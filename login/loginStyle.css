@@ -1,0 +1,28 @@
+section {
+  margin-top: 100px;
+  height: 500px;
+  width: 500px;
+  background-color: var(--color-off-white);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+section div {
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-dark-coffe);
+}
+
+section div h2 {
+  color: #f5f5dc;
+}
+
+form {
+  height: 85%;
+  background-color: var(--color-soft-beige);
+  display: flex;
+  flex-direction: column;
+  padding: 10%;
+}
