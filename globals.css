@@ -1,0 +1,119 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: "Lato", Tahoma;
+}
+
+:root {
+  --color-sienna: #8c716a;
+  --color-ice-blue: #f0f4f8;
+  --color-off-white: #f7f7f7;
+  --color-dark-coffe: #5c3d2e;
+  --color-soft-beige: #f2e6d4;
+  --color-moccasin: #ffe4b5;
+  --color-black: black;
+}
+
+header {
+  width: 100%;
+  background-color: var(--color-sienna);
+  height: 12vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+}
+
+header div {
+  position: absolute;
+  top: 3vh;
+  left: 2vh;
+  display: flex;
+  align-items: center;
+}
+
+header div img {
+  height: 7vh;
+  border-radius: 5vh;
+  margin-right: 6px;
+}
+
+header div p {
+  color: #f5f5dc;
+}
+
+header h1 {
+  color: #f5f5dc;
+}
+
+main {
+  height: 100vh;
+  background-color: var(--color-ice-blue); /* Ice Blue */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+section {
+  margin-top: 100px;
+  height: 500px;
+  width: 850px;
+  background-color: var(--color-off-white); /* Off White */
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+section div {
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-dark-coffe); /* Dark Coffee */
+}
+
+section div h2 {
+  color: #f5f5dc;
+}
+
+section ul {
+  height: 85%;
+  background-color: var(--color-soft-beige); /* Soft Beige */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+section li {
+  margin: 12px;
+  height: 300px;
+  width: 175px;
+  background-color: var(--color-moccasin); /* Moccasin */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 36px;
+  border-radius: 8px;
+}
+
+section li:hover {
+  transform: scale(104%);
+  transition: 0.2s;
+  cursor: pointer;
+  box-shadow: 5px 5px 20px var(--color-black);
+}
+
+section li img {
+  height: 126px;
+}
+
+section li p {
+  height: 30px;
+  width: 100px;
+  text-align: center;
+}
