@@ -11,12 +11,15 @@ section ul {
   height: 85%;
   background-color: var(--color-soft-beige);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: auto;
 }
 
 section ul li {
   background-color: var(--color-sienna);
-  width: 80%;
+  width: 90%;
   height: 10%;
   display: flex;
   align-items: center;
