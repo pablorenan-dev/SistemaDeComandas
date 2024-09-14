@@ -15,8 +15,11 @@
   --color-dark-coffe: #5c3d2e;
   --color-soft-beige: #f2e6d4;
   --color-moccasin: #ffe4b5;
-  --color-black: black;
-  --color-white: white;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-black-transparent: rgba(0, 0, 0, 0.2);
+  --color-soft-green: #8fff8f;
+  --color-green: #009900;
 }
 
 header {
