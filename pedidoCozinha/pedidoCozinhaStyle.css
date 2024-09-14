@@ -3,13 +3,63 @@ header
     flex-direction: column;
 }
 
+header h2
+{
+    color: #f5f5dc;
+}
+
 main
 {
     height: 100vh;
+    padding-top: 12vh;
+    gap: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
-.setaVoltarImg
+a
 {
-    top: 0;
-    left: 0;
+    position: fixed;
+    top: 124px;
+    left: 16px;
 }
+
+section ul 
+{
+    height: 55%;
+    width: 66%;
+    background-color: var(--color-soft-beige);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  section li 
+  {
+    margin: 12px;
+    height: 300px;
+    width: 175px;
+    background-color: var(--color-moccasin);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 36px;
+    border-radius: 8px;
+  }
+  
+  section li:hover 
+  {
+    transform: scale(104%);
+    transition: 0.2s;
+    cursor: pointer;
+    box-shadow: 5px 5px 20px var(--color-black);
+  }
+
+  section li p 
+  {
+    height: 30px;
+    width: 100px;
+    text-align: center;
+  }
