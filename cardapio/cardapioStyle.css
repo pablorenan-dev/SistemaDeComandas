@@ -7,6 +7,16 @@ section {
   overflow: hidden;
 }
 
+.div-section-header {
+  height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-dark-coffe);
+  display: flex;
+  flex-direction: column;
+}
+
 section ul {
   height: 85%;
   background-color: var(--color-soft-beige);
@@ -21,22 +31,53 @@ section ul {
 section ul li {
   background-color: var(--color-sienna);
   width: 90%;
-  height: 10%;
-  display: flex;
-  align-items: center;
-  padding: 2%;
-  margin: 2% 0 2% 0;
+  padding: 5%;
+  margin: 2% 0;
   border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100px;
 }
 
-section div {
-  height: 25%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--color-dark-coffe);
+.div-li-info {
+  width: 90%;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.div-li-info h3,
+.div-li-info p {
+  margin: 4px 0;
+  width: 100%;
+}
+
+section ul {
+  height: 75%;
+  background-color: var(--color-soft-beige);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: scroll;
+  padding-bottom: 20px;
+}
+
+.div-li-buttons {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  button {
+    height: 32px;
+    width: 32px;
+    border-radius: 4px;
+    border-style: none;
+  }
 }
 
 section div input {

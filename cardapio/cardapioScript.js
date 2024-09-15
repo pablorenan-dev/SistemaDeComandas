@@ -20,9 +20,27 @@ async function montarItensCardapio() {
     ulCardapioItens.insertAdjacentHTML(
       "beforeend",
       `
-      <li>${item.titulo}</li>
+      <li>
+            <div class="div-li-info">
+              <h3>${item.titulo}</h3>
+              <p>${item.descricao}</p>
+              <p>R$${item.preco.toFixed(2)}</p>
+            </div>
+            <div class="div-li-buttons">
+              <button id="button-li-delete-${item.id}">❌</button>
+              <button>✏️</button>
+            </div>
+      </li>
       `
     );
+    adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
+  });
+}
+
+function adicionarEventoCliqueDeletarBotaoItemCardapio(idItem, tituloItem) {
+  let botaoDelete = document.querySelector(`#button-li-delete-${idItem}`);
+  botaoDelete.addEventListener("click", () => {
+    montarModalDeletarItem(idItem, tituloItem);
   });
 }
 
@@ -84,12 +102,77 @@ function montarModalAdicionarItem() {
   adicionarEventoCliqueBotaoAdicionarItemModal();
 }
 
+function montarModalDeletarItem(itemId, itemTitulo) {
+  const body = document.body;
+  body.insertAdjacentHTML(
+    "beforeend",
+    `
+     <div class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-header" style="background-color: var(--color-red);">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="42"
+            height="42"
+            fill="currentColor"
+            class="bi bi-file-x"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708"
+            />
+            <path
+              d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"
+            />
+          </svg>
+          <h2>Deseja deletar o item ${itemTitulo}?</h2>
+          <button class="modal-button">X</button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <button class="button-adicionar-item-modal" id="button-deletar-item">
+              Sim, delete o item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `
+  );
+  adicionarEventoCliqueBotaoFecharModal();
+  adicionarEventoCliqueBotaoConfirmarDeletarItem(itemId);
+}
+
+function adicionarEventoCliqueBotaoConfirmarDeletarItem(itemId) {
+  const botaoDeletarItem = document.querySelector("#button-deletar-item");
+  botaoDeletarItem.addEventListener("click", () => {
+    DELETEItenCardapio(itemId);
+  });
+}
+
+async function DELETEItenCardapio(itemId) {
+  let response = await fetch(
+    `http://localhost:5164/api/CardapioItems/${itemId}`,
+    {
+      method: "DELETE",
+      headers: header,
+    }
+  );
+  deletarItensUl();
+  montarItensCardapio();
+  removerModal();
+}
+
 function adicionarEventoCliqueBotaoFecharModal() {
   const buttonClose = document.querySelector(".modal-button");
   buttonClose.addEventListener("click", () => {
-    const modalWrapper = document.querySelector(".modal-wrapper");
-    modalWrapper.remove();
+    removerModal();
   });
+}
+
+function removerModal() {
+  const modalWrapper = document.querySelector(".modal-wrapper");
+  modalWrapper.remove();
 }
 
 function adicionarEventoCliqueBotaoAdicionarItemModal() {
@@ -119,6 +202,7 @@ async function POSTItemCardapio() {
   let result = await response.json();
   deletarItensUl();
   montarItensCardapio();
+  removerModal();
 }
 
 function pegarValoresDosItens() {
