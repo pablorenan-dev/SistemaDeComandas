@@ -28,12 +28,13 @@ async function montarItensCardapio() {
             </div>
             <div class="div-li-buttons">
               <button id="button-li-delete-${item.id}">❌</button>
-              <button>✏️</button>
+              <button id="button-li-editar-${item.id}">✏️</button>
             </div>
       </li>
       `
     );
     adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
+    adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
   });
 }
 
@@ -44,11 +45,66 @@ function adicionarEventoCliqueDeletarBotaoItemCardapio(idItem, tituloItem) {
   });
 }
 
+function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
+  let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
+  botaoDelete.addEventListener("click", () => {
+    montarModalEditarItem(idItem, tituloItem);
+  });
+}
+
 function adicionarEventoCliqueBotaoAdicionarItem() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
   botaoAdicionarItem.addEventListener("click", () => {
     montarModalAdicionarItem();
   });
+}
+
+async function montarModalEditarItem(idItem, tituloItem) {
+  const itemDetalhes = await GETItemCardapio(idItem);
+  const body = document.body;
+  body.insertAdjacentHTML(
+    "beforeend",
+    `
+   <div class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-header" style="background-color: var(--color-light-blue);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+          </svg>
+          </svg>
+          <h2>Editar Item ${tituloItem}</h2>
+          <button class="modal-button">X</button>
+        </div>
+        <div class="modal-body">
+          <p>Nome Item:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.titulo}"/>
+          <p>Descricao Item:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.descricao}"/>
+          <p>Preco Item:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.preco}"/>
+          <p>Possui Preparo?</p>
+          <input type="checkbox" id="checkbox-adicionar-item-${itemDetalhes.id}"/>
+          <div>
+            <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `
+  );
+  if (itemDetalhes.possuiPreparo) {
+    marcarCheckboxItemCardapio(itemDetalhes.id);
+  }
+
+  adicionarEventoCliqueBotaoFecharModal();
+  adicionarEventoCliqueBotaoEditarItemModal(idItem);
+}
+
+function marcarCheckboxItemCardapio(idItem) {
+  let checkboxitemCardapio = document.querySelector(
+    `#checkbox-adicionar-item-${idItem}`
+  );
+  checkboxitemCardapio.checked = true;
 }
 
 function montarModalAdicionarItem() {
@@ -102,7 +158,7 @@ function montarModalAdicionarItem() {
   adicionarEventoCliqueBotaoAdicionarItemModal();
 }
 
-function montarModalDeletarItem(itemId, itemTitulo) {
+function montarModalDeletarItem(idItem, itemTitulo) {
   const body = document.body;
   body.insertAdjacentHTML(
     "beforeend",
@@ -140,19 +196,51 @@ function montarModalDeletarItem(itemId, itemTitulo) {
     `
   );
   adicionarEventoCliqueBotaoFecharModal();
-  adicionarEventoCliqueBotaoConfirmarDeletarItem(itemId);
+  adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem);
 }
 
-function adicionarEventoCliqueBotaoConfirmarDeletarItem(itemId) {
-  const botaoDeletarItem = document.querySelector("#button-deletar-item");
+function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
+  const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    DELETEItenCardapio(itemId);
+    const dethales = pegarValoresDosItens();
+    PUTItemCardapio(idItem);
   });
 }
 
-async function DELETEItenCardapio(itemId) {
+async function PUTItemCardapio(idItem) {
+  const valoresItem = pegarValoresDosItensEditar(idItem);
+  let valoresInputs = valoresItem[0];
+  let valorCheckbox = valoresItem[1];
+
   let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${itemId}`,
+    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify({
+        id: idItem,
+        titulo: valoresInputs[0].value,
+        descricao: valoresInputs[1].value,
+        preco: parseFloat(valoresInputs[2].value),
+        possuiPreparo: valorCheckbox.checked,
+      }),
+    }
+  );
+  deletarItensUl();
+  montarItensCardapio();
+  removerModal();
+}
+
+function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
+  const botaoDeletarItem = document.querySelector("#button-deletar-item");
+  botaoDeletarItem.addEventListener("click", () => {
+    DELETEItenCardapio(idItem);
+  });
+}
+
+async function DELETEItenCardapio(idItem) {
+  let response = await fetch(
+    `http://localhost:5164/api/CardapioItems/${idItem}`,
     {
       method: "DELETE",
       headers: header,
@@ -161,6 +249,19 @@ async function DELETEItenCardapio(itemId) {
   deletarItensUl();
   montarItensCardapio();
   removerModal();
+}
+
+async function GETItemCardapio(idItem) {
+  let response = await fetch(
+    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    {
+      method: "GET",
+      headers: header,
+    }
+  );
+  let result = await response.json();
+  console.log(result, "DETALHES ITEM ESPECIFICO");
+  return result;
 }
 
 function adicionarEventoCliqueBotaoFecharModal() {
@@ -209,6 +310,16 @@ function pegarValoresDosItens() {
   let arrayValores = [];
   let valoresItens = document.querySelectorAll(".input-item-modal");
   let checkbox = document.querySelector("#checkbox-adicionar-item");
+  arrayValores.push(valoresItens);
+  arrayValores.push(checkbox);
+
+  return arrayValores;
+}
+
+function pegarValoresDosItensEditar(idItem) {
+  let arrayValores = [];
+  let valoresItens = document.querySelectorAll(".input-item-modal");
+  let checkbox = document.querySelector(`#checkbox-adicionar-item-${idItem}`);
   arrayValores.push(valoresItens);
   arrayValores.push(checkbox);
 

@@ -17,27 +17,15 @@ section {
   flex-direction: column;
 }
 
-section ul {
-  height: 85%;
-  background-color: var(--color-soft-beige);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow: scroll;
-  padding-bottom: 20px;
-}
-
 section ul li {
   background-color: var(--color-sienna);
   width: 90%;
-  padding: 5%;
+  padding: 2%;
   margin: 2% 0;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 100px;
 }
 
 .div-li-info {

@@ -21,6 +21,7 @@
   --color-soft-green: #8fff8f;
   --color-green: #009900;
   --color-red: #ff4d4d;
+  --color-light-blue: #89c0ff;
 }
 
 header {
@@ -61,4 +62,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+button:hover {
+  cursor: pointer;
 }
