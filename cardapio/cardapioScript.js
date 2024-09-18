@@ -4,13 +4,17 @@ const header = {
 };
 
 async function GETItensCardapio() {
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
-    method: "GET",
-    headers: header,
-  });
-  let result = await response.json();
-  console.log(result);
-  return result;
+  try {
+    let response = await fetch("http://localhost:5164/api/CardapioItems", {
+      method: "GET",
+      headers: header,
+    });
+    let result = await response.json();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error, "EROOOOOOOO!");
+  }
 }
 
 async function montarItensCardapio() {
