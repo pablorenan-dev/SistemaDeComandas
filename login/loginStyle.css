@@ -1,21 +1,21 @@
 section {
   margin-top: 100px;
-  height: 500px;
+  height: 400px;
   width: 500px;
   background-color: var(--color-off-white);
   border-radius: 16px;
   overflow: hidden;
 }
 
-section div {
-  height: 15%;
+.section-header {
+  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--color-dark-coffe);
 }
 
-section div h2 {
+.section-header h2 {
   color: #f5f5dc;
 }
 
@@ -25,4 +25,41 @@ form {
   display: flex;
   flex-direction: column;
   padding: 10%;
+  gap: 10px;
+}
+
+.input-parameter {
+  height: 13%;
+  padding: 2%;
+  border-radius: 8px;
+  border: solid 1px var(--color-black);
+  background-color: var(--color-ice-blue);
+}
+
+.div-mostrar-senha {
+  display: flex;
+  align-items: center;
+}
+
+.div-mostrar-senha input {
+  margin-right: 8px;
+}
+
+.button-logar {
+  height: 13%;
+  padding: 2%;
+  background-color: var(--color-ice-blue);
+  border-radius: 8px;
+  border: solid 1px var(--color-black);
+}
+
+.button-logar:hover {
+  transform: scale(102%);
+  transition: 0.2s;
+}
+
+.button-logar:active {
+  background-color: var(--color-sienna);
+  transition: 0.2s;
+  transform: scale(98%);
 }

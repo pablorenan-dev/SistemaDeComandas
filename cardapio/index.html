@@ -17,16 +17,30 @@
     </header>
     <main>
       <section>
-        <div>
+        <div class="div-section-header">
           <input type="text" placeholder="🔎" />
           <div>
-            <button>+ Adicionar item</button>
+            <button class="button-geral" id="button-adicionar-item">
+              + Adicionar item
+            </button>
           </div>
         </div>
         <ul>
-          <li>Hamburgão</li>
+          <li>
+            <div class="div-li-info">
+              <h3>Hamburgao</h3>
+              <p>Descricao Hamburgao</p>
+              <p>R$18,90</p>
+            </div>
+            <div class="div-li-buttons">
+              <button>❌</button>
+              <button>✏️</button>
+            </div>
+          </li>
         </ul>
       </section>
     </main>
+    
+    <script src="cardapioScript.js"></script>
   </body>
 </html>

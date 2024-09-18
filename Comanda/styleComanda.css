@@ -1,0 +1,78 @@
+section {
+    padding: 15px;
+    margin-top: 100px;
+    height: 400px;
+    width: 750px;
+    background-color: var(--color-off-white);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  section ul {
+    background-color: var(--color-soft-beige);
+    display: flex;
+    justify-content: center;
+    border-radius: 0px 0px 16px 16px;
+  }
+  
+  section ul li {
+    background-color: var(--color-sienna);
+    width: 80%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    padding: 2%;
+    margin: 2% 0 2% 0;
+    border-radius: 8px;
+  }
+  
+  section div {
+    height: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-dark-coffe);
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px 16px 0px 0px;
+  }
+  
+  section div input {
+    width: 90%;
+    height: 35%;
+    text-align: center;
+    padding: 1%;
+    border-radius: 8px;
+  }
+  
+  section div div {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    width: 90%;
+  }
+  
+  section div div button {
+    height: 120%;
+    padding: 8px;
+    background-color: var(--color-soft-beige);
+    border-radius: 8px;
+    border-style: none;
+  }
+  
+  section div div button:hover {
+    transform: scale(102%);
+    transition: 0.2s;
+  }
+  
+  section div div button:active {
+    background-color: var(--color-sienna);
+    transition: 0.2s;
+    transform: scale(98%);
+  }
+  
+  section div input::placeholder {
+    text-align: left;
+  }
+  

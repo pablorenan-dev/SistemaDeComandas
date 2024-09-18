@@ -15,7 +15,13 @@
   --color-dark-coffe: #5c3d2e;
   --color-soft-beige: #f2e6d4;
   --color-moccasin: #ffe4b5;
-  --color-black: black;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-black-transparent: rgba(0, 0, 0, 0.2);
+  --color-soft-green: #8fff8f;
+  --color-green: #009900;
+  --color-red: #ff4d4d;
+  --color-light-blue: #89c0ff;
 }
 
 header {
@@ -56,4 +62,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+button:hover {
+  cursor: pointer;
 }
