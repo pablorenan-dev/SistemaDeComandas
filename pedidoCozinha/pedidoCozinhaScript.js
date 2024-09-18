@@ -14,7 +14,7 @@ const header = {
   }
   
   function montarPedidoCozinha(cardapioItens) {
-    let ulPedidoCozinhaItensAFazer = document.querySelector("#ul-cardapio");
+    let ulPedidoCozinhaItensAFazer = document.querySelector("#ulPendente");
     cardapioItens.forEach((item) => {
         ulPedidoCozinhaItensAFazer.insertAdjacentHTML(
         "beforeend",
