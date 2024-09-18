@@ -1,21 +1,10 @@
-const header = {
-  Accept: "application/json",
-  "Content-Type": "application/json",
-};
-
-async function GETItensCardapio() {
-  try {
-    let response = await fetch("http://localhost:5164/api/CardapioItems", {
-      method: "GET",
-      headers: header,
-    });
-    let result = await response.json();
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.log(error, "EROOOOOOOO!");
-  }
-}
+import {
+  DELETEItenCardapio,
+  GETItemCardapio,
+  GETItensCardapio,
+  POSTItemCardapio,
+  PUTItemCardapio,
+} from "./cardapioApiScript.js";
 
 async function montarItensCardapio() {
   const cardapioItens = await GETItensCardapio();
@@ -206,66 +195,28 @@ function montarModalDeletarItem(idItem, itemTitulo) {
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    const dethales = pegarValoresDosItens();
-    PUTItemCardapio(idItem);
+    deletarItem(idItem);
   });
 }
 
-async function PUTItemCardapio(idItem) {
+function deletarItem(idItem) {
   const valoresItem = pegarValoresDosItensEditar(idItem);
-  let valoresInputs = valoresItem[0];
-  let valorCheckbox = valoresItem[1];
-
-  let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
-    {
-      method: "PUT",
-      headers: header,
-      body: JSON.stringify({
-        id: idItem,
-        titulo: valoresInputs[0].value,
-        descricao: valoresInputs[1].value,
-        preco: parseFloat(valoresInputs[2].value),
-        possuiPreparo: valorCheckbox.checked,
-      }),
-    }
-  );
+  PUTItemCardapio(valoresItem, idItem);
   deletarItensUl();
   montarItensCardapio();
   removerModal();
+  recarregarPagina();
 }
 
 function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", () => {
     DELETEItenCardapio(idItem);
+    deletarItensUl();
+    montarItensCardapio();
+    removerModal();
+    recarregarPagina();
   });
-}
-
-async function DELETEItenCardapio(idItem) {
-  let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
-    {
-      method: "DELETE",
-      headers: header,
-    }
-  );
-  deletarItensUl();
-  montarItensCardapio();
-  removerModal();
-}
-
-async function GETItemCardapio(idItem) {
-  let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
-    {
-      method: "GET",
-      headers: header,
-    }
-  );
-  let result = await response.json();
-  console.log(result, "DETALHES ITEM ESPECIFICO");
-  return result;
 }
 
 function adicionarEventoCliqueBotaoFecharModal() {
@@ -285,29 +236,21 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
     ".button-adicionar-item-modal"
   );
   buttonAdicionarItemModal.addEventListener("click", () => {
-    POSTItemCardapio();
+    adicionarItem();
   });
 }
 
-async function POSTItemCardapio() {
+function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
-  let valoresInputs = valoresItem[0];
-  let valorCheckbox = valoresItem[1];
-
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
-    method: "POST",
-    headers: header,
-    body: JSON.stringify({
-      titulo: valoresInputs[0].value,
-      descricao: valoresInputs[1].value,
-      preco: parseFloat(valoresInputs[2].value),
-      possuiPreparo: valorCheckbox.checked,
-    }),
-  });
-  let result = await response.json();
+  POSTItemCardapio(valoresItem);
   deletarItensUl();
   montarItensCardapio();
   removerModal();
+  recarregarPagina();
+}
+
+function recarregarPagina() {
+  location.reload();
 }
 
 function pegarValoresDosItens() {
