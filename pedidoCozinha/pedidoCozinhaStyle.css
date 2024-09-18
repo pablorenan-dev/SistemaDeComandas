@@ -23,9 +23,14 @@ a
 
 section 
 {
-  width: 99vh;
-  height: 75vh;
-  background-color: var(--color-sienna);
+    display: flex;
+    gap: 8px;
+    width: 90%;
+    height: 75vh;
+    background-color: var(--color-sienna);
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
 }
 
 div
@@ -34,7 +39,7 @@ div
   justify-content: space-evenly;
   align-items: flex-start;
   flex-direction: row;
-  height: 100%;
+  height: 90%;
   overflow: auto;
 }
 
@@ -42,10 +47,9 @@ ul
 {
   overflow: auto;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   flex-direction: column;
-
+  gap: 16px;
   width: 25%;
   height: 100%;
   background-color: var(--color-sienna);
@@ -54,9 +58,9 @@ ul
 ul p
 {
   width: 100%;
+  height: 8%;
   background-color: var(--color-dark-coffe);
   color: #f5f5dc;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,11 +68,33 @@ ul p
 
 ul li
 {
-  width: 100%;
+  width: 95%;
   color: #f5f5dc;
   background-color: var(--color-dark-coffe);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-wrap: anywhere;
+  padding: 8px;
+}
+
+.buttonDiv
+{
+    display: flex;
+    height: 10%;
+    color: #f5f5dc;
+    background-color: var(--color-dark-coffe);
+    align-items: center;
+    justify-content: space-around;
+}
+
+.pDiv
+{
+  color: #f5f5dc;
+    background-color: var(--color-dark-coffe);
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
