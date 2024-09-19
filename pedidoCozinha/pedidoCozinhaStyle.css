@@ -23,14 +23,14 @@ a
 
 section 
 {
-    display: flex;
-    gap: 8px;
-    width: 90%;
-    height: 75vh;
-    background-color: var(--color-sienna);
-    flex-direction: column;
-    border-radius: 16px;
-    overflow: hidden;
+  display: flex;
+  gap: 8px;
+  width: 90%;
+  height: 75vh;
+  background-color: var(--color-sienna);
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 div
@@ -79,22 +79,39 @@ ul li
   padding: 8px;
 }
 
+button
+{
+  border-radius: 8px;
+  height: 24px;
+  background: transparent;
+  color: #f5f5dc;
+  border: 2px solid #f5f5dc;
+}
+
+button:hover
+{
+  transform: scale(110%);
+  transition: 0.25s;
+}
+
+
 .buttonDiv
 {
-    display: flex;
-    height: 10%;
-    color: #f5f5dc;
-    background-color: var(--color-dark-coffe);
-    align-items: center;
-    justify-content: space-around;
+  display: flex;
+  height: 10%;
+  color: #f5f5dc;
+  background-color: var(--color-dark-coffe);
+  align-items: center;
+  justify-content: space-around;
 }
 
 .pDiv
 {
+  font-size: 36px;
   color: #f5f5dc;
-    background-color: var(--color-dark-coffe);
-    height: 10%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
+  background-color: var(--color-dark-coffe);
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 }
