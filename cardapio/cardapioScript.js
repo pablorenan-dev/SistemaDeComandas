@@ -6,9 +6,9 @@ import {
   PUTItemCardapio,
 } from "./cardapioApiScript.js";
 
-async function montarItensCardapio() {
-  const cardapioItens = await GETItensCardapio();
+async function montarItensCardapio(cardapioItens = []) {
   let ulCardapioItens = document.querySelector("ul");
+  ulCardapioItens.innerHTML = "";
   cardapioItens.forEach((item) => {
     ulCardapioItens.insertAdjacentHTML(
       "beforeend",
@@ -28,7 +28,44 @@ async function montarItensCardapio() {
     );
     adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
     adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
+
+    adicionarItensLocalStorage(cardapioItens);
   });
+}
+
+function pegarItensLocalStorage() {
+  try {
+    const cardapioItensLocalStorage = JSON.parse(
+      localStorage.getItem("cardapioItens")
+    );
+    return cardapioItensLocalStorage;
+  } catch (error) {}
+}
+
+function filtrarItem() {
+  const inputProcurar = document.querySelector("#input-procurar");
+  const cardapioItensLocalStorage = pegarItensLocalStorage();
+
+  inputProcurar.addEventListener("input", (event) => {
+    const itensFiltrados = cardapioItensLocalStorage.filter((item) => {
+      return (
+        item.titulo.toLowerCase().includes(event.target.value.toLowerCase()) ||
+        item.descricao.toLowerCase().includes(event.target.value.toLowerCase())
+      );
+    });
+
+    montarItensCardapio(itensFiltrados);
+  });
+}
+
+function adicionarItensLocalStorage(cardapioItens) {
+  localStorage.setItem("cardapioItens", JSON.stringify(cardapioItens));
+}
+
+async function montarItensLocalStorage() {
+  const cardapioItens = await GETItensCardapio();
+  adicionarItensLocalStorage(cardapioItens);
+  montarItensCardapio(cardapioItens);
 }
 
 function adicionarEventoCliqueDeletarBotaoItemCardapio(idItem, tituloItem) {
@@ -278,5 +315,7 @@ function deletarItensUl() {
   ulCardapioItens.innerHTML = "";
 }
 
+filtrarItem();
+montarItensLocalStorage();
 adicionarEventoCliqueBotaoAdicionarItem();
 montarItensCardapio();
