@@ -4,7 +4,7 @@ const header = {
 };
 
 async function GETItensCardapio() {
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
+  let response = await fetch("https://localhost:7168/api/CardapioItems", {
     method: "GET",
     headers: header,
   });
@@ -213,7 +213,7 @@ async function PUTItemCardapio(idItem) {
   let valorCheckbox = valoresItem[1];
 
   let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    `https://localhost:7168/api/CardapioItems/1${idItem}`,
     {
       method: "PUT",
       headers: header,
@@ -240,7 +240,7 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
 
 async function DELETEItenCardapio(idItem) {
   let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    `https://localhost:7168/api/CardapioItems/${idItem}`,
     {
       method: "DELETE",
       headers: header,
@@ -253,7 +253,7 @@ async function DELETEItenCardapio(idItem) {
 
 async function GETItemCardapio(idItem) {
   let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    `https://localhost:7168/api/CardapioItems/${idItem}`,
     {
       method: "GET",
       headers: header,
