@@ -13,18 +13,26 @@
         <h2>Pedidos</h2>
     </header>
     <main>
-        <a href="../index.html">
-            <img src="../imgs/setaVoltar.png" alt="Voltar">
-        </a>
         <section>
-            <p>A preparar</p>
-            <p>Preparando</p>
-            <p>preparado</p>
-            <ul></ul>
-            <ul></ul>
-            <ul></ul>
+            <div class="pDiv">
+                <p>Pendente</p>
+                <p>Em Andamento</p>
+                <p>Finalizado</p>
+                <p>Entregue</p>
+            </div>
+            <div>
+                <ul id="ulPendente"></ul>
+                <ul id="ulAndamento"></ul>
+                <ul id="ulFinalizado"></ul>
+                <ul id="ulEntregue"></ul>
+            </div>
+            <div class="buttonDiv">
+                <button>Mover para Em andamento</button>
+                <button>Mover para Finalizado</button>
+                <button>Mover para Entregue</button>
+            </div>
         </section>
-        
     </main>
+    <script src="pedidoCozinhaScript.js"></script>
 </body>
 </html>
