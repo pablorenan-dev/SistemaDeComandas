@@ -25,3 +25,8 @@ const header = {
     });
   }
   GETItensCardapio();
+
+  // function adicionarEventoCliqueMoverItemAndamento(item.id)
+  // {
+  //   montarPedidoCozinha(result);
+  // }
