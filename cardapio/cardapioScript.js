@@ -213,7 +213,7 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   });
 }
 
-function deletarItem(idItem) {
+async function deletarItem(idItem) {
   const valoresItem = pegarValoresDosItensEditar(idItem);
   let valoresInputs = valoresItem[0];
   let valorCheckbox = valoresItem[1];
