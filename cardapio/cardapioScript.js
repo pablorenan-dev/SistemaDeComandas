@@ -3,15 +3,6 @@ const header = {
   "Content-Type": "application/json",
 };
 
-async function GETItensCardapio() {
-  let response = await fetch("https://localhost:7168/api/CardapioItems", {
-    method: "GET",
-    headers: header,
-  });
-  let result = await response.json();
-  console.log(result);
-  return result;
-}
 import {
   DELETEItenCardapio,
   GETItemCardapio,
@@ -280,32 +271,6 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   botaoDeletarItem.addEventListener("click", () => {
     DELETEItenCardapio(idItem);
   });
-}
-
-async function DELETEItenCardapio(idItem) {
-  let response = await fetch(
-    `https://localhost:7168/api/CardapioItems/${idItem}`,
-    {
-      method: "DELETE",
-      headers: header,
-    }
-  );
-  deletarItensUl();
-  montarItensCardapio();
-  removerModal();
-}
-
-async function GETItemCardapio(idItem) {
-  let response = await fetch(
-    `https://localhost:7168/api/CardapioItems/${idItem}`,
-    {
-      method: "GET",
-      headers: header,
-    }
-  );
-  let result = await response.json();
-  console.log(result, "DETALHES ITEM ESPECIFICO");
-  return result;
 }
 
 function adicionarEventoCliqueBotaoFecharModal() {
