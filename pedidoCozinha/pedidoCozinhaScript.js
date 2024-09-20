@@ -11,6 +11,7 @@ const header = {
     let result = await response.json();
     console.log(result);
     montarPedidoCozinha(result);
+    adicionarEventoCliqueMoverItemAndamento();
   }
   
   function montarPedidoCozinha(cardapioItens) {
@@ -26,7 +27,12 @@ const header = {
   }
   GETItensCardapio();
 
-  // function adicionarEventoCliqueMoverItemAndamento(item.id)
-  // {
-  //   montarPedidoCozinha(result);
-  // }
+function adicionarEventoCliqueMoverItemAndamento(cardapioItens)
+{
+  const btnMoverItemAndamento = document.querySelector("#mover-andamento");
+  btnMoverItemAndamento.addEventListener("click", () => {
+    cardapioItens.splice;
+    // mandar pra api a atuliazação do status do item q tu clicou
+    // monta a lista novamente
+  });
+}
