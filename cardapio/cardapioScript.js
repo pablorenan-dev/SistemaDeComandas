@@ -335,6 +335,14 @@ function deletarItensUl() {
   ulCardapioItens.innerHTML = "";
 }
 
+function adicionarEventoCliqueH1Chiquinho() {
+  const h1Chiquinho = document.querySelector(".h1-chiquinho");
+  h1Chiquinho.addEventListener("click", () => {
+    document.location.href = "http://127.0.0.1:5500/index.html";
+  });
+}
+
+adicionarEventoCliqueH1Chiquinho();
 filtrarItem();
 montarItensLocalStorage();
 adicionarEventoCliqueBotaoAdicionarItem();
