@@ -237,7 +237,9 @@ function montarModalDeletarItem(idItem, itemTitulo) {
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    deletarItem(idItem);
+    const valoresItensTela = pegarValoresDosItensEditar(idItem);
+    PUTItemCardapio(valoresItensTela, idItem);
+    recarregarPagina();
   });
 }
 
@@ -270,6 +272,7 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", () => {
     DELETEItenCardapio(idItem);
+    recarregarPagina();
   });
 }
 
