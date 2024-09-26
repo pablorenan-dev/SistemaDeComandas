@@ -239,7 +239,11 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   botaoDeletarItem.addEventListener("click", () => {
     const valoresItensTela = pegarValoresDosItensEditar(idItem);
     PUTItemCardapio(valoresItensTela, idItem);
-    recarregarPagina();
+    deletarItensUl();
+    removerModal();
+    montarLiCarregandoUl();
+    carregarModalSucessoAlterado();
+    setTimeout(recarregarPagina, 2000);
   });
 }
 
@@ -272,7 +276,11 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", () => {
     DELETEItenCardapio(idItem);
-    recarregarPagina();
+    deletarItensUl();
+    montarLiCarregandoUl();
+    carregarModalSucessoDeletado();
+    removerModal();
+    setTimeout(recarregarPagina, 2000);
   });
 }
 
@@ -303,7 +311,37 @@ function adicionarItem() {
   deletarItensUl();
   montarItensCardapio();
   removerModal();
-  recarregarPagina();
+  carregarModalSucessoAdicionado();
+  montarLiCarregandoUl();
+  setTimeout(recarregarPagina, 2000);
+}
+
+function carregarModalSucessoAdicionado() {
+  toastr.success("Adicionado com Sucesso");
+}
+
+function carregarModalSucessoAlterado() {
+  toastr.success("Alterado com Sucesso");
+}
+
+function carregarModalSucessoDeletado() {
+  toastr.success("Deletado com Sucesso");
+}
+
+function montarLiCarregandoUl() {
+  let ulCardapioItens = document.querySelector("ul");
+  ulCardapioItens.innerHTML = "";
+  ulCardapioItens.insertAdjacentHTML(
+    "beforeend",
+    `
+      <li>
+            <div class="div-li-info">
+              <h3>Carregando...</h3>
+            </div>
+
+      </li>
+      `
+  );
 }
 
 function recarregarPagina() {
@@ -342,8 +380,12 @@ function adicionarEventoCliqueH1Chiquinho() {
   });
 }
 
-adicionarEventoCliqueH1Chiquinho();
-filtrarItem();
-montarItensLocalStorage();
-adicionarEventoCliqueBotaoAdicionarItem();
-montarItensCardapio();
+function chamarFuncoesIniciais() {
+  adicionarEventoCliqueH1Chiquinho();
+  filtrarItem();
+  montarItensLocalStorage();
+  adicionarEventoCliqueBotaoAdicionarItem();
+  montarItensCardapio();
+}
+
+chamarFuncoesIniciais();
