@@ -21,17 +21,21 @@
           <h2>Login</h2>
         </div>
         <form>
-          <p>Email</p>
-          <input type="email" class="input-parameter" />
-          <p>Senha</p>
-          <input type="password" class="input-parameter" />
-          <div class="div-mostrar-senha">
-            <input type="checkbox" />
-            <p>Mostrar Senha</p>
+          <div class="container-input">
+            <p>Email</p>
+            <input type="email" class="input-parameter" />
           </div>
+          <div class="container-input">
+            <p>Senha</p>
+            <input type="password" class="input-parameter" id="input-senha" />
+            <img src="../imgs/olho.png" class="olho-icon" />
+          </div>
+
           <button class="button-logar">Logar</button>
         </form>
       </section>
     </main>
+
+    <script src="loginScript.js"></script>
   </body>
 </html>
