@@ -237,7 +237,13 @@ function montarModalDeletarItem(idItem, itemTitulo) {
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    deletarItem(idItem);
+    const valoresItensTela = pegarValoresDosItensEditar(idItem);
+    PUTItemCardapio(valoresItensTela, idItem);
+    deletarItensUl();
+    removerModal();
+    montarLiCarregandoUl();
+    carregarModalSucessoAlterado();
+    setTimeout(recarregarPagina, 2000);
   });
 }
 
@@ -270,6 +276,11 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", () => {
     DELETEItenCardapio(idItem);
+    deletarItensUl();
+    montarLiCarregandoUl();
+    carregarModalSucessoDeletado();
+    removerModal();
+    setTimeout(recarregarPagina, 2000);
   });
 }
 
@@ -300,7 +311,37 @@ function adicionarItem() {
   deletarItensUl();
   montarItensCardapio();
   removerModal();
-  recarregarPagina();
+  carregarModalSucessoAdicionado();
+  montarLiCarregandoUl();
+  setTimeout(recarregarPagina, 2000);
+}
+
+function carregarModalSucessoAdicionado() {
+  toastr.success("Adicionado com Sucesso");
+}
+
+function carregarModalSucessoAlterado() {
+  toastr.success("Alterado com Sucesso");
+}
+
+function carregarModalSucessoDeletado() {
+  toastr.success("Deletado com Sucesso");
+}
+
+function montarLiCarregandoUl() {
+  let ulCardapioItens = document.querySelector("ul");
+  ulCardapioItens.innerHTML = "";
+  ulCardapioItens.insertAdjacentHTML(
+    "beforeend",
+    `
+      <li>
+            <div class="div-li-info">
+              <h3>Carregando...</h3>
+            </div>
+
+      </li>
+      `
+  );
 }
 
 function recarregarPagina() {
@@ -332,7 +373,19 @@ function deletarItensUl() {
   ulCardapioItens.innerHTML = "";
 }
 
-filtrarItem();
-montarItensLocalStorage();
-adicionarEventoCliqueBotaoAdicionarItem();
-montarItensCardapio();
+function adicionarEventoCliqueH1Chiquinho() {
+  const h1Chiquinho = document.querySelector(".h1-chiquinho");
+  h1Chiquinho.addEventListener("click", () => {
+    document.location.href = "http://127.0.0.1:5500/index.html";
+  });
+}
+
+function chamarFuncoesIniciais() {
+  adicionarEventoCliqueH1Chiquinho();
+  filtrarItem();
+  montarItensLocalStorage();
+  adicionarEventoCliqueBotaoAdicionarItem();
+  montarItensCardapio();
+}
+
+chamarFuncoesIniciais();

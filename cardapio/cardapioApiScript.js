@@ -20,30 +20,38 @@ async function PUTItemCardapio(valoresItem, idItem) {
   let valoresInputs = valoresItem[0];
   let valorCheckbox = valoresItem[1];
 
-  let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
-    {
-      method: "PUT",
-      headers: header,
-      body: JSON.stringify({
-        id: idItem,
-        titulo: valoresInputs[0].value,
-        descricao: valoresInputs[1].value,
-        preco: parseFloat(valoresInputs[2].value),
-        possuiPreparo: valorCheckbox.checked,
-      }),
-    }
-  );
+  try {
+    let response = await fetch(
+      `http://localhost:5164/api/CardapioItems/${idItem}`,
+      {
+        method: "PUT",
+        headers: header,
+        body: JSON.stringify({
+          id: idItem,
+          titulo: valoresInputs[0].value,
+          descricao: valoresInputs[1].value,
+          preco: parseFloat(valoresInputs[2].value),
+          possuiPreparo: valorCheckbox.checked,
+        }),
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function DELETEItenCardapio(idItem) {
-  let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
-    {
-      method: "DELETE",
-      headers: header,
-    }
-  );
+  try {
+    let response = await fetch(
+      `http://localhost:5164/api/CardapioItems/${idItem}`,
+      {
+        method: "DELETE",
+        headers: header,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function GETItemCardapio(idItem) {
@@ -62,17 +70,20 @@ async function POSTItemCardapio(valoresItem) {
   let valoresInputs = valoresItem[0];
   let valorCheckbox = valoresItem[1];
 
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
-    method: "POST",
-    headers: header,
-    body: JSON.stringify({
-      titulo: valoresInputs[0].value,
-      descricao: valoresInputs[1].value,
-      preco: parseFloat(valoresInputs[2].value),
-      possuiPreparo: valorCheckbox.checked,
-    }),
-  });
-  let result = await response.json();
+  try {
+    let response = await fetch("http://localhost:5164/api/CardapioItems", {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify({
+        titulo: valoresInputs[0].value,
+        descricao: valoresInputs[1].value,
+        preco: parseFloat(valoresInputs[2].value),
+        possuiPreparo: valorCheckbox.checked,
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export {
