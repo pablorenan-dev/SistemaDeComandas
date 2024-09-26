@@ -12,7 +12,7 @@ const header = {
     console.log(result);
     montarPedidoCozinha(result);
     // adicionarEventoCliqueMoverItemAndamento();
-  }
+  };
   
   function montarPedidoCozinha(cardapioItens) {
     let ulPedidoCozinhaItensAFazer = document.querySelector("#ul-Pendente");
@@ -27,7 +27,8 @@ const header = {
         `
       );
     });
-  }
+  };
+  
   GETPedidoCozinha();
 
 // function adicionarEventoCliqueMoverItemAndamento(cardapioItens)
