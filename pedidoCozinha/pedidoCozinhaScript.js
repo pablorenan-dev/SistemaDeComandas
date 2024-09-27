@@ -4,24 +4,24 @@ const header = {
   };
 
   async function GETPedidoCozinha() {
-    let response = await fetch("https://localhost:7129/api/CardapioItems", {
+    let response = await fetch("https://localhost:7129/api/PedidoCozinhas", {
       method: "GET",
       headers: header,
     });
     let result = await response.json();
     console.log(result);
-    montarPedidoCozinha(result);
+    montarPedidoCozinhaPendentes(result);
     // adicionarEventoCliqueMoverItemAndamento();
   };
   
-  function montarPedidoCozinha(cardapioItens) {
+  function montarPedidoCozinhaPendentes(pedidosPendentes) {
     let ulPedidoCozinhaItensAFazer = document.querySelector("#ul-Pendente");
-    cardapioItens.forEach((item) => {
+    pedidosPendentes.forEach((pedido) => {
         ulPedidoCozinhaItensAFazer.insertAdjacentHTML(
         "beforeend",
         `
         <li>
-        <p>${item.titulo}</p>
+        <p>${pedido.item}</p>
         <button>→</button>
         </li>
         `
