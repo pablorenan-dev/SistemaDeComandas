@@ -27,7 +27,7 @@
 header {
   width: 100%;
   background-color: var(--color-sienna);
-  height: 12vh;
+  height: 12%;
   display: flex;
   justify-content: center;
   align-items: center;
