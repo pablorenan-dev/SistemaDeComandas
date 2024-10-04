@@ -2,7 +2,7 @@ const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
-
+// Importa todas as funcoes que usam a API
 import {
   DELETEItenCardapio,
   GETItemCardapio,
@@ -11,6 +11,7 @@ import {
   PUTItemCardapio,
 } from "./cardapioApiScript.js";
 
+// Adicionar os itens do Cardapio na tela
 async function montarItensCardapio(cardapioItens = []) {
   let ulCardapioItens = document.querySelector("ul");
   ulCardapioItens.innerHTML = "";
@@ -38,6 +39,7 @@ async function montarItensCardapio(cardapioItens = []) {
   });
 }
 
+// Pega todos os itens do localStorage e retorna
 function pegarItensLocalStorage() {
   try {
     const cardapioItensLocalStorage = JSON.parse(
@@ -47,6 +49,7 @@ function pegarItensLocalStorage() {
   } catch (error) {}
 }
 
+// Adicionar um evento no input de pesquisar, para filtrar os itens na tela, mostrando somente os escritos
 function filtrarItem() {
   const inputProcurar = document.querySelector("#input-procurar");
   const cardapioItensLocalStorage = pegarItensLocalStorage();
@@ -63,16 +66,19 @@ function filtrarItem() {
   });
 }
 
+// Adiciona o array de items enviado para o LocalStorage
 function adicionarItensLocalStorage(cardapioItens) {
   localStorage.setItem("cardapioItens", JSON.stringify(cardapioItens));
 }
 
+// Pega os Itens do LocalStorage e monta eles na tela em hmtl
 async function montarItensLocalStorage() {
   const cardapioItens = await GETItensCardapio();
   adicionarItensLocalStorage(cardapioItens);
   montarItensCardapio(cardapioItens);
 }
 
+// Adicionar um Evento de clique que monta uma tela de modal para confirmar a deletacao
 function adicionarEventoCliqueDeletarBotaoItemCardapio(idItem, tituloItem) {
   let botaoDelete = document.querySelector(`#button-li-delete-${idItem}`);
   botaoDelete.addEventListener("click", () => {
@@ -80,6 +86,7 @@ function adicionarEventoCliqueDeletarBotaoItemCardapio(idItem, tituloItem) {
   });
 }
 
+// Adicionar um Evento de clique que monta uma tela de modal para confirmar a edicao e adicionar os novos parametros do item
 function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
   let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
   botaoDelete.addEventListener("click", () => {
@@ -87,6 +94,7 @@ function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
   });
 }
 
+// Adicionar um Evento de clique que monta uma tela de modal para adicionar os parametros para adicionar um novo item e confirmar a adicao
 function adicionarEventoCliqueBotaoAdicionarItem() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
   botaoAdicionarItem.addEventListener("click", () => {
@@ -94,6 +102,7 @@ function adicionarEventoCliqueBotaoAdicionarItem() {
   });
 }
 
+// Monta o modal na tela de editar um item especifico
 async function montarModalEditarItem(idItem, tituloItem) {
   const itemDetalhes = await GETItemCardapio(idItem);
   const body = document.body;
@@ -135,6 +144,7 @@ async function montarModalEditarItem(idItem, tituloItem) {
   adicionarEventoCliqueBotaoEditarItemModal(idItem);
 }
 
+// Marca a checkbox do modal de editar item, dependendo se ele tem preparo ou nao
 function marcarCheckboxItemCardapio(idItem) {
   let checkboxitemCardapio = document.querySelector(
     `#checkbox-adicionar-item-${idItem}`
@@ -142,6 +152,7 @@ function marcarCheckboxItemCardapio(idItem) {
   checkboxitemCardapio.checked = true;
 }
 
+// Monta o modal na tela de adicionar um item
 function montarModalAdicionarItem() {
   const body = document.body;
   body.insertAdjacentHTML(
@@ -193,6 +204,7 @@ function montarModalAdicionarItem() {
   adicionarEventoCliqueBotaoAdicionarItemModal();
 }
 
+// Monta o modal na tela de deletar um item especifico
 function montarModalDeletarItem(idItem, itemTitulo) {
   const body = document.body;
   body.insertAdjacentHTML(
@@ -234,6 +246,7 @@ function montarModalDeletarItem(idItem, itemTitulo) {
   adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem);
 }
 
+// adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
@@ -247,31 +260,7 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   });
 }
 
-async function deletarItem(idItem) {
-  const valoresItem = pegarValoresDosItensEditar(idItem);
-  let valoresInputs = valoresItem[0];
-  let valorCheckbox = valoresItem[1];
-
-  let response = await fetch(
-    `https://localhost:7168/api/CardapioItems/1${idItem}`,
-    {
-      method: "PUT",
-      headers: header,
-      body: JSON.stringify({
-        id: idItem,
-        titulo: valoresInputs[0].value,
-        descricao: valoresInputs[1].value,
-        preco: parseFloat(valoresInputs[2].value),
-        possuiPreparo: valorCheckbox.checked,
-      }),
-    }
-  );
-  deletarItensUl();
-  montarItensCardapio();
-  removerModal();
-  recarregarPagina();
-}
-
+// Adiciona um evento de clique no botao de confirmar a delecao de um item (no modal)
 function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", () => {
@@ -284,6 +273,7 @@ function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   });
 }
 
+// Adicionar um evento de clique no botao de fechar o modal(o x no canto superior direito do modal)
 function adicionarEventoCliqueBotaoFecharModal() {
   const buttonClose = document.querySelector(".modal-button");
   buttonClose.addEventListener("click", () => {
@@ -291,11 +281,13 @@ function adicionarEventoCliqueBotaoFecharModal() {
   });
 }
 
+// Remove o modal por completo da tela
 function removerModal() {
   const modalWrapper = document.querySelector(".modal-wrapper");
   modalWrapper.remove();
 }
 
+// Adiciona um evento de clique no botao de adicionar algum item no modal
 function adicionarEventoCliqueBotaoAdicionarItemModal() {
   const buttonAdicionarItemModal = document.querySelector(
     ".button-adicionar-item-modal"
@@ -305,29 +297,40 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
   });
 }
 
+// Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
-  POSTItemCardapio(valoresItem);
-  deletarItensUl();
-  montarItensCardapio();
-  removerModal();
-  carregarModalSucessoAdicionado();
-  montarLiCarregandoUl();
-  setTimeout(recarregarPagina, 2000);
+  try {
+    POSTItemCardapio(valoresItem);
+    deletarItensUl();
+    montarItensCardapio();
+    removerModal();
+    carregarModalSucessoAdicionado();
+    montarLiCarregandoUl();
+    setTimeout(recarregarPagina, 2000);
+  } catch {}
 }
 
+// Monta o toastify de sucesso na tela
+function carregarModalErroAdicionado() {
+  toastr.success("Erro ao adicionar");
+}
+// Monta o toastify de sucesso na tela
 function carregarModalSucessoAdicionado() {
   toastr.success("Adicionado com Sucesso");
 }
 
+// Monta o toastify de alterado na tela
 function carregarModalSucessoAlterado() {
   toastr.success("Alterado com Sucesso");
 }
 
+// Monta o toastify de deletar na tela
 function carregarModalSucessoDeletado() {
   toastr.success("Deletado com Sucesso");
 }
 
+// Adiciona uma Li na tela escrito carregando...
 function montarLiCarregandoUl() {
   let ulCardapioItens = document.querySelector("ul");
   ulCardapioItens.innerHTML = "";
@@ -344,10 +347,12 @@ function montarLiCarregandoUl() {
   );
 }
 
+// Recarrega a pagina
 function recarregarPagina() {
   location.reload();
 }
 
+// Pegar os valores do modal de adicionar itens e retorna eles em um array
 function pegarValoresDosItens() {
   let arrayValores = [];
   let valoresItens = document.querySelectorAll(".input-item-modal");
@@ -358,6 +363,7 @@ function pegarValoresDosItens() {
   return arrayValores;
 }
 
+// Pegar os valores do modal de editar itens e retorna eles em um array
 function pegarValoresDosItensEditar(idItem) {
   let arrayValores = [];
   let valoresItens = document.querySelectorAll(".input-item-modal");
@@ -368,11 +374,13 @@ function pegarValoresDosItensEditar(idItem) {
   return arrayValores;
 }
 
+// Deleta todos os itens da Ul em html (li)
 function deletarItensUl() {
   let ulCardapioItens = document.querySelector("ul");
   ulCardapioItens.innerHTML = "";
 }
 
+// Adiciona um evento de clique no h1 para retornar para o menu
 function adicionarEventoCliqueH1Chiquinho() {
   const h1Chiquinho = document.querySelector(".h1-chiquinho");
   h1Chiquinho.addEventListener("click", () => {
@@ -380,6 +388,7 @@ function adicionarEventoCliqueH1Chiquinho() {
   });
 }
 
+// Chama todas as funcoes iniciais
 function chamarFuncoesIniciais() {
   adicionarEventoCliqueH1Chiquinho();
   filtrarItem();
