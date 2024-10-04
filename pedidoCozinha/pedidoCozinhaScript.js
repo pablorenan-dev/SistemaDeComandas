@@ -26,7 +26,7 @@ function montarPedidoCozinha(pedidos,element,finish) {
       <li>
       <p>${pedido.item}</p>
       
-      ${ finish !=3 ? `<button id=${`btn-mover${pedido.id}`}>→</button>` : ''}
+      ${finish !=3 ? `<button id=${`btn-mover${pedido.id}`}>→</button>` : ''}
       
       </li>
       `
@@ -54,23 +54,9 @@ async function PUTPedidoCozinha(id,situacaoId) {
     body:JSON.stringify(body)
   });
 
-  // let result = await response.json();
-  console.log(response);
   if(response.ok){
     GETPedidoCozinha(1,"#ul-Pendente");
     GETPedidoCozinha(2,"#ul-Andamento");
     GETPedidoCozinha(3,"#ul-Finalizado");
   }
   };
-
-
-function adicionarEventoCliqueMoverItemAndamento(id)
-{
-  const btnMoverItemAndamento = document.getElementById("#mover-andamento");
-  btnMoverItemAndamento.addEventListener("click", () => {
-
-  });
-}
-
-PUTPedidoCozinha(2);
-PUTPedidoCozinha(3);
