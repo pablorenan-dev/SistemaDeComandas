@@ -23,7 +23,7 @@ function montarPedidoCozinha(pedidos,element,finish) {
     ulPedidoCozinhaItens.insertAdjacentHTML(
       "beforeend",
       `
-      <li>
+      <li draggable="true">
       <p>${pedido.item}</p>
       
       ${finish !=3 ? `<button id=${`btn-mover${pedido.id}`}>→</button>` : ''}
@@ -31,6 +31,25 @@ function montarPedidoCozinha(pedidos,element,finish) {
       </li>
       `
     );
+
+    const columns = document.querySelectorAll(".coluna");
+
+    document.addEventListener("dragstart", (e) => {
+      e.target.classList.add("dragging");
+    });
+    
+    document.addEventListener("dragend", (e) => {
+      e.target.classList.remove("dragging");
+    });
+
+    columns.forEach((item) => {
+      item.addEventListener("dragover", (e) => {
+        console.log(e,"evnto dragover colum")
+        const dragging = document.querySelector(".dragging");
+        item.insertAdjacentElement("beforeend", dragging);
+      });
+    });
+
     const btnMover = document.getElementById(`btn-mover${pedido.id}`)
    
     if(btnMover){
