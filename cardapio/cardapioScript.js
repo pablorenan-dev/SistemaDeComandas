@@ -34,8 +34,6 @@ async function montarItensCardapio(cardapioItens = []) {
     );
     adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
     adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
-
-    adicionarItensLocalStorage(cardapioItens);
   });
 }
 
@@ -52,9 +50,9 @@ function pegarItensLocalStorage() {
 // Adicionar um evento no input de pesquisar, para filtrar os itens na tela, mostrando somente os escritos
 function filtrarItem() {
   const inputProcurar = document.querySelector("#input-procurar");
-  const cardapioItensLocalStorage = pegarItensLocalStorage();
 
   inputProcurar.addEventListener("input", (event) => {
+    const cardapioItensLocalStorage = pegarItensLocalStorage();
     const itensFiltrados = cardapioItensLocalStorage.filter((item) => {
       return (
         item.titulo.toLowerCase().includes(event.target.value.toLowerCase()) ||
@@ -261,14 +259,16 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
 }
 
 // Adiciona um evento de clique no botao de confirmar a delecao de um item (no modal)
-function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
+async function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
-  botaoDeletarItem.addEventListener("click", () => {
+  botaoDeletarItem.addEventListener("click", async () => {
     DELETEItenCardapio(idItem);
     deletarItensUl();
     montarLiCarregandoUl();
     carregarModalSucessoDeletado();
     removerModal();
+    let novosItems = await GETItensCardapio();
+    adicionarItensLocalStorage(novosItems);
     setTimeout(recarregarPagina, 2000);
   });
 }
