@@ -23,38 +23,27 @@ function montarPedidoCozinha(pedidos,element,finish) {
     ulPedidoCozinhaItens.insertAdjacentHTML(
       "beforeend",
       `
-      <li draggable="true">
+      <li draggable="true" id="mover${pedido.id}">
       <p>${pedido.item}</p>
-      
-      ${finish !=3 ? `<button id=${`btn-mover${pedido.id}`}>→</button>` : ''}
-      
       </li>
       `
     );
 
     const columns = document.querySelectorAll(".coluna");
-
+    const mover = document.getElementById(`mover${pedido.id}`)
+    
     document.addEventListener("dragstart", (e) => {
       e.target.classList.add("dragging");
     });
     
-    document.addEventListener("dragend", (e) => {
-      e.target.classList.remove("dragging");
-    });
-
     columns.forEach((item) => {
-      item.addEventListener("dragover", (e) => {
+      mover.addEventListener("dragend", (e) => {
+        e.target.classList.remove("dragging");
         console.log(e,"evnto dragover colum")
-        const dragging = document.querySelector(".dragging");
-        item.insertAdjacentElement("beforeend", dragging);
+        PUTPedidoCozinha(pedido.id,finish)
+        console.log(item)
       });
-    });
-
-    const btnMover = document.getElementById(`btn-mover${pedido.id}`)
-   
-    if(btnMover){
-      btnMover.addEventListener("click",()=>PUTPedidoCozinha(pedido.id,finish))
-    }
+    })
   });
 };
   
@@ -65,17 +54,20 @@ GETPedidoCozinha(3,"#ul-Finalizado");
 async function PUTPedidoCozinha(id,situacaoId) {
   
   const body = {
-    novoStatusId:situacaoId+1
+    novoStatusId:situacaoId + 1
   }
-  let response = await fetch(`https://localhost:7129/api/PedidoCozinhas/${id}`, {
-    method: "PUT",
-    headers: header,
-    body:JSON.stringify(body)
-  });
+  if(body.novoStatusId<=3){
 
-  if(response.ok){
-    GETPedidoCozinha(1,"#ul-Pendente");
-    GETPedidoCozinha(2,"#ul-Andamento");
-    GETPedidoCozinha(3,"#ul-Finalizado");
+    let response = await fetch(`https://localhost:7129/api/PedidoCozinhas/${id}`, {
+      method: "PUT",
+      headers: header,
+      body:JSON.stringify(body)
+    });
+  
+    if(response.ok){
+      GETPedidoCozinha(1,"#ul-Pendente");
+      GETPedidoCozinha(2,"#ul-Andamento");
+      GETPedidoCozinha(3,"#ul-Finalizado");
+    }
   }
   };
