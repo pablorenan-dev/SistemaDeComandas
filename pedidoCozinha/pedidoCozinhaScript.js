@@ -15,7 +15,7 @@ async function GETPedidoCozinha(situacaoId,element) {
   montarPedidoCozinha(result,element,situacaoId);
 };
   
-function montarPedidoCozinha(pedidos,element,finish) {
+function montarPedidoCozinha(pedidos, element, finish) {
   console.log(finish,"finish")
   let ulPedidoCozinhaItens = document.querySelector(element);
   ulPedidoCozinhaItens.innerHTML = ""
@@ -38,10 +38,28 @@ function montarPedidoCozinha(pedidos,element,finish) {
     
     columns.forEach((item) => {
       mover.addEventListener("dragend", (e) => {
-        e.target.classList.remove("dragging");
-        console.log(e,"evnto dragover colum")
-        PUTPedidoCozinha(pedido.id,finish)
-        console.log(item)
+        e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto
+        const colunaDestino = document.elementFromPoint(e.clientX, e.clientY).closest('.coluna'); // Verifica onde o item foi solto
+  
+        if (colunaDestino) {
+          const colunaId = colunaDestino.id; // Pega o ID da coluna (como "ul-Pendente")
+          let novoStatusId;
+  
+          // Define o novo status com base na coluna
+          switch (colunaId) {
+            case "ul-Pendente":
+              novoStatusId = 1; // Para "Pendente"
+              break;
+            case "ul-Andamento":
+              novoStatusId = 2; // Para "Em Andamento"
+              break;
+            case "ul-Finalizado":
+              novoStatusId = 3; // Para "Finalizado"
+              break;
+          }
+  
+          PUTPedidoCozinha(pedido.id, novoStatusId); // Atualiza o status do pedido
+        }
       });
     })
   });
@@ -54,14 +72,14 @@ GETPedidoCozinha(3,"#ul-Finalizado");
 async function PUTPedidoCozinha(id,situacaoId) {
   
   const body = {
-    novoStatusId:situacaoId + 1
+    novoStatusId:situacaoId
   }
   if(body.novoStatusId<=3){
 
     let response = await fetch(`https://localhost:7129/api/PedidoCozinhas/${id}`, {
       method: "PUT",
       headers: header,
-      body:JSON.stringify(body)
+      body:JSON.stringify(body) 
     });
   
     if(response.ok){
