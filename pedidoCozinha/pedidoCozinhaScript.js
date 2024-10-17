@@ -70,6 +70,11 @@ function montarPedidoCozinha(pedidos, element, finish) {
   });
 }
 
+setInterval(() => {
+  GETPedidoCozinha(1, "#ul-Pendente");
+  console.log("interval");
+}, 30000);
+
 GETPedidoCozinha(1, "#ul-Pendente");
 GETPedidoCozinha(2, "#ul-Andamento");
 GETPedidoCozinha(3, "#ul-Finalizado");
