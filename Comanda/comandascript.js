@@ -45,44 +45,57 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
   let botaoAdd = document.querySelector(`#button-li-add-comanda-${idItem}`);
 
   botaoAdd.addEventListener("click", () => {
-    // Se o item já estiver na comanda, incrementa a quantidade, caso contrário, adiciona
     if (comanda[idItem]) {
       comanda[idItem].quantidade += 1;
     } else {
       comanda[idItem] = { ...item, quantidade: 1 };
-      // Adiciona o item ao DOM
-      ulComanda.insertAdjacentHTML("beforeend",
-        `
+      ulComanda.insertAdjacentHTML("beforeend", `
         <li id="li-comanda-item-${idItem}">
           <div class="div-li-info">
             <h3>${item.titulo}</h3>
             <p>${item.descricao}</p>
             <p>R$${item.preco.toFixed(2)}</p>
             <p>Quantidade: <span id="quantidade-item-${idItem}">1</span></p>
-            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${(item.preco).toFixed(2)}</span></p>
+            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${item.preco.toFixed(2)}</span></p>
           </div>
           <div class="div-li-buttons">
             <button id="button-li-remove-comanda-${idItem}">➖</button>
             <button id="button-li-remove-todos-comanda-${idItem}">❌</button>
           </div>
         </li>
-        `
-      );
-      // Chama a função para adicionar eventos aos botões de remover
+      `);
       adicionarEventoCliqueRemoverBotaoItemComanda(idItem);
       adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem);
     }
-    // Atualiza a quantidade e o valor total no DOM
     atualizarQuantidadeEValorTotal(idItem);
+    atualizarValorTotalComanda(); // Atualiza o valor total da comanda
+  });
+}
+document.querySelector("#input-procurar").addEventListener("input", filtrarItensCardapio);
+
+function filtrarItensCardapio() {
+  const termoDeBusca = document.querySelector("#input-procurar").value.toLowerCase();
+  const listaDeItens = document.querySelectorAll("ul li");
+
+  listaDeItens.forEach((li) => {
+    const titulo = li.querySelector("h3").textContent.toLowerCase();
+    const descricao = li.querySelector("p").textContent.toLowerCase();
+
+    if (titulo.includes(termoDeBusca) || descricao.includes(termoDeBusca)) {
+      li.style.display = "";
+    } else {
+      li.style.display = "none";
+    }
   });
 }
 
+// Função para remover um item específico da comanda
 function adicionarEventoCliqueRemoverBotaoItemComanda(idItem) {
   let botaoRemove = document.querySelector(`#button-li-remove-comanda-${idItem}`);
   botaoRemove.addEventListener("click", () => {
     if (comanda[idItem]) {
+      // Diminui a quantidade ou remove o item se a quantidade chegar a zero
       comanda[idItem].quantidade -= 1;
-
       if (comanda[idItem].quantidade === 0) {
         delete comanda[idItem];
         let itemLi = document.querySelector(`#li-comanda-item-${idItem}`);
@@ -92,6 +105,9 @@ function adicionarEventoCliqueRemoverBotaoItemComanda(idItem) {
       } else {
         atualizarQuantidadeEValorTotal(idItem);
       }
+      
+      // Atualiza o valor total da comanda após a remoção
+      atualizarValorTotalComanda();
     }
   });
 }
@@ -100,11 +116,17 @@ function adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem) {
   let botaoRemoveTodos = document.querySelector(`#button-li-remove-todos-comanda-${idItem}`);
   botaoRemoveTodos.addEventListener("click", () => {
     if (comanda[idItem]) {
+      // Remove o item da comanda
       delete comanda[idItem];
+      
+      // Remove o elemento do DOM
       let itemLi = document.querySelector(`#li-comanda-item-${idItem}`);
       if (itemLi) {
         itemLi.remove();
       }
+
+      // Atualiza o valor total da comanda após a remoção
+      atualizarValorTotalComanda();
     }
   });
 }
@@ -169,3 +191,36 @@ async function finalizarComanda() {
 }
 
 montarItensCardapio();
+
+// Função para calcular o valor total da comanda
+function calcularValorTotalComanda() {
+  let valorTotal = 0;
+  Object.keys(comanda).forEach((idItem) => {
+    valorTotal += comanda[idItem].quantidade * comanda[idItem].preco;
+  });
+  return valorTotal.toFixed(2);
+}
+
+// Função para atualizar o valor total da comanda no DOM
+function atualizarValorTotalComanda() {
+  const totalElement = document.querySelector('#valor-total-comanda');
+  if (totalElement) {
+    totalElement.innerText = `Valor Total: R$${calcularValorTotalComanda()}`;
+  }
+}
+// Adicione o valor total no rodapé ao lado do botão "Finalizar"
+function adicionarBotaoFinalizarComanda() {
+  const footerComanda = document.querySelector(`#footer-comanda`);
+  
+  footerComanda.innerHTML = `
+    <span id="valor-total-comanda">Valor Total: R$0.00</span>
+    <button id="button-finalizar-comanda">✔</button>
+  `;
+
+  document.querySelector(`#button-finalizar-comanda`).addEventListener("click", finalizarComanda);
+}
+
+document.querySelector("#ver-comandas").addEventListener("click", () => {
+  // Redireciona o usuário para a página de visualização de comandas
+  window.location.href = "./verComandas/index.html";
+});

@@ -1,0 +1,112 @@
+header {
+    height: 100px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--color-dark-coffe);
+    justify-content: space-between;
+    }
+
+header img{
+    height: 90px;
+}
+
+header div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+section {
+    margin-top: 100px;
+    height: 500px;
+    width: 850px;
+    background-color: var(--color-off-white);
+    border-radius: 16px;
+    padding: 10px;
+}
+
+.div-section-header {
+    height: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-dark-coffe);
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px 16px 0px 0px;
+    gap: 4px;
+}
+h1{
+    color: #f5f5dc;
+}
+section ul {
+    height: 75%;
+    background-color: var(--color-soft-beige);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: scroll;
+    padding-bottom: 20px;
+    border-radius: 0px 0px 16px 16px;
+}
+section ul li {
+    background-color: var(--color-sienna);
+    width: 90%;
+    padding: 2%;
+    margin: 2% 0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+/* Modal */
+.modal-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    display: none; /* O modal começa oculto */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+  }
+  
+  .modal-body {
+    margin-top: 20px;
+  }
+  
+  .button-geral {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .button-geral:hover {
+    background-color: #45a049;
+  }
+  

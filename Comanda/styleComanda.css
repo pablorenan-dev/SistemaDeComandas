@@ -1,11 +1,11 @@
-section {
-  margin-top: 100px;
-  height: 500px;
-  width: 850px;
-  background-color: var(--color-off-white);
-  border-radius: 16px;
-  padding: 10px;
-}
+  section {
+    margin-top: 100px;
+    height: 500px;
+    width: 850px;
+    background-color: var(--color-off-white);
+    border-radius: 16px;
+    padding: 10px;
+  }
 
 .div-section-header {
   height: 25%;
@@ -16,6 +16,7 @@ section {
   display: flex;
   flex-direction: column;
   border-radius: 16px 16px 0px 0px;
+  gap: 4px;
 }
 
 section ul li {
@@ -210,7 +211,7 @@ header h1 {
 
 /* Melhoria dos botões */
 button {
-  background-color: var(--color-sienna);
+  background-color: var(--color-soft-beige);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -224,7 +225,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--color-dark-sienna);
+  background-color: var(--color-off-white);
   transform: translateY(-3px);
 }
 
@@ -232,22 +233,17 @@ button:active {
   transform: translateY(0);
 }
 
-/* Melhorando as listas */
-section ul li {
-  background-color: var(--color-soft-beige);
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
 section ul {
   max-height: 400px;
   overflow-y: auto;
   padding: 0 1rem;
+}
+main {
+  height: 80vh;
+  background-color: var(--color-ice-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Seção da comanda */
@@ -255,7 +251,8 @@ section ul {
   text-align: right;
   padding: 1rem;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #button-finalizar-comanda {
@@ -269,4 +266,36 @@ section ul {
 
 #button-finalizar-comanda:hover {
   transform: scale(1.05);
+}
+
+header {
+  height: 100px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--color-dark-coffe);
+}
+
+#ver-comandas {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--color-soft-green);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+#ver-comandas:hover {
+  transform: scale(1.05);
+}
+
+#ver-comandas:active {
+  transform: scale(0.98);
 }
