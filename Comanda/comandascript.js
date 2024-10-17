@@ -6,7 +6,7 @@ const header = {
 let comanda = {};
 
 async function GETItensCardapio() {
-  let response = await fetch("https://localhost:7168/api/CardapioItems", {
+  let response = await fetch("http://localhost:5164/api/CardapioItems", {
     method: "GET",
     headers: header,
   });
@@ -35,7 +35,7 @@ async function montarItensCardapio() {
     );
     adicionarEventoCliqueAdicionarBotaoItemComanda(item.id, item);
   });
-  
+
   // Adicionar o botão "Finalizar" ao final da comanda
   adicionarBotaoFinalizarComanda();
 }
@@ -51,7 +51,8 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
     } else {
       comanda[idItem] = { ...item, quantidade: 1 };
       // Adiciona o item ao DOM
-      ulComanda.insertAdjacentHTML("beforeend",
+      ulComanda.insertAdjacentHTML(
+        "beforeend",
         `
         <li id="li-comanda-item-${idItem}">
           <div class="div-li-info">
@@ -59,7 +60,9 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
             <p>${item.descricao}</p>
             <p>R$${item.preco.toFixed(2)}</p>
             <p>Quantidade: <span id="quantidade-item-${idItem}">1</span></p>
-            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${(item.preco).toFixed(2)}</span></p>
+            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${item.preco.toFixed(
+          2
+        )}</span></p>
           </div>
           <div class="div-li-buttons">
             <button id="button-li-remove-comanda-${idItem}">➖</button>
@@ -78,7 +81,9 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
 }
 
 function adicionarEventoCliqueRemoverBotaoItemComanda(idItem) {
-  let botaoRemove = document.querySelector(`#button-li-remove-comanda-${idItem}`);
+  let botaoRemove = document.querySelector(
+    `#button-li-remove-comanda-${idItem}`
+  );
   botaoRemove.addEventListener("click", () => {
     if (comanda[idItem]) {
       comanda[idItem].quantidade -= 1;
@@ -97,7 +102,9 @@ function adicionarEventoCliqueRemoverBotaoItemComanda(idItem) {
 }
 
 function adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem) {
-  let botaoRemoveTodos = document.querySelector(`#button-li-remove-todos-comanda-${idItem}`);
+  let botaoRemoveTodos = document.querySelector(
+    `#button-li-remove-todos-comanda-${idItem}`
+  );
   botaoRemoveTodos.addEventListener("click", () => {
     if (comanda[idItem]) {
       delete comanda[idItem];
@@ -112,26 +119,34 @@ function adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem) {
 // Função para atualizar a quantidade e o valor total do item no DOM
 function atualizarQuantidadeEValorTotal(idItem) {
   if (comanda[idItem]) {
-    document.querySelector(`#quantidade-item-${idItem}`).innerText = comanda[idItem].quantidade;
+    document.querySelector(`#quantidade-item-${idItem}`).innerText =
+      comanda[idItem].quantidade;
     let valorTotal = comanda[idItem].quantidade * comanda[idItem].preco;
-    document.querySelector(`#valor-total-item-${idItem}`).innerText = valorTotal.toFixed(2);
+    document.querySelector(`#valor-total-item-${idItem}`).innerText =
+      valorTotal.toFixed(2);
   }
 }
 
 // Adicionar botão "Finalizar" no footer da comanda
 function adicionarBotaoFinalizarComanda() {
   const footerComanda = document.querySelector(`#footer-comanda`);
-  
+
   footerComanda.innerHTML = `
     <button id="button-finalizar-comanda">✔</button>
   `;
-  
-  document.querySelector(`#button-finalizar-comanda`).addEventListener("click", finalizarComanda);
+
+  document
+    .querySelector(`#button-finalizar-comanda`)
+    .addEventListener("click", finalizarComanda);
 }
 
 async function finalizarComanda() {
-  const nomeCliente = document.querySelector('input[placeholder="Nome cliente"]').value;
-  const numeroMesa = document.querySelector('input[placeholder="N° Mesa"]').value;
+  const nomeCliente = document.querySelector(
+    'input[placeholder="Nome cliente"]'
+  ).value;
+  const numeroMesa = document.querySelector(
+    'input[placeholder="N° Mesa"]'
+  ).value;
 
   if (!nomeCliente) {
     alert("Por favor, preencha o nome do cliente.");
@@ -148,7 +163,7 @@ async function finalizarComanda() {
 
   try {
     // Faz o POST com o nome do cliente, número da mesa e os IDs dos itens
-    const response = await fetch("https://localhost:7168/api/Comandas", {
+    const response = await fetch("http://localhost:5164/api/Comandas", {
       method: "POST",
       headers: header,
       body: JSON.stringify({
@@ -157,7 +172,7 @@ async function finalizarComanda() {
         cardapioItems: itensIDs, // Enviando o array de IDs dos itens
       }),
     });
-    
+
     alert("Comanda finalizada com sucesso!");
     // Limpa a comanda após finalizar
     document.querySelector("#ul-comanda").innerHTML = "";

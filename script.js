@@ -25,12 +25,10 @@ function adicionarEventoCliqueLiComanda() {
 
 adicionarEventoCliqueLiComanda();
 
-
-
 function adicionarEventoCliqueLiUsuarios() {
   const liCardapio = document.querySelector("#li-usuarios");
   liCardapio.addEventListener("click", () => {
-    window.location.href = "/login/index.html";
+    window.location.href = "/usuario/index.html";
   });
 }
 
