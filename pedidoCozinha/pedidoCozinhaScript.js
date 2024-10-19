@@ -3,6 +3,9 @@ const header = {
   "Content-Type": "application/json",
 };
 
+// Adicionando o som
+const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+
 async function GETPedidoCozinha(situacaoId, element) {
   //ENDPOINT == ?situacaoId
   // situacaoId = 1 == pendente; situacaoId = 2 == andamento; situacaoId = 3 == finalizado;
@@ -93,6 +96,8 @@ function montarPedidoCozinha(pedidos, element, finish) {
 }
 
 setInterval(() => {
+  // Toca o som quando a requisição é iniciada
+  sfx.play();
   GETPedidoCozinha(1, "#ul-Pendente");
   console.log("interval");
 }, 30000);
