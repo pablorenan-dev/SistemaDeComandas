@@ -249,12 +249,22 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
     const valoresItensTela = pegarValoresDosItensEditar(idItem);
-    PUTItemCardapio(valoresItensTela, idItem);
-    deletarItensUl();
-    removerModal();
-    montarLiCarregandoUl();
-    carregarModalSucessoAlterado();
-    setTimeout(recarregarPagina, 2000);
+    let valoresInputs = valoresItensTela[0];
+
+    if (valoresInputs[0].value == "") {
+      carregarModalErro("Escreva um nome");
+    } else if (valoresInputs[1].value == "") {
+      carregarModalErro("Escreva uma descrição valida");
+    } else if (valoresInputs[2].value == "") {
+      carregarModalErro("Escreva um preço valido");
+    } else {
+      PUTItemCardapio(valoresItensTela, idItem);
+      deletarItensUl();
+      removerModal();
+      montarLiCarregandoUl();
+      carregarModalSucessoAlterado();
+      setTimeout(recarregarPagina, 2000);
+    }
   });
 }
 
@@ -300,20 +310,32 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
 // Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
-  try {
-    POSTItemCardapio(valoresItem);
-    deletarItensUl();
-    montarItensCardapio();
-    removerModal();
-    carregarModalSucessoAdicionado();
-    montarLiCarregandoUl();
-    setTimeout(recarregarPagina, 2000);
-  } catch {}
+  let valoresInputs = valoresItem[0];
+
+  if (valoresInputs[0].value == "") {
+    carregarModalErro("Escreva um nome valido");
+  } else if (valoresInputs[1].value == "") {
+    carregarModalErro("Escreva uma descrição valida");
+  } else if (valoresInputs[2].value == "") {
+    carregarModalErro("Escreva um preço valido");
+  } else {
+    try {
+      POSTItemCardapio(valoresItem);
+      deletarItensUl();
+      montarItensCardapio();
+      removerModal();
+      carregarModalSucessoAdicionado();
+      montarLiCarregandoUl();
+      setTimeout(recarregarPagina, 2000);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 // Monta o toastify de sucesso na tela
-function carregarModalErroAdicionado() {
-  toastr.success("Erro ao adicionar");
+function carregarModalErro(mensagem) {
+  toastr.error(mensagem);
 }
 // Monta o toastify de sucesso na tela
 function carregarModalSucessoAdicionado() {

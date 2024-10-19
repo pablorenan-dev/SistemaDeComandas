@@ -10,7 +10,7 @@ async function GETPedidoCozinha(situacaoId, element) {
   //ENDPOINT == ?situacaoId
   // situacaoId = 1 == pendente; situacaoId = 2 == andamento; situacaoId = 3 == finalizado;
   let response = await fetch(
-    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -27,7 +27,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   };
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `https://localhost:7129/api/PedidoCozinhas/${id}`,
+      `http://localhost:5164/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -52,7 +52,7 @@ function montarPedidoCozinha(pedidos, element, finish) {
       "beforeend",
       `
       <li draggable="true" id="mover${pedido.id}">
-      <p>${pedido.item}</p>
+      <p>${pedido.titulo}</p>
       </li>
       `
     );
