@@ -1,4 +1,10 @@
-import { GETUsuarios, POSTUsuario, DELETEUsuario } from "./usuarioApiScript.js";
+import {
+  GETUsuarios,
+  POSTUsuario,
+  DELETEUsuario,
+  PUTUsuario,
+  GETUsuario,
+} from "./usuarioApiScript.js";
 
 // Adiciona um evento de clique no h1 para retornar para o menu
 function adicionarEventoCliqueH1Chiquinho() {
@@ -77,22 +83,30 @@ function adicionarEventoCliqueBotaoFecharModal() {
 // Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
 function adicionarUsuario() {
   const valoresUsuario = pegarValoresDosItens();
-  try {
-    POSTUsuario(valoresUsuario);
-    deletarItensUl();
-    montarUsuarios();
-    removerModal();
-    carregarModalSucessoAdicionado();
-    montarLiCarregandoUl();
-    setTimeout(recarregarPagina, 2000);
-  } catch (error) {
-    console.log(error);
+  if (valoresUsuario[0].value == "") {
+    carregarModalErro("Escreva um nome de usuário valido");
+  } else if (valoresUsuario[1].value == "") {
+    carregarModalErro("Escreva um email valido");
+  } else if (valoresUsuario[2].value == "") {
+    carregarModalErro("Escreva uma senha valida");
+  } else {
+    try {
+      POSTUsuario(valoresUsuario);
+      deletarItensUl();
+      montarUsuarios();
+      removerModal();
+      carregarModalSucessoAdicionado();
+      montarLiCarregandoUl();
+      setTimeout(recarregarPagina, 2000);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
 // Monta o toastify de sucesso na tela
-function carregarModalErroAdicionado() {
-  toastr.success("Erro ao adicionar");
+function carregarModalErro(mensagem) {
+  toastr.error(mensagem);
 }
 // Monta o toastify de sucesso na tela
 function carregarModalSucessoAdicionado() {
@@ -183,7 +197,74 @@ async function montarUsuarios(usuarios = []) {
       `
     );
     adicionarEventoCliqueDeletarBotaoUsuario(item.idUsuario, item.nomeUsuario);
-    // adicionarEventoCliqueEditarBotaoUsuario(item.id, item.titulo);
+    adicionarEventoCliqueEditarBotaoUsuario(item.idUsuario, item.nomeUsuario);
+  });
+}
+
+// Adicionar um Evento de clique que monta uma tela de modal para confirmar a edicao e adicionar os novos parametros do item
+function adicionarEventoCliqueEditarBotaoUsuario(idItem, tituloItem) {
+  let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
+  botaoDelete.addEventListener("click", () => {
+    montarModalEditarItem(idItem, tituloItem);
+  });
+}
+
+// Monta o modal na tela de editar um item especifico
+async function montarModalEditarItem(idItem, tituloItem) {
+  const itemDetalhes = await GETUsuario(idItem);
+  const body = document.body;
+  body.insertAdjacentHTML(
+    "beforeend",
+    `
+   <div class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-header" style="background-color: var(--color-light-blue);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+          </svg>
+          </svg>
+          <h2>Editar Usuário ${tituloItem}</h2>
+          <button class="modal-button">X</button>
+        </div>
+        <div class="modal-body">
+          <p>Nome:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.nomeUsuario}"/>
+          <p>Email:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.emailUsuario}"/>
+          <p>Senha:</p>
+          <input type="text" class="input-item-modal" value="${itemDetalhes.senhaUsuario}"/>
+          <div>
+            <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `
+  );
+
+  adicionarEventoCliqueBotaoFecharModal();
+  adicionarEventoCliqueBotaoEditarUsuario(idItem);
+}
+
+// adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
+function adicionarEventoCliqueBotaoEditarUsuario(idItem) {
+  const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
+  botaoDeletarItem.addEventListener("click", () => {
+    const valoresItensTela = pegarValoresDosItens();
+    if (valoresItensTela[0].value == "") {
+      carregarModalErro("Escreva um nome de usuário valido");
+    } else if (valoresItensTela[1].value == "") {
+      carregarModalErro("Escreva um email valido");
+    } else if (valoresItensTela[2].value == "") {
+      carregarModalErro("Escreva uma senha valida");
+    } else {
+      PUTUsuario(valoresItensTela, idItem);
+      deletarItensUl();
+      removerModal();
+      montarLiCarregandoUl();
+      carregarModalSucessoAlterado();
+      setTimeout(recarregarPagina, 2000);
+    }
   });
 }
 
@@ -237,6 +318,40 @@ function montarModalDeletarUsuario(idItem, itemTitulo) {
   adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem);
 }
 
+// Adicionar um evento no input de pesquisar, para filtrar os itens na tela, mostrando somente os escritos
+function filtrarItem() {
+  const inputProcurar = document.querySelector("#input-procurar");
+
+  inputProcurar.addEventListener("input", (event) => {
+    const cardapioItensLocalStorage = pegarItensLocalStorage();
+    const itensFiltrados = cardapioItensLocalStorage.filter((item) => {
+      return (
+        item.nomeUsuario
+          .toLowerCase()
+          .includes(event.target.value.toLowerCase()) ||
+        item.emailUsuario
+          .toLowerCase()
+          .includes(event.target.value.toLowerCase()) ||
+        item.senhaUsuario
+          .toLowerCase()
+          .includes(event.target.value.toLowerCase())
+      );
+    });
+
+    montarUsuarios(itensFiltrados);
+  });
+}
+
+// Pega todos os itens do localStorage e retorna
+function pegarItensLocalStorage() {
+  try {
+    const cardapioItensLocalStorage = JSON.parse(
+      localStorage.getItem("usuarios")
+    );
+    return cardapioItensLocalStorage;
+  } catch (error) {}
+}
+
 // Adiciona um evento de clique no botao de confirmar a delecao de um item (no modal)
 async function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
@@ -272,3 +387,4 @@ function chamarFuncoesIniciais() {
 }
 
 chamarFuncoesIniciais();
+filtrarItem();

@@ -47,4 +47,31 @@ async function DELETEUsuario(idUsuario) {
   }
 }
 
-export { GETUsuarios, POSTUsuario, DELETEUsuario };
+async function PUTUsuario(valoresUsuario, idItem) {
+  try {
+    let response = await fetch(`http://localhost:5164/api/Usuarios/${idItem}`, {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify({
+        idUsuario: idItem,
+        nomeUsuario: valoresUsuario[0].value,
+        emailUsuario: valoresUsuario[1].value,
+        senhaUsuario: valoresUsuario[2].value,
+        idFuncaoUsuario: 0,
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function GETUsuario(idItem) {
+  let response = await fetch(`http://localhost:5164/api/Usuarios/${idItem}`, {
+    method: "GET",
+    headers: header,
+  });
+  let result = await response.json();
+  return result;
+}
+
+export { GETUsuarios, POSTUsuario, DELETEUsuario, PUTUsuario, GETUsuario };
