@@ -70,6 +70,16 @@ function montarModalAdicionarUsuario() {
   );
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoAdicionarUsuarioModal();
+  adicionarEventoCliqueRemoverModalWrapper();
+}
+
+function adicionarEventoCliqueRemoverModalWrapper() {
+  const modalWrapper = document.querySelector(".modal-wrapper");
+  modalWrapper.addEventListener("click", function (event) {
+    if (event.target === event.currentTarget) {
+      removerModal();
+    }
+  });
 }
 
 // Adicionar um evento de clique no botao de fechar o modal(o x no canto superior direito do modal)
@@ -244,6 +254,7 @@ async function montarModalEditarItem(idItem, tituloItem) {
 
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoEditarUsuario(idItem);
+  adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
@@ -316,6 +327,7 @@ function montarModalDeletarUsuario(idItem, itemTitulo) {
   );
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem);
+  adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // Adicionar um evento no input de pesquisar, para filtrar os itens na tela, mostrando somente os escritos

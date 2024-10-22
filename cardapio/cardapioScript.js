@@ -140,6 +140,7 @@ async function montarModalEditarItem(idItem, tituloItem) {
 
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoEditarItemModal(idItem);
+  adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // Marca a checkbox do modal de editar item, dependendo se ele tem preparo ou nao
@@ -198,8 +199,19 @@ function montarModalAdicionarItem() {
     </div>
     `
   );
+
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoAdicionarItemModal();
+  adicionarEventoCliqueRemoverModalWrapper();
+}
+
+function adicionarEventoCliqueRemoverModalWrapper() {
+  const modalWrapper = document.querySelector(".modal-wrapper");
+  modalWrapper.addEventListener("click", function (event) {
+    if (event.target === event.currentTarget) {
+      removerModal();
+    }
+  });
 }
 
 // Monta o modal na tela de deletar um item especifico
@@ -242,6 +254,7 @@ function montarModalDeletarItem(idItem, itemTitulo) {
   );
   adicionarEventoCliqueBotaoFecharModal();
   adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem);
+  adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
