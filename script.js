@@ -33,3 +33,12 @@ function adicionarEventoCliqueLiUsuarios() {
 }
 
 adicionarEventoCliqueLiUsuarios();
+
+function adicionarEventoCliqueLiMesas() {
+  const liCardapio = document.querySelector("#li-mesas");
+  liCardapio.addEventListener("click", () => {
+    window.location.href = "/mesas/index.html";
+  });
+}
+
+adicionarEventoCliqueLiMesas();

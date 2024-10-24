@@ -177,10 +177,10 @@ function removerModal() {
 
 // Adiciona um evento de clique no botao de adicionar algum item no modal
 function adicionarEventoCliqueBotaoAdicionarUsuarioModal() {
-  const buttonAdicionarItemModal = document.querySelector(
+  const buttonAdicionarUsuarioModal = document.querySelector(
     ".button-adicionar-item-modal"
   );
-  buttonAdicionarItemModal.addEventListener("click", () => {
+  buttonAdicionarUsuarioModal.addEventListener("click", () => {
     adicionarUsuario();
   });
 }
@@ -215,12 +215,12 @@ async function montarUsuarios(usuarios = []) {
 function adicionarEventoCliqueEditarBotaoUsuario(idItem, tituloItem) {
   let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
   botaoDelete.addEventListener("click", () => {
-    montarModalEditarItem(idItem, tituloItem);
+    montarModalEditarUsuario(idItem, tituloItem);
   });
 }
 
 // Monta o modal na tela de editar um item especifico
-async function montarModalEditarItem(idItem, tituloItem) {
+async function montarModalEditarUsuario(idItem, tituloItem) {
   const itemDetalhes = await GETUsuario(idItem);
   const body = document.body;
   body.insertAdjacentHTML(
