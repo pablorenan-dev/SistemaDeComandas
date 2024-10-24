@@ -10,7 +10,7 @@ async function GETPedidoCozinha(situacaoId, element) {
   //ENDPOINT == ?situacaoId
   // situacaoId = 1 == pendente; situacaoId = 2 == andamento; situacaoId = 3 == finalizado;
   let response = await fetch(
-    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `https://localhost:7168/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
