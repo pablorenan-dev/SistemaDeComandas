@@ -8,7 +8,7 @@ section {
 }
 
 .div-section-header {
-  height: 15%;
+  height: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,7 +20,7 @@ section {
 section ul li {
   background-color: var(--color-sienna);
   width: 20%;
-  height: 40%;
+  height: 50%;
   padding: 2%;
   margin: 2% 0;
   border-radius: 8px;
@@ -32,8 +32,18 @@ section ul li {
 }
 
 section ul li img {
-  height: 75%;
+  height: 60%;
   margin: 6px;
+}
+
+section ul li div {
+  display: flex;
+}
+
+section ul li div button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
 }
 
 .div-li-info {
@@ -55,7 +65,7 @@ section ul {
   height: 75%;
   background-color: var(--color-soft-beige);
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   overflow-y: scroll;
   padding-bottom: 20px;
@@ -78,7 +88,7 @@ section ul {
 
 section div input {
   width: 90%;
-  height: 60%;
+  height: 40%;
   text-align: center;
   padding: 1%;
   border-radius: 8px;
