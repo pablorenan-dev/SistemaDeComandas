@@ -4,9 +4,6 @@ const header = {
   "Content-Type": "application/json",
 };
 
-// Inicializa o objeto de áudio para notificação sonora \\
-const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
-
 /**
  * Busca os pedidos da cozinha baseado no status (situação) e atualiza a interface
  * @param {number} situacaoId - ID do status do pedido (1: pendente, 2: em andamento, 3: finalizado)
@@ -24,6 +21,11 @@ async function GETPedidoCozinha(situacaoId, element) {
   console.log(result);
   montarPedidoCozinha(result, element, situacaoId);
 }
+
+// Carrega inicialmente todos os pedidos \\
+GETPedidoCozinha(1, "#ul-Pendente");
+GETPedidoCozinha(2, "#ul-Andamento");
+GETPedidoCozinha(3, "#ul-Finalizado");
 
 /**
  * Atualiza o status de um pedido específico na cozinha
@@ -54,6 +56,64 @@ async function PUTPedidoCozinha(id, situacaoId) {
     }
   }
 }
+
+/**
+ * Compara duas listas de pedidos para detectar mudanças
+ * @param {Array} pedidosAntigos - Lista antiga de pedidos
+ * @param {Array} pedidosNovos - Lista nova de pedidos
+ * @returns {boolean} - Retorna true se houver diferenças
+ */
+function teveTrocaNosPedidos(pedidosAntigos, pedidosNovos) {
+  // Se as quantidades são diferentes, houve mudança \\
+  if (pedidosAntigos.length !== pedidosNovos.length) {
+    return true;
+  }
+
+  // Cria conjuntos de IDs para comparação rápida \\
+  const idsVelhos = new Set(pedidosAntigos.map((pedido) => pedido.id));
+  const idsNovos = new Set(pedidosNovos.map((pedido) => pedido.id));
+
+  // Verifica se algum ID existe em uma lista mas não na outra
+  for (const idPedido of idsVelhos) {
+    if (!idsNovos.has(idPedido)) return true;
+  }
+
+  for (const idPedido of idsNovos) {
+    if (!idsVelhos.has(idPedido)) return true;
+  }
+
+  return false;
+}
+
+/**
+ * Verifica se houve atualizações nos últimos 30 segundos
+ * @returns {boolean} - Retorna true se houver atualizações
+ */
+function procuraUpdates() {
+  const momentoUltimoUpdate =
+    localStorage.getItem("momentoUltimoUpdate") || "0";
+  const momentoAtual = Date.now();
+  const trintaSegundosAtras = momentoAtual - 30000;
+
+  // Obtém as listas de pedidos atual e anterior
+  const currentOrders = JSON.parse(
+    localStorage.getItem("pendingOrders") || "[]"
+  );
+  const previousOrders = JSON.parse(
+    localStorage.getItem("previousPendingOrders") || "[]"
+  );
+
+  // Verifica se houve mudança nos pedidos
+  const hasChanges = hasOrderChanges(previousOrders, currentOrders);
+
+  return {
+    hasRecentUpdate: parseInt(lastUpdateTime) > thirtySecondsAgo,
+    hasChanges: hasChanges,
+  };
+}
+
+// Inicializa o objeto de áudio para notificação sonora \\
+const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
 
 /**
  * Monta a interface dos pedidos na cozinha e configura o sistema de drag and drop
@@ -128,8 +188,3 @@ setInterval(() => {
   GETPedidoCozinha(1, "#ul-Pendente");
   console.log("interval");
 }, 30000);
-
-// Carrega inicialmente todos os pedidos \\
-GETPedidoCozinha(1, "#ul-Pendente");
-GETPedidoCozinha(2, "#ul-Andamento");
-GETPedidoCozinha(3, "#ul-Finalizado");
