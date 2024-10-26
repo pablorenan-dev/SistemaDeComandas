@@ -96,20 +96,55 @@ function procuraUpdates() {
   const trintaSegundosAtras = momentoAtual - 30000;
 
   // Obtém as listas de pedidos atual e anterior
-  const currentOrders = JSON.parse(
-    localStorage.getItem("pendingOrders") || "[]"
+  const pedidosAtuais = JSON.parse(
+    localStorage.getItem("pedidosPendentes") || "[]"
   );
-  const previousOrders = JSON.parse(
-    localStorage.getItem("previousPendingOrders") || "[]"
+  const pedidosPassados = JSON.parse(
+    localStorage.getItem("pedidosPendentesAnteriores") || "[]"
   );
 
   // Verifica se houve mudança nos pedidos
-  const hasChanges = hasOrderChanges(previousOrders, currentOrders);
+  const teveMudancas = teveTrocaNosPedidos(pedidosPassados, pedidosAtuais);
 
   return {
-    hasRecentUpdate: parseInt(lastUpdateTime) > thirtySecondsAgo,
-    hasChanges: hasChanges,
+    teveUpdateRecente: parseInt(momentoUltimoUpdate) > trintaSegundosAtras,
+    teveMudancas: teveMudancas,
   };
+}
+
+if (situacaoId === 1) {
+  const pedidosPassados = JSON.parse(
+    localStorage.getItem("pedidosPendentes") || "[]"
+  );
+
+  // Verifica se há mudanças nos pedidos
+  if (teveTrocaNosPedidos(pedidosPassados, result)) {
+    // Guarda o estado anterior antes de atualizar
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    // Atualiza com os novos pedidos
+    localStorage.setItem("pedidosPendentes", JSON.stringify(result));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+    sfx.play(); // Toca o som quando a requisição é iniciada \\
+
+    console.log("Mudanças detectadas nos pedidos:");
+    console.log(
+      "Pedidos removidos:",
+      previousOrders.filter(
+        (antigo) =>
+          !result.some((pedidosNovos) => pedidosNovos.id === antigo.id)
+      )
+    );
+    console.log(
+      "Pedidos adicionados:",
+      result.filter(
+        (pedidosNovos) =>
+          !previousOrders.some((antigo) => antigo.id === pedidosNovos.id)
+      )
+    );
+  }
 }
 
 // Inicializa o objeto de áudio para notificação sonora \\
@@ -183,8 +218,12 @@ function montarPedidoCozinha(pedidos, element, finish) {
 
 // Configura atualização automática dos pedidos pendentes a cada 30 segundos \\
 setInterval(() => {
-  sfx.play(); // Toca o som quando a requisição é iniciada \\
+  const updates = procuraUpdates();
 
-  GETPedidoCozinha(1, "#ul-Pendente");
-  console.log("interval");
+  if (updates.teveMudancas || updates.teveMudancas) {
+    console.log("Atualizações ou mudanças detectadas");
+    GETPedidoCozinha(1, "#ul-Pendente");
+  } else {
+    console.log("Nenhuma atualização ou mudança recente");
+  }
 }, 30000);
