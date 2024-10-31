@@ -6,7 +6,7 @@ const header = {
 let comanda = {};
 
 async function GETItensCardapio() {
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
+  let response = await fetch("https://localhost:7168/api/CardapioItems", {
     method: "GET",
     headers: header,
   });
@@ -191,7 +191,7 @@ async function finalizarComanda() {
 
   try {
     // Faz o POST com o nome do cliente, número da mesa e os IDs dos itens
-    const response = await fetch("http://localhost:5164/api/Comandas", {
+    const response = await fetch("https://localhost:7168/api/Comandas", {
       method: "POST",
       headers: header,
       body: JSON.stringify({

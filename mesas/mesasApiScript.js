@@ -16,4 +16,55 @@ async function GETMesas() {
   }
 }
 
-export { GETMesas };
+async function DELETEMesa(IdMesa) {
+  try {
+    let response = await fetch(`http://localhost:5164/api/Mesas/${IdMesa}`, {
+      method: "DELETE",
+      headers: header,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function POSTMesa(valoresMesa) {
+  try {
+    let response = await fetch(`http://localhost:5164/api/Mesas`, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify({
+        numeroMesa: valoresMesa[0].value,
+        situacaoMesa: valoresMesa[1].value,
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function GETMesa(idItem) {
+  let response = await fetch(`http://localhost:5164/api/Mesas/${idItem}`, {
+    method: "GET",
+    headers: header,
+  });
+  let result = await response.json();
+  return result;
+}
+
+async function PUTMesa(valoresMesa, idItem) {
+  try {
+    let response = await fetch(`http://localhost:5164/api/Mesas/${idItem}`, {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify({
+        idMesa: idItem,
+        numeroMesa: valoresMesa[0].value,
+        situacaoMesa: valoresMesa[1].value,
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { GETMesas, DELETEMesa, POSTMesa, GETMesa, PUTMesa };

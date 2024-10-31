@@ -13,8 +13,11 @@ async function GETTodasComandas() {
       },
     });
     let result = await response.json();
+    console.log(result)
     return result;
   }
+
+  GETTodasComandas()
   
   async function montarComandas() {
     const comandas = await GETTodasComandas();
@@ -23,28 +26,35 @@ async function GETTodasComandas() {
     ulComandas.innerHTML = ''; // Limpa a lista antes de inserir os elementos
   
     comandas.forEach((comanda) => {
-      const itens = Array.isArray(comanda.cardapioItems) 
-        ? comanda.cardapioItems.join(", ") 
+      const itens = Array.isArray(comanda.comandaItens) 
+        ? comanda.comandaItens
         : "Nenhum item listado";
-      
+      console.log(itens)
       ulComandas.insertAdjacentHTML(
         "beforeend",
         `
         <li id="comanda-${comanda.id}">
           <h3>Cliente: ${comanda.nomeCliente}</h3>
           <p>Número da mesa: ${comanda.numeroMesa}</p>
-          <p>Itens: ${itens}</p>
-          <button class="button-editar" onclick="abrirModalEdicao(${comanda.id})">Editar</button>
+          <p>Itens: ${itens.map((item)=>item.titulo)}</p>
+          <button class="button-editar" id="${comanda.id}edit">Editar</button>
         </li>
         `
       );
+      let btnEditar = document.getElementById(`${comanda.id}edit`)
+      btnEditar.addEventListener("click", ()=>{
+        abrirModalEdicao(comanda)
+      })
+
+
     });
   }  
 montarComandas();
-function criarModalEdicao() {
+function criarModalEdicao(comanda) {
     // Verifica se o modal já existe, se não, cria-o
+    console.log("começou")
     if (document.querySelector('#modal-editar-comanda')) return;
-  
+    console.log("passour")
     const modalHtml = `
       <div id="modal-editar-comanda" class="modal-wrapper" style="display: none;">
         <div class="modal">
@@ -60,8 +70,8 @@ function criarModalEdicao() {
             <input type="text" id="mesa-editar" placeholder="Número da Mesa">
             
             <label for="itens-editar">Itens:</label>
-            <textarea id="itens-editar" rows="4" placeholder="Exemplo: Café, Bolo"></textarea>
-            
+            <textarea  rows="4" placeholder="Exemplo: Café, Bolo"></textarea>
+              <select id="itens-editar"></select>
             <button class="button-geral" onclick="salvarEdicaoComanda()">Salvar</button>
           </div>
         </div>
@@ -70,32 +80,38 @@ function criarModalEdicao() {
   
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 
+    console.log("teste")
+    // abrirModalEdicao(comanda)
+    // let comanda = [];
+  }
+  
+      async function abrirModalEdicao(comanda) {
+        // Garante que o modal foi criado
+        console.log(comanda,"chega no modal de editar")
+        criarModalEdicao();
+      
+        // Encontra a comanda a ser editada
+        // Preenche os campos com os dados atuais da comanda
+        
+        document.querySelector('#nome-cliente-editar').value = comanda.nomeCliente;
+        document.querySelector('#mesa-editar').value = comanda.numeroMesa;
+        comanda.comandaItens.forEach((item)=>{
+          document.querySelector('#itens-editar').insertAdjacentHTML(`beforeend`,`
 
-    let comandas = [];
-
-    async function abrirModalEdicao(idComanda) {
-      // Garante que o modal foi criado
-      criarModalEdicao();
-    
-      // Encontra a comanda a ser editada
-      const comanda = comandas.find(c => c.id === idComanda);
+              <option value=${item.id}> ${item.titulo}</option>
+            `) 
+        })
+        
+        // Exibe o modal
+        document.querySelector('#modal-editar-comanda').style.display = 'flex';
+        
+        // Armazena o ID da comanda sendo editada
+        document.querySelector('#modal-editar-comanda').dataset.id = comanda.id;
+      }
       
-      // Preenche os campos com os dados atuais da comanda
-      document.querySelector('#nome-cliente-editar').value = comanda.nomeCliente;
-      document.querySelector('#mesa-editar').value = comanda.numeroMesa;
-      document.querySelector('#itens-editar').value = comanda.cardapioItems.join(", ");
-      
-      // Exibe o modal
-      document.querySelector('#modal-editar-comanda').style.display = 'flex';
-      
-      // Armazena o ID da comanda sendo editada
-      document.querySelector('#modal-editar-comanda').dataset.id = idComanda;
-    }
-    
-    function fecharModal() {
-      document.querySelector('#modal-editar-comanda').style.display = 'none';
-    }
-    }
+      function fecharModal() {
+        document.querySelector('#modal-editar-comanda').style.display = 'none';
+      }
 
     async function salvarEdicaoComanda() {
         const idComanda = document.querySelector('#modal-editar-comanda').dataset.id;
@@ -139,18 +155,7 @@ function atualizarInterfaceComanda(idComanda, dadosAtualizados) {
     comandaLi.querySelector('p:nth-child(2)').innerText = `Número da mesa: ${dadosAtualizados.numeroMesa}`;
     comandaLi.querySelector('p:nth-child(3)').innerText = `Itens: ${dadosAtualizados.cardapioItems.join(", ")}`;
   }
-  function abrirModalEdicao(idComanda) {
-    console.log("Botão Editar clicado, ID da comanda:", idComanda); // Verifica se a função está sendo chamada
-    
-    criarModalEdicao();
-    
-    const modal = document.querySelector('#modal-editar-comanda');
-    if (modal) {
-      modal.style.display = 'flex';
-    }
-    
-    modal.dataset.id = idComanda;
-  }
+
     
       
   
