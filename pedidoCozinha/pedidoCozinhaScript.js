@@ -20,6 +20,7 @@ async function GETPedidoCozinha(situacaoId, element) {
   let result = await response.json();
   console.log(result);
   montarPedidoCozinha(result, element, situacaoId);
+  return;
 }
 
 // Carrega inicialmente todos os pedidos \\
@@ -40,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `http://localhost:7129/api/PedidoCozinhas/${id}`,
+      `https://localhost:7129/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -50,9 +51,111 @@ async function PUTPedidoCozinha(id, situacaoId) {
 
     // Se a atualização for bem-sucedida, atualiza todas as listas de pedidos \\
     if (response.ok) {
-      GETPedidoCozinha(1, "#ul-Pendente");
-      GETPedidoCozinha(2, "#ul-Andamento");
-      GETPedidoCozinha(3, "#ul-Finalizado");
+      await GETPedidoCozinha(1, "#ul-Pendente");
+      await GETPedidoCozinha(2, "#ul-Andamento");
+      await GETPedidoCozinha(3, "#ul-Finalizado");
+    }
+  }
+}
+
+/**
+ * Função que modifica o montarPedidoCozinha para adicionar eventos de clique
+ * e exibir o modal com os detalhes do pedido
+ * @param {Array} pedidos - Array de pedidos a serem exibidos
+ * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
+ * @param {number} situacaoId - Status atual dos pedidos sendo montados
+ */
+function montarPedidoCozinha(pedidos, element, situacaoId) {
+  let ulPedidoCozinhaItens = document.querySelector(element);
+  ulPedidoCozinhaItens.innerHTML = "";
+
+  // Itera sobre cada pedido e cria os elementos na interface
+  pedidos.forEach((pedido) => {
+    const pedidoHTML = `
+      <li draggable="true" id="mover${pedido.id}" class="pedido-item">
+        <p>${pedido.item}</p>
+      </li>
+    `;
+
+    ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
+
+    // Configura o evento de clique para abrir o modal
+    const pedidoElement = document.getElementById(`mover${pedido.id}`);
+    pedidoElement.addEventListener("click", () => {
+      exibirDetalhesModal(pedido);
+    });
+
+    // Configura o sistema de drag and drop \\
+    const colunas = document.querySelectorAll(".coluna");
+    const mover = document.getElementById(`mover${pedido.id}`);
+
+    // Adiciona classe visual durante o arrasto \\
+    document.addEventListener("dragstart", (e) => {
+      e.target.classList.add("dragging");
+    });
+
+    // Configura o evento de soltar o item para cada coluna
+    colunas.forEach((item) => {
+      mover.addEventListener("dragend", (e) => {
+        e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto \\
+
+        // Identifica a coluna onde o item foi solto \\
+        const colunaDestino = document
+          .elementFromPoint(e.clientX, e.clientY)
+          .closest(".coluna"); // Verifica onde o item foi solto \\
+
+        if (colunaDestino) {
+          const colunaId = colunaDestino.id; // Pega o ID da coluna (como "ul-Pendente") \\
+          let novoStatusId;
+
+          // Define o novo status baseado na coluna de destino \\
+          switch (colunaId) {
+            case "ul-Pendente":
+              novoStatusId = 1; // Para "Pendente"
+              break;
+            case "ul-Andamento":
+              novoStatusId = 2; // Para "Em Andamento"
+              break;
+            case "ul-Finalizado":
+              novoStatusId = 3; // Para "Finalizado"
+              break;
+          }
+
+          // Atualiza o status do pedido \\
+          PUTPedidoCozinha(pedido.id, novoStatusId);
+        }
+      });
+    });
+  });
+
+  // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
+  if (situacaoId === 1) {
+    const pedidosPassados = JSON.parse(
+      localStorage.getItem("pedidosPendentes") || "[]"
+    );
+
+    // Só atualiza se realmente houver mudanças
+    if (teveTrocaNosPedidos(pedidosPassados, pedidos)) {
+      localStorage.setItem(
+        "pedidosPendentesAnteriores",
+        JSON.stringify(pedidosPassados)
+      );
+      localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
+      localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+
+      console.log("Mudanças detectadas:");
+      console.log(
+        "Pedidos removidos:",
+        pedidosPassados.filter(
+          (antigo) => !pedidos.some((novo) => novo.id === antigo.id)
+        )
+      );
+      console.log(
+        "Pedidos adicionados:",
+        pedidos.filter(
+          (novo) => !pedidosPassados.some((antigo) => antigo.id === novo.id)
+        )
+      );
     }
   }
 }
@@ -64,25 +167,19 @@ async function PUTPedidoCozinha(id, situacaoId) {
  * @returns {boolean} - Retorna true se houver diferenças
  */
 function teveTrocaNosPedidos(pedidosAntigos, pedidosNovos) {
-  // Se as quantidades são diferentes, houve mudança \\
+  // Se alguma das listas é null ou undefined, não considera como mudança
+  if (!pedidosAntigos || !pedidosNovos) return false;
+
+  // Se as quantidades são diferentes, houve mudança
   if (pedidosAntigos.length !== pedidosNovos.length) {
     return true;
   }
 
-  // Cria conjuntos de IDs para comparação rápida \\
-  const idsVelhos = new Set(pedidosAntigos.map((pedido) => pedido.id));
-  const idsNovos = new Set(pedidosNovos.map((pedido) => pedido.id));
-
-  // Verifica se algum ID existe em uma lista mas não na outra
-  for (const idPedido of idsVelhos) {
-    if (!idsNovos.has(idPedido)) return true;
-  }
-
-  for (const idPedido of idsNovos) {
-    if (!idsVelhos.has(idPedido)) return true;
-  }
-
-  return false;
+  // Compara cada pedido
+  return pedidosAntigosOrdenados.some((pedidoAntigo, index) => {
+    const pedidoNovo = pedidosNovosOrdenados[index];
+    return pedidoAntigo.id !== pedidoNovo.id;
+  });
 }
 
 /**
@@ -93,7 +190,7 @@ function procuraUpdates() {
   const momentoUltimoUpdate =
     localStorage.getItem("momentoUltimoUpdate") || "0";
   const momentoAtual = Date.now();
-  const trintaSegundosAtras = momentoAtual - 30000;
+  const quinzeSegundosAtras = momentoAtual - 15000;
 
   // Obtém as listas de pedidos atual e anterior
   const pedidosAtuais = JSON.parse(
@@ -107,13 +204,26 @@ function procuraUpdates() {
   const teveMudancas = teveTrocaNosPedidos(pedidosPassados, pedidosAtuais);
 
   return {
-    teveUpdateRecente: parseInt(momentoUltimoUpdate) > trintaSegundosAtras,
+    teveUpdateRecente: parseInt(momentoUltimoUpdate) > quinzeSegundosAtras,
     teveMudancas: teveMudancas,
   };
 }
 
-// Inicializa o objeto de áudio para notificação sonora \\
+// Inicializa o objeto de áudio para notificação sonora
 const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+
+setInterval(() => {
+  const updates = procuraUpdates();
+
+  // Corrigido a condição de verificação
+  if (updates.teveMudancas) {
+    sfx.play();
+    console.log("Mudanças detectadas nos pedidos");
+    GETPedidoCozinha(1, "#ul-Pendente");
+  } else {
+    console.log("Nenhuma mudança recente");
+  }
+}, 15000);
 
 // Define o HTML do modal que será inserido no documento
 const modalHTML = `
@@ -145,111 +255,6 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
-
-/**
- * Função que modifica o montarPedidoCozinha para adicionar eventos de clique
- * e exibir o modal com os detalhes do pedido
- * @param {Array} pedidos - Array de pedidos a serem exibidos
- * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
- * @param {number} finish - Status atual dos pedidos sendo montados
- */
-function montarPedidoCozinha(pedidos, element, finish) {
-  console.log(finish, "finish");
-  let ulPedidoCozinhaItens = document.querySelector(element);
-  ulPedidoCozinhaItens.innerHTML = "";
-
-  // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
-  if (situacaoId === 1) {
-    const pedidosPassados = JSON.parse(
-      localStorage.getItem("pedidosPendentes") || "[]"
-    );
-
-    // Verifica se há mudanças nos pedidos
-    if (teveTrocaNosPedidos(pedidosPassados, pedidos)) {
-      // Guarda o estado anterior antes de atualizar
-      localStorage.setItem(
-        "pedidosPendentesAnteriores",
-        JSON.stringify(pedidosPassados)
-      );
-      // Atualiza com os novos pedidos
-      localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
-      localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
-
-      // Log das mudanças para debug
-      console.log("Mudanças detectadas nos pedidos:");
-      console.log(
-        "Pedidos removidos:",
-        pedidosPassados.filter(
-          (antigo) => !pedidos.some((novo) => novo.id === antigo.id)
-        )
-      );
-      console.log(
-        "Pedidos adicionados:",
-        pedidos.filter(
-          (novo) => !pedidosPassados.some((antigo) => antigo.id === novo.id)
-        )
-      );
-    }
-    // Itera sobre cada pedido e cria os elementos na interface
-    pedidos.forEach((pedido) => {
-      const pedidoHTML = `
-      <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.titulo}</p>
-      </li>
-    `;
-
-      ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
-
-      // Configura o evento de clique para abrir o modal
-      const pedidoElement = document.getElementById(`mover${pedido.id}`);
-      pedidoElement.addEventListener("click", () => {
-        exibirDetalhesModal(pedido);
-      });
-
-      // Configura o sistema de drag and drop \\
-      const colunas = document.querySelectorAll(".coluna");
-      const mover = document.getElementById(`mover${pedido.id}`);
-
-      // Adiciona classe visual durante o arrasto \\
-      document.addEventListener("dragstart", (e) => {
-        e.target.classList.add("dragging");
-      });
-
-      // Configura o evento de soltar o item para cada coluna
-      colunas.forEach((item) => {
-        mover.addEventListener("dragend", (e) => {
-          e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto \\
-
-          // Identifica a coluna onde o item foi solto \\
-          const colunaDestino = document
-            .elementFromPoint(e.clientX, e.clientY)
-            .closest(".coluna"); // Verifica onde o item foi solto \\
-
-          if (colunaDestino) {
-            const colunaId = colunaDestino.id; // Pega o ID da coluna (como "ul-Pendente") \\
-            let novoStatusId;
-
-            // Define o novo status baseado na coluna de destino \\
-            switch (colunaId) {
-              case "ul-Pendente":
-                novoStatusId = 1; // Para "Pendente"
-                break;
-              case "ul-Andamento":
-                novoStatusId = 2; // Para "Em Andamento"
-                break;
-              case "ul-Finalizado":
-                novoStatusId = 3; // Para "Finalizado"
-                break;
-            }
-
-            // Atualiza o status do pedido \\
-            PUTPedidoCozinha(pedido.id, novoStatusId);
-          }
-        });
-      });
-    });
-  }
-}
 
 /**
  * Exibe o modal com os detalhes do pedido
@@ -299,15 +304,3 @@ function exibirDetalhesModal(pedido) {
   // Exibe o modal
   modal.style.display = "block";
 }
-
-// Configura atualização automática dos pedidos pendentes a cada 30 segundos \\
-setInterval(() => {
-  const updates = procuraUpdates();
-
-  if (updates.teveMudancas || updates.teveMudancas) {
-    console.log("Atualizações ou mudanças detectadas");
-    GETPedidoCozinha(1, "#ul-Pendente");
-  } else {
-    console.log("Nenhuma atualização ou mudança recente");
-  }
-}, 30000);
