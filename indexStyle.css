@@ -1,10 +1,25 @@
+body {
+  background: linear-gradient(
+    to bottom right,
+    rgb(249 250 251),
+    white,
+    rgb(243 244 246)
+  );
+}
+
 section {
   margin-top: 100px;
   height: 500px;
   width: 1100px;
-  background-color: var(--color-off-white);
+  border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 16px;
   overflow: hidden;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
 }
 
 section div {
@@ -12,16 +27,40 @@ section div {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-dark-coffe);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.03);
+  padding: 2rem;
+  transition: all 0.3s;
 }
 
+/* li {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.8));
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05),
+              0 10px 15px rgba(0, 0, 0, 0.03);
+  padding: 2rem;
+  transition: all 0.3s;
+} */
+
 section div h2 {
-  color: #f5f5dc;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 section ul {
   height: 85%;
-  background-color: var(--color-soft-beige);
+  background-color: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -33,7 +72,8 @@ section li {
   margin: 12px;
   height: 300px;
   width: 175px;
-  background-color: var(--color-moccasin);
+  background-color: linear-gradient(to right, white, rgba(249, 250, 251, 0.5));
+  border: 1px solid rgb(229 231 235);
   display: flex;
   justify-content: center;
   align-items: center;
