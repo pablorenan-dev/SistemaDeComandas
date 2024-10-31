@@ -5,7 +5,7 @@
   padding: 0;
   box-sizing: border-box;
   list-style: none;
-  font-family: "Lato", Tahoma;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 :root {
@@ -26,12 +26,19 @@
 
 header {
   width: 100%;
-  background-color: var(--color-sienna);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
   height: 12%;
   display: flex;
   justify-content: center;
   align-items: center;
   position: fixed;
+  border-bottom: 1px solid rgb(229 231 235);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 header div {
@@ -43,22 +50,28 @@ header div {
 }
 
 header div img {
-  height: 7vh;
+  height: 50px;
   border-radius: 5vh;
   margin-right: 6px;
 }
 
 header div p {
-  color: #f5f5dc;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
 }
 
 header h1 {
-  color: #f5f5dc;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 main {
   height: 100vh;
-  background-color: var(--color-ice-blue);
+  background-color: linear-gradient(
+    to bottom right,
+    rgb(249 250 251),
+    white,
+    rgb(243 244 246)
+  );
   display: flex;
   justify-content: center;
   align-items: center;
