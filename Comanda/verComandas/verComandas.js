@@ -90,7 +90,7 @@ async function openEditModal(order) {
             ${Array.isArray(order.comandaItens) ? order.comandaItens.map(item => `
               <div class="order-item" id="item-${item.id}">
                 <span>${item.titulo}</span>
-                <button onclick="removeItem(${item.id})" class="remove-item">✕</button>
+                <button onclick="removeItem(${order.id}, ${item.id}, ${order.numeroMesa}, '${order.nomeCliente}')" class="remove-item">✕</button>
               </div>
             `).join('') : ''}
             </div>
@@ -103,10 +103,7 @@ async function openEditModal(order) {
                 <option value="${item.id}">${item.titulo}</option>
               `).join('')}
             </select>
-            <button onclick="addItem()" class="add-button">Adicionar</button>
-          </div>
-          <div class="modal-actions">
-            <button onclick="saveOrder(${order.id})" class="save-button">Salvar Alterações</button>
+            <button onclick="addItem(${order.id}, ${order.numeroMesa}, '${order.nomeCliente}')" class="add-button">Adicionar</button>
           </div>
         </div>
       </div>
@@ -114,13 +111,9 @@ async function openEditModal(order) {
   `;
 
   document.body.insertAdjacentHTML('beforeend', modalHTML);
-  
-  // Store current items for reference
-  window.currentItems = new Set(
-    Array.isArray(order.comandaItens) ? order.comandaItens.map(item => item.id) : []
-  );
 }
 
+// Close edit modal
 function closeEditModal() {
   const modal = document.getElementById('edit-modal');
   if (modal) {
@@ -128,71 +121,84 @@ function closeEditModal() {
   }
 }
 
-async function addItem() {
+// Add item to the order
+async function addItem(orderId, tableNumber, clientName) {
   const select = document.getElementById('add-item');
   const itemId = select.value;
   
-  if (!itemId || window.currentItems.has(parseInt(itemId))) {
-    return;
-  }
-  
-  const menuItems = await getMenuItems();
-  const item = menuItems.find(i => i.id === parseInt(itemId));
-  
-  if (item) {
-    const orderItems = document.getElementById('order-items');
-    orderItems.insertAdjacentHTML('beforeend', `
-      <div class="order-item" id="item-${item.id}">
-        <span>${item.titulo}</span>
-        <button onclick="removeItem(${item.id})" class="remove-item">✕</button>
-      </div>
-    `);
-    
-    window.currentItems.add(item.id);
-  }
-}
-
-function removeItem(itemId) {
-  const itemElement = document.getElementById(`item-${itemId}`);
-  if (itemElement) {
-    itemElement.remove();
-    window.currentItems.delete(itemId);
-  }
-}
-
-async function saveOrder(orderId) {
-  const clientName = document.getElementById('client-name').value;
-  const tableNumber = document.getElementById('table-number').value;
-  
-  if (!clientName || !tableNumber) {
-    alert('Por favor, preencha todos os campos obrigatórios.');
+  if (!itemId) {
     return;
   }
   
   const updatedOrder = {
     id: orderId,
+    numeroMesa: 0,
     nomeCliente: clientName,
-    numeroMesa: tableNumber,
-    cardapioItems: Array.from(window.currentItems)
+    comandaItens: [
+      {
+        cardapioItemId: 0, // Pode ser qualquer valor, como mencionado
+        id: parseInt(itemId),
+        excluir: false,
+        incluir: true
+      }
+    ]
   };
-  
+
   try {
     const response = await fetch(`https://localhost:7168/api/Comandas/${orderId}`, {
       method: 'PUT',
       headers: header,
       body: JSON.stringify(updatedOrder)
     });
-    
+
     if (response.ok) {
-      alert('Comanda atualizada com sucesso!');
+      alert('Item adicionado com sucesso!');
       closeEditModal();
-      renderOrders(); // Refresh the orders list
+      renderOrders();
     } else {
-      alert('Erro ao atualizar comanda.');
+      alert('Erro ao adicionar item.');
     }
   } catch (error) {
-    console.error('Error updating order:', error);
+    console.error('Error adding item:', error);
     alert('Erro ao conectar com o servidor.');
   }
 }
+
+// Remove item from the order
+async function removeItem(orderId, itemId, tableNumber, clientName) {
+  const updatedOrder = {
+    id: orderId,
+    numeroMesa: 0,
+    nomeCliente: clientName,
+    comandaItens: [
+      {
+        cardapioItemId: 0, // Pode ser qualquer valor, como mencionado
+        id: itemId,
+        excluir: true,
+        incluir: false
+      }
+    ]
+  };
+
+  try {
+    const response = await fetch(`https://localhost:7168/api/Comandas/${orderId}`, {
+      method: 'PUT',
+      headers: header,
+      body: JSON.stringify(updatedOrder)
+    });
+
+    if (response.ok) {
+      alert('Item removido com sucesso!');
+      closeEditModal();
+      renderOrders();
+    } else {
+      alert('Erro ao remover item.');
+    }
+  } catch (error) {
+    console.error('Error removing item:', error);
+    alert('Erro ao conectar com o servidor.');
+  }
+}
+
+// Render orders when the document is ready
 document.addEventListener('DOMContentLoaded', renderOrders);
