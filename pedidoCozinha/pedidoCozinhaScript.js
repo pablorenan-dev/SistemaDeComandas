@@ -1,11 +1,8 @@
-// Define os cabeçalhos padrão para as requisições HTTP \\
+/////////////////////////////////////// Define os cabeçalhos padrão para as requisições HTTP \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
-
-// Inicializa o objeto de áudio para notificação sonora \\
-const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
 
 /**
  * Busca os pedidos da cozinha baseado no status (situação) e atualiza a interface
@@ -14,7 +11,7 @@ const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `https://localhost:7168/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -23,7 +20,13 @@ async function GETPedidoCozinha(situacaoId, element) {
   let result = await response.json();
   console.log(result);
   montarPedidoCozinha(result, element, situacaoId);
+  return;
 }
+
+// Carrega inicialmente todos os pedidos \\
+GETPedidoCozinha(1, "#ul-Pendente");
+GETPedidoCozinha(2, "#ul-Andamento");
+GETPedidoCozinha(3, "#ul-Finalizado");
 
 /**
  * Atualiza o status de um pedido específico na cozinha
@@ -38,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `http://localhost:5164/api/PedidoCozinhas/${id}`,
+      `https://localhost:7129/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -48,37 +51,44 @@ async function PUTPedidoCozinha(id, situacaoId) {
 
     // Se a atualização for bem-sucedida, atualiza todas as listas de pedidos \\
     if (response.ok) {
-      GETPedidoCozinha(1, "#ul-Pendente");
-      GETPedidoCozinha(2, "#ul-Andamento");
-      GETPedidoCozinha(3, "#ul-Finalizado");
+      await GETPedidoCozinha(1, "#ul-Pendente");
+      await GETPedidoCozinha(2, "#ul-Andamento");
+      await GETPedidoCozinha(3, "#ul-Finalizado");
     }
   }
 }
 
+////////////////////////////////////////////////// aqui começa a montagem da tela \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 /**
- * Monta a interface dos pedidos na cozinha e configura o sistema de drag and drop
+ * Função que modifica o montarPedidoCozinha para adicionar eventos de clique
+ * e exibir o modal com os detalhes do pedido
  * @param {Array} pedidos - Array de pedidos a serem exibidos
  * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
- * @param {number} finish - Status atual dos pedidos sendo montados
+ * @param {number} situacaoId - Status atual dos pedidos sendo montados
  */
-function montarPedidoCozinha(pedidos, element, finish) {
-  console.log(finish, "finish");
+function montarPedidoCozinha(pedidos, element, situacaoId) {
   let ulPedidoCozinhaItens = document.querySelector(element);
   ulPedidoCozinhaItens.innerHTML = "";
 
-  // Itera sobre cada pedido e cria os elementos na interface \\
+  // Itera sobre cada pedido e cria os elementos na interface
   pedidos.forEach((pedido) => {
-    ulPedidoCozinhaItens.insertAdjacentHTML(
-      "beforeend",
-      `
-      <li draggable="true" id="mover${pedido.id}">
-      <p>${pedido.titulo}</p>
+    const pedidoHTML = `
+      <li draggable="true" id="mover${pedido.id}" class="pedido-item">
+        <p>${pedido.item}</p>
       </li>
-      `
-    );
+    `;
+
+    ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
+
+    // Configura o evento de clique para abrir o modal
+    const pedidoElement = document.getElementById(`mover${pedido.id}`);
+    pedidoElement.addEventListener("click", () => {
+      exibirDetalhesModal(pedido);
+    });
 
     // Configura o sistema de drag and drop \\
-    const columns = document.querySelectorAll(".coluna");
+    const colunas = document.querySelectorAll(".coluna");
     const mover = document.getElementById(`mover${pedido.id}`);
 
     // Adiciona classe visual durante o arrasto \\
@@ -87,7 +97,7 @@ function montarPedidoCozinha(pedidos, element, finish) {
     });
 
     // Configura o evento de soltar o item para cada coluna
-    columns.forEach((item) => {
+    colunas.forEach((item) => {
       mover.addEventListener("dragend", (e) => {
         e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto \\
 
@@ -119,17 +129,173 @@ function montarPedidoCozinha(pedidos, element, finish) {
       });
     });
   });
+
+  ///////////////////////////////////// aqui começa a verificação para atualizar o pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
+  if (situacaoId === 1) {
+    const pedidosPassados = JSON.parse(
+      localStorage.getItem("pedidosPendentes") || "[]"
+    );
+
+    // Atualiza o localStorage com os novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+  }
 }
 
-// Configura atualização automática dos pedidos pendentes a cada 30 segundos \\
+/**
+ * Função simplificada para verificar novos pedidos pendentes
+ * @param {Array} pedidosAntigos - Lista antiga de pedidos
+ * @param {Array} pedidosNovos - Lista nova de pedidos
+ * @returns {boolean} - Retorna true se houver novos pedidos
+ */
+function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
+  // Se não houver pedidos anteriores, mas existem novos pedidos
+  if (!pedidosAntigos.length && pedidosNovos.length > 0) {
+    return true;
+  }
+
+  // Se a nova lista é maior que a antiga, significa que há novos pedidos
+  if (pedidosNovos.length > pedidosAntigos.length) {
+    return true;
+  }
+
+  // Verifica se há algum pedido novo que não estava na lista antiga
+  const novoPedidoEncontrado = pedidosNovos.some((pedidoNovo) => {
+    return !pedidosAntigos.some(
+      (pedidoAntigo) => pedidoAntigo.id === pedidoNovo.id
+    );
+  });
+
+  return novoPedidoEncontrado;
+}
+
+// Função que procura atualizações
+function procuraUpdates() {
+  // Obtém as listas de pedidos atual e anterior do localStorage
+  const pedidosAtuais = JSON.parse(
+    localStorage.getItem("pedidosPendentes") || "[]"
+  );
+  const pedidosPassados = JSON.parse(
+    localStorage.getItem("pedidosPendentesAnteriores") || "[]"
+  );
+
+  // Verifica se há novos pedidos
+  const temNovosPedidos = verificarNovosPedidos(pedidosPassados, pedidosAtuais);
+
+  if (temNovosPedidos) {
+    // Atualiza o localStorage apenas se houver novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+  }
+
+  return {
+    teveMudancas: temNovosPedidos,
+  };
+}
+
+// Atualiza o setInterval para usar a nova lógica
 setInterval(() => {
-  sfx.play(); // Toca o som quando a requisição é iniciada \\
+  const updates = procuraUpdates();
 
-  GETPedidoCozinha(1, "#ul-Pendente");
-  console.log("interval");
-}, 30000);
+  if (updates.teveMudancas) {
+    // Toca o som de notificação apenas quando houver novos pedidos
+    const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+    sfx.play();
+    console.log("Novos pedidos detectados");
+    GETPedidoCozinha(1, "#ul-Pendente");
+  } else {
+    console.log("Nenhum novo pedido");
+  }
+}, 15000);
 
-// Carrega inicialmente todos os pedidos \\
-GETPedidoCozinha(1, "#ul-Pendente");
-GETPedidoCozinha(2, "#ul-Andamento");
-GETPedidoCozinha(3, "#ul-Finalizado");
+/////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+// Define o HTML do modal que será inserido no documento
+const modalHTML = `
+<div id="pedidoModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); z-index: 1000;">
+  <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative;">
+    <span class="close-modal" style="position: absolute; right: 10px; top: 10px; font-size: 24px; cursor: pointer;">&times;</span>
+    <h2 id="modalTitulo" style="margin-bottom: 15px;"></h2>
+    <div id="modalDescricao"></div>
+    <div id="modalItens" style="margin-top: 15px;"></div>
+  </div>
+</div>
+`;
+
+// Adiciona o HTML do modal ao body do documento
+document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+// Seleciona os elementos do modal
+const modal = document.getElementById("pedidoModal");
+const closeModal = document.querySelector(".close-modal");
+
+// Fecha o modal quando clicar no X
+closeModal.onclick = function () {
+  modal.style.display = "none";
+};
+
+// Fecha o modal quando clicar fora dele
+window.onclick = function (event) {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+/**
+ * Exibe o modal com os detalhes do pedido
+ * @param {Object} pedido - Objeto contendo os detalhes do pedido
+ */
+function exibirDetalhesModal(pedido) {
+  const modalTitulo = document.getElementById("modalTitulo");
+  const modalDescricao = document.getElementById("modalDescricao");
+  const modalItens = document.getElementById("modalItens");
+
+  // Limpa o conteúdo anterior do modal
+  modalTitulo.textContent = "";
+  modalDescricao.innerHTML = "";
+  modalItens.innerHTML = "";
+
+  // Preenche o título
+  modalTitulo.textContent = pedido.titulo;
+
+  // Preenche a descrição (se existir)
+  if (pedido.descricao) {
+    modalDescricao.innerHTML = `
+      <p><strong>Descrição:</strong></p>
+      <p>${pedido.descricao}</p>
+    `;
+  }
+
+  // Preenche os itens do pedido (se existirem)
+  if (pedido.itens && pedido.itens.length > 0) {
+    const itensHTML = `
+      <p><strong>Itens do Pedido:</strong></p>
+      <ul style="list-style-type: disc; margin-left: 20px;">
+        ${pedido.itens
+          .map(
+            (item) => `
+          <li>
+            ${item.quantidade}x ${item.nome}
+            ${item.observacao ? `<br><em>Obs: ${item.observacao}</em>` : ""}
+          </li>
+        `
+          )
+          .join("")}
+      </ul>
+    `;
+    modalItens.innerHTML = itensHTML;
+  }
+
+  // Exibe o modal
+  modal.style.display = "block";
+}
