@@ -2,9 +2,15 @@ section {
   margin-top: 100px;
   height: 500px;
   width: 850px;
-  background-color: var(--color-off-white);
+  border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 16px;
   overflow: hidden;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .div-section-header {
@@ -12,13 +18,18 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-dark-coffe);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
   display: flex;
   flex-direction: column;
 }
 
 section ul li {
-  background-color: var(--color-sienna);
+  background-color: rgb(196, 196, 196);
   width: 90%;
   padding: 2%;
   margin: 2% 0;
@@ -26,6 +37,10 @@ section ul li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+section ul li div p {
+  color: var(--color-dark-blue-grey);
 }
 
 .div-li-info {
@@ -45,13 +60,17 @@ section ul li {
 
 section ul {
   height: 75%;
-  background-color: var(--color-soft-beige);
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   overflow-y: scroll;
   padding-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .div-li-buttons {
@@ -66,12 +85,24 @@ section ul {
     border-radius: 4px;
     border-style: none;
   }
+
+  button:hover {
+    transform: scale(102%);
+    transition: 0.2s;
+    background: var(--color-slight-grey);
+  }
+
+  button:active {
+    background-color: var(--color-dark-blue-grey);
+    transition: 0.2s;
+    transform: scale(98%);
+  }
 }
 
 section div input {
   width: 90%;
-  height: 35%;
-  text-align: center;
+  height: 40%;
+  text-align: left;
   padding: 1%;
   border-radius: 8px;
   font-size: 12pt;
@@ -88,7 +119,7 @@ section div div {
 .button-geral {
   height: 120%;
   padding: 8px;
-  background-color: var(--color-soft-beige);
+  background-color: var(--color-light-grey);
   border-radius: 8px;
   border-style: none;
 }
@@ -99,7 +130,7 @@ section div div {
 }
 
 .button-geral:active {
-  background-color: var(--color-sienna);
+  background-color: var(--color-dark-blue-grey);
   transition: 0.2s;
   transform: scale(98%);
 }

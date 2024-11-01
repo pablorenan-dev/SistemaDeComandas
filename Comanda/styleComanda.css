@@ -1,18 +1,23 @@
-  section {
-    margin-top: 100px;
-    height: 500px;
-    width: 850px;
-    background-color: var(--color-off-white);
-    border-radius: 16px;
-    padding: 10px;
-  }
+section {
+  margin-top: 100px;
+  height: 500px;
+  width: 850px;
+  background-color: var(--color-off-white);
+  border-radius: 16px;
+  padding: 10px;
+}
 
 .div-section-header {
   height: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-dark-coffe);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
   display: flex;
   flex-direction: column;
   border-radius: 16px 16px 0px 0px;
@@ -20,7 +25,7 @@
 }
 
 section ul li {
-  background-color: var(--color-sienna);
+  background-color: var(--color-light-grey);
   width: 90%;
   padding: 2%;
   margin: 2% 0;
@@ -47,14 +52,17 @@ section ul li {
 
 section ul {
   height: 75%;
-  background-color: var(--color-soft-beige);
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   overflow-y: scroll;
   padding-bottom: 20px;
-  border-radius: 0px 0px 16px 16px;
+  flex-wrap: wrap;
 }
 
 .div-li-buttons {
@@ -74,7 +82,7 @@ section ul {
 section div input {
   width: 90%;
   height: 35%;
-  text-align: center;
+  text-align: left;
   padding: 1%;
   border-radius: 8px;
 }
@@ -211,8 +219,7 @@ header h1 {
 
 /* Melhoria dos botões */
 button {
-  background-color: var(--color-soft-beige);
-  color: white;
+  color: var(--color-dark-blue-grey);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   border: none;

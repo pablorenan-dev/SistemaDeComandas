@@ -62,6 +62,18 @@ section ul li div button {
   margin: 3px;
 }
 
+section ul li div button:hover {
+  transform: scale(102%);
+  transition: 0.2s;
+  background: var(--color-slight-grey);
+}
+
+section ul li div button:active {
+  background-color: var(--color-dark-blue-grey);
+  transition: 0.2s;
+  transform: scale(98%);
+}
+
 .div-li-info {
   width: 90%;
   display: flex;
