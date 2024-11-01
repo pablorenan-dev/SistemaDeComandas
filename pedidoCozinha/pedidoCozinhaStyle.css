@@ -80,7 +80,12 @@ button:hover {
 .p-div {
   font-size: 36px;
   color: var(--color-ice-blue);
-  background-color: var(--color-dark-coffe);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
   height: 10%;
   display: flex;
   align-items: center;

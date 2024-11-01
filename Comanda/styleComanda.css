@@ -1,5 +1,5 @@
 section {
-  margin-top: 100px;
+  margin-top: 200px;
   height: 500px;
   width: 850px;
   background-color: var(--color-off-white);
@@ -212,11 +212,6 @@ input:focus {
   border-color: var(--color-primary);
 }
 
-header h1 {
-  color: var(--color-soft-beige);
-  font-size: 1.8rem;
-}
-
 /* Melhoria dos botões */
 button {
   color: var(--color-dark-blue-grey);
@@ -275,18 +270,9 @@ main {
   transform: scale(1.05);
 }
 
-header {
-  height: 100px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: var(--color-dark-coffe);
-}
-
 #ver-comandas {
   position: absolute;
-  top: 10px;
+  top: 30px;
   right: 10px;
   background-color: var(--color-soft-green);
   color: white;

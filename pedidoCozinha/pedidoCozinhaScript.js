@@ -14,7 +14,7 @@ const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `https://localhost:7168/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
