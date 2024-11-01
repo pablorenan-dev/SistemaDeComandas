@@ -11,7 +11,7 @@ const header = {
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -41,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `https://localhost:7129/api/PedidoCozinhas/${id}`,
+      `http://localhost:5164/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -75,7 +75,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.item}</p>
+        <p>${pedido.titulo}</p>
       </li>
     `;
 
@@ -299,3 +299,13 @@ function exibirDetalhesModal(pedido) {
   // Exibe o modal
   modal.style.display = "block";
 }
+
+// Adiciona um evento de clique no h1 para retornar para o menu
+function adicionarEventoCliqueH1Chiquinho() {
+  const h1Chiquinho = document.querySelector(".h1-chiquinho");
+  h1Chiquinho.addEventListener("click", () => {
+    document.location.href = "http://127.0.0.1:5500/index.html";
+  });
+}
+
+adicionarEventoCliqueH1Chiquinho();

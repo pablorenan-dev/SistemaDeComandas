@@ -15,7 +15,12 @@ section {
   flex-direction: column;
   border-radius: 16px;
   overflow: hidden;
-  background-color: var(--color-soft-beige);
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
 }
 
 section div {
@@ -25,7 +30,7 @@ section div {
   flex-direction: row;
   height: 90%;
   overflow: auto;
-  background-color: var(--color-soft-beige);
+  background-color: var(--color-ice-blue);
 }
 
 ul {
@@ -36,15 +41,20 @@ ul {
   gap: 16px;
   width: 30%;
   height: 95%;
-  background-color: var(--color-moccasin);
+  background-color: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.9),
+    rgba(249, 250, 251, 0.8)
+  );
   padding: 8px;
-  border-radius: 8px;
+  border-right: 2px solid rgba(128, 128, 128, 0.3);
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
 }
 
 ul p {
   width: 100%;
   height: 8%;
-  color: var(--color-ice-blue);
+  color: var(--color-dark-blue-grey);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,14 +62,13 @@ ul p {
 
 ul li {
   width: 95%;
-  color: var(--color-ice-blue);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow-wrap: anywhere;
   padding: 8px;
-  background-color: var(--color-sienna);
+  background-color: var(--color-slight-grey);
 }
 
 button {
