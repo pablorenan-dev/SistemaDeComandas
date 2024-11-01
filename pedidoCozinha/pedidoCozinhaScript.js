@@ -1,4 +1,4 @@
-// Define os cabeçalhos padrão para as requisições HTTP \\
+/////////////////////////////////////// Define os cabeçalhos padrão para as requisições HTTP \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
@@ -57,6 +57,8 @@ async function PUTPedidoCozinha(id, situacaoId) {
     }
   }
 }
+
+////////////////////////////////////////////////// aqui começa a montagem da tela \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
  * Função que modifica o montarPedidoCozinha para adicionar eventos de clique
@@ -128,71 +130,54 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
     });
   });
 
+  ///////////////////////////////////// aqui começa a verificação para atualizar o pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
   // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
   if (situacaoId === 1) {
     const pedidosPassados = JSON.parse(
       localStorage.getItem("pedidosPendentes") || "[]"
     );
 
-    // Só atualiza se realmente houver mudanças
-    if (teveTrocaNosPedidos(pedidosPassados, pedidos)) {
-      localStorage.setItem(
-        "pedidosPendentesAnteriores",
-        JSON.stringify(pedidosPassados)
-      );
-      localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
-      localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
-
-      console.log("Mudanças detectadas:");
-      console.log(
-        "Pedidos removidos:",
-        pedidosPassados.filter(
-          (antigo) => !pedidos.some((novo) => novo.id === antigo.id)
-        )
-      );
-      console.log(
-        "Pedidos adicionados:",
-        pedidos.filter(
-          (novo) => !pedidosPassados.some((antigo) => antigo.id === novo.id)
-        )
-      );
-    }
+    // Atualiza o localStorage com os novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
   }
 }
 
 /**
- * Compara duas listas de pedidos para detectar mudanças
+ * Função simplificada para verificar novos pedidos pendentes
  * @param {Array} pedidosAntigos - Lista antiga de pedidos
  * @param {Array} pedidosNovos - Lista nova de pedidos
- * @returns {boolean} - Retorna true se houver diferenças
+ * @returns {boolean} - Retorna true se houver novos pedidos
  */
-function teveTrocaNosPedidos(pedidosAntigos, pedidosNovos) {
-  // Se alguma das listas é null ou undefined, não considera como mudança
-  if (!pedidosAntigos || !pedidosNovos) return false;
-
-  // Se as quantidades são diferentes, houve mudança
-  if (pedidosAntigos.length !== pedidosNovos.length) {
+function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
+  // Se não houver pedidos anteriores, mas existem novos pedidos
+  if (!pedidosAntigos.length && pedidosNovos.length > 0) {
     return true;
   }
 
-  // Compara cada pedido
-  return pedidosAntigosOrdenados.some((pedidoAntigo, index) => {
-    const pedidoNovo = pedidosNovosOrdenados[index];
-    return pedidoAntigo.id !== pedidoNovo.id;
+  // Se a nova lista é maior que a antiga, significa que há novos pedidos
+  if (pedidosNovos.length > pedidosAntigos.length) {
+    return true;
+  }
+
+  // Verifica se há algum pedido novo que não estava na lista antiga
+  const novoPedidoEncontrado = pedidosNovos.some((pedidoNovo) => {
+    return !pedidosAntigos.some(
+      (pedidoAntigo) => pedidoAntigo.id === pedidoNovo.id
+    );
   });
+
+  return novoPedidoEncontrado;
 }
 
-/**
- * Verifica se houve atualizações nos últimos 30 segundos
- * @returns {boolean} - Retorna true se houver atualizações
- */
+// Função que procura atualizações
 function procuraUpdates() {
-  const momentoUltimoUpdate =
-    localStorage.getItem("momentoUltimoUpdate") || "0";
-  const momentoAtual = Date.now();
-  const quinzeSegundosAtras = momentoAtual - 15000;
-
-  // Obtém as listas de pedidos atual e anterior
+  // Obtém as listas de pedidos atual e anterior do localStorage
   const pedidosAtuais = JSON.parse(
     localStorage.getItem("pedidosPendentes") || "[]"
   );
@@ -200,30 +185,40 @@ function procuraUpdates() {
     localStorage.getItem("pedidosPendentesAnteriores") || "[]"
   );
 
-  // Verifica se houve mudança nos pedidos
-  const teveMudancas = teveTrocaNosPedidos(pedidosPassados, pedidosAtuais);
+  // Verifica se há novos pedidos
+  const temNovosPedidos = verificarNovosPedidos(pedidosPassados, pedidosAtuais);
+
+  if (temNovosPedidos) {
+    // Atualiza o localStorage apenas se houver novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+  }
 
   return {
-    teveUpdateRecente: parseInt(momentoUltimoUpdate) > quinzeSegundosAtras,
-    teveMudancas: teveMudancas,
+    teveMudancas: temNovosPedidos,
   };
 }
 
-// Inicializa o objeto de áudio para notificação sonora
-const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
-
+// Atualiza o setInterval para usar a nova lógica
 setInterval(() => {
   const updates = procuraUpdates();
 
-  // Corrigido a condição de verificação
   if (updates.teveMudancas) {
+    // Toca o som de notificação apenas quando houver novos pedidos
+    const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
     sfx.play();
-    console.log("Mudanças detectadas nos pedidos");
+    console.log("Novos pedidos detectados");
     GETPedidoCozinha(1, "#ul-Pendente");
   } else {
-    console.log("Nenhuma mudança recente");
+    console.log("Nenhum novo pedido");
   }
 }, 15000);
+
+/////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 // Define o HTML do modal que será inserido no documento
 const modalHTML = `
