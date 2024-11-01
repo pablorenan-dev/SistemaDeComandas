@@ -6,7 +6,7 @@ const header = {
 let comanda = {};
 
 async function GETItensCardapio() {
-  let response = await fetch("http://localhost:5164/api/CardapioItems", {
+  let response = await fetch("https://localhost:7168/api/CardapioItems", {
     method: "GET",
     headers: header,
   });
@@ -73,7 +73,7 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
       adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem);
     }
     atualizarQuantidadeEValorTotal(idItem);
-    atualizarValorTotalComanda(); // Atualiza o valor total da comanda
+    atualizarValorTotalComanda();
   });
 }
 document
@@ -177,26 +177,33 @@ async function finalizarComanda() {
   ).value;
 
   if (!nomeCliente) {
-    alert("Por favor, preencha o nome do cliente.");
+    createModal(
+      "Campo Obrigatório",
+      "Por favor, preencha o nome do cliente.",
+      icons.error
+    );
     return;
   }
 
   if (!numeroMesa) {
-    alert("Por favor, preencha o número da mesa.");
+    createModal(
+      "Campo Obrigatório",
+      "Por favor, preencha o número da mesa.",
+      icons.error
+    );
     return;
   }
 
-  // Pegar os IDs dos itens da comanda
   const itensIDs = Object.keys(comanda);
 
   try {
-    const response = await fetch("http://localhost:5164/api/Comandas", {
+    const response = await fetch("https://localhost:7168/api/Comandas", {
       method: "POST",
       headers: header,
       body: JSON.stringify({
         numeroMesa: numeroMesa,
         nomeCliente: nomeCliente,
-        cardapioItems: itensIDs, // Enviando o array de IDs dos itens
+        cardapioItems: itensIDs,
       }),
     });
 
@@ -290,13 +297,3 @@ const icons = {
     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
   </svg>`,
 };
-
-// Adiciona um evento de clique no h1 para retornar para o menu
-function adicionarEventoCliqueH1Chiquinho() {
-  const h1Chiquinho = document.querySelector(".h1-chiquinho");
-  h1Chiquinho.addEventListener("click", () => {
-    document.location.href = "http://127.0.0.1:5500/index.html";
-  });
-}
-
-adicionarEventoCliqueH1Chiquinho();
