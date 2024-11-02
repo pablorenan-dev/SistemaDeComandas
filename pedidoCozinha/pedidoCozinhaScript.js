@@ -23,7 +23,7 @@ async function GETPedidoCozinha(situacaoId, element) {
   return;
 }
 
-// Carrega inicialmente todos os pedidos \\
+// Carrega todos os pedidos quando a tela é aberta \\
 GETPedidoCozinha(1, "#ul-Pendente");
 GETPedidoCozinha(2, "#ul-Andamento");
 GETPedidoCozinha(3, "#ul-Finalizado");
@@ -130,7 +130,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
     });
   });
 
-  ///////////////////////////////////// aqui começa a verificação para atualizar o pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  ///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
   if (situacaoId === 1) {
@@ -216,18 +216,18 @@ setInterval(() => {
   } else {
     console.log("Nenhum novo pedido");
   }
-}, 15000);
+}, 1000);
 
 /////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 // Define o HTML do modal que será inserido no documento
 const modalHTML = `
-<div id="pedidoModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); z-index: 1000;">
-  <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative;">
-    <span class="close-modal" style="position: absolute; right: 10px; top: 10px; font-size: 24px; cursor: pointer;">&times;</span>
-    <h2 id="modalTitulo" style="margin-bottom: 15px;"></h2>
+<div id="pedidoModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2 id="modalTitulo"></h2>
     <div id="modalDescricao"></div>
-    <div id="modalItens" style="margin-top: 15px;"></div>
+    <div id="modalItens""></div>
   </div>
 </div>
 `;
