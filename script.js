@@ -37,7 +37,8 @@ adicionarEventoCliqueLiUsuarios();
 function adicionarEventoCliqueLiMesas() {
   const liCardapio = document.querySelector("#li-mesas");
   liCardapio.addEventListener("click", () => {
-    window.location.href = "./mesas/index.html";
+    // para arrumar passar /SistemaDeComandas/
+    window.location.href = "mesas/index.html";
   });
 }
 
