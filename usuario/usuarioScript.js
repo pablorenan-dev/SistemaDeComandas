@@ -10,6 +10,7 @@ import {
 function adicionarEventoCliqueH1Chiquinho() {
   const h1Chiquinho = document.querySelector(".h1-chiquinho");
   h1Chiquinho.addEventListener("click", () => {
+    // usar a no h1 e passar ./
     document.location.href = "http://127.0.0.1:5500/index.html";
   });
 }
