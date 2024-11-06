@@ -124,9 +124,9 @@ const header = {
   // Add item to the order
   async function addItem(orderId, tableNumber, clientName) {
     const select = document.getElementById('add-item');
-    const itemId = select.value;
+    const cardapioItemId = parseInt(select.value);
     
-    if (!itemId) {
+    if (!cardapioItemId) {
       return;
     }
     
@@ -136,8 +136,8 @@ const header = {
       nomeCliente: clientName,
       comandaItens: [
         {
-          cardapioItemId: 0, // Pode ser qualquer valor, como mencionado
-          id: parseInt(itemId),
+          cardapioItemId: cardapioItemId, // ID do item do cardápio a ser incluído
+          id: 0, // ID do item na comanda (0 para novo)
           excluir: false,
           incluir: true
         }
@@ -157,6 +157,7 @@ const header = {
         renderOrders();
       } else {
         alert('Erro ao adicionar item.');
+        console.error('API response:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error adding item:', error);
@@ -193,6 +194,7 @@ const header = {
         renderOrders();
       } else {
         alert('Erro ao remover item.');
+        console.error('API response:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error removing item:', error);
