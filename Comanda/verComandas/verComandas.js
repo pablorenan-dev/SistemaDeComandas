@@ -6,7 +6,7 @@ const header = {
 // Get all orders from the API
 async function getAllOrders() {
   try {
-    const response = await fetch("https://localhost:7168/api/Comandas", {
+    const response = await fetch("http://localhost:5164/api/Comandas", {
       method: "GET",
       headers: header,
     });
@@ -21,7 +21,7 @@ async function getAllOrders() {
 // Get all menu items from the API
 async function getMenuItems() {
   try {
-    const response = await fetch("https://localhost:7168/api/CardapioItems", {
+    const response = await fetch("http://localhost:5164/api/CardapioItems", {
       method: "GET",
       headers: header,
     });
@@ -164,7 +164,7 @@ async function addItem(orderId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `https://localhost:7168/api/Comandas/${orderId}`,
+      `http://localhost:5164/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -204,7 +204,7 @@ async function removeItem(orderId, itemId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `https://localhost:7168/api/Comandas/${orderId}`,
+      `http://localhost:5164/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
