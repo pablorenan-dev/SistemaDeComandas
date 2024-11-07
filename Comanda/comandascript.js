@@ -58,7 +58,9 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
             <p>${item.descricao}</p>
             <p>R$${item.preco.toFixed(2)}</p>
             <p>Quantidade: <span id="quantidade-item-${idItem}">1</span></p>
-            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${item.preco.toFixed(2)}</span></p>
+            <p>Valor Total: R$<span id="valor-total-item-${idItem}">${item.preco.toFixed(
+          2
+        )}</span></p>
           </div>
           <div class="div-li-buttons">
             <button id="button-li-remove-comanda-${idItem}">➖</button>
@@ -167,8 +169,12 @@ function adicionarBotaoFinalizarComanda() {
 }
 
 async function finalizarComanda() {
-  const nomeCliente = document.querySelector('input[placeholder="Nome cliente"]').value;
-  const numeroMesa = document.querySelector('input[placeholder="N° Mesa"]').value;
+  const nomeCliente = document.querySelector(
+    'input[placeholder="Nome cliente"]'
+  ).value;
+  const numeroMesa = document.querySelector(
+    'input[placeholder="N° Mesa"]'
+  ).value;
 
   if (!nomeCliente) {
     createModal(
@@ -201,21 +207,13 @@ async function finalizarComanda() {
       }),
     });
 
-    createModal(
-      "Sucesso",
-      "Comanda finalizada com sucesso!",
-      icons.success
-    );
-    
+    createModal("Sucesso", "Comanda finalizada com sucesso!", icons.success);
+
     document.querySelector("#ul-comanda").innerHTML = "";
     comanda = {};
   } catch (error) {
     console.log(error);
-    createModal(
-      "Erro",
-      "Erro ao finalizar comanda",
-      icons.error
-    );
+    createModal("Erro", "Erro ao finalizar comanda", icons.error);
   }
 }
 
@@ -256,7 +254,6 @@ document.querySelector("#ver-comandas").addEventListener("click", () => {
   window.location.href = "./verComandas/index.html";
 });
 
-
 function createModal(title, message, icon) {
   const modalHTML = `
     <div class="modal-wrapper">
@@ -276,19 +273,19 @@ function createModal(title, message, icon) {
     </div>
   `;
 
-  const modalContainer = document.createElement('div');
+  const modalContainer = document.createElement("div");
   modalContainer.innerHTML = modalHTML;
   document.body.appendChild(modalContainer);
 
   // Add event listeners for closing the modal
-  const closeButton = modalContainer.querySelector('.modal-button');
-  const confirmButton = modalContainer.querySelector('.button-confirm-modal');
+  const closeButton = modalContainer.querySelector(".modal-button");
+  const confirmButton = modalContainer.querySelector(".button-confirm-modal");
   const closeModal = () => {
     modalContainer.remove();
   };
 
-  closeButton.addEventListener('click', closeModal);
-  confirmButton.addEventListener('click', closeModal);
+  closeButton.addEventListener("click", closeModal);
+  confirmButton.addEventListener("click", closeModal);
 }
 
 // Define icons for different types of messages
@@ -298,5 +295,5 @@ const icons = {
   </svg>`,
   success: `<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" viewBox="0 0 16 16">
     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-  </svg>`
+  </svg>`,
 };

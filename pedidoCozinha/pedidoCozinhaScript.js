@@ -11,7 +11,7 @@ const header = {
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -41,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `https://localhost:7129/api/PedidoCozinhas/${id}`,
+      `http://localhost:5164/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -75,7 +75,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.item}</p>
+        <p>${pedido.titulo}</p>
       </li>
     `;
 
@@ -177,6 +177,7 @@ function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
 
 // Função que procura atualizações
 function procuraUpdates() {
+  console.log("começa");
   // Obtém as listas de pedidos atual e anterior do localStorage
   const pedidosAtuais = JSON.parse(
     localStorage.getItem("pedidosPendentes") || "[]"
@@ -197,7 +198,7 @@ function procuraUpdates() {
     localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
     localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
   }
-
+  console.log(temNovosPedidos);
   return {
     teveMudancas: temNovosPedidos,
   };
@@ -217,6 +218,24 @@ setInterval(() => {
     console.log("Nenhum novo pedido");
   }
 }, 1000);
+iniciaTimeout();
+function iniciaTimeout() {
+  setInterval(() => {
+    console.log("entrou interval");
+    const updates = procuraUpdates();
+    console.log(updates, "updates");
+    if (updates.teveMudancas) {
+      // Toca o som de notificação apenas quando houver novos pedidos
+      const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+      sfx.play();
+      console.log("Novos pedidos detectados");
+      GETPedidoCozinha(1, "#ul-Pendente");
+    } else {
+      console.log("Nenhum novo pedido");
+    }
+  }, 5000);
+}
+// Atualiza o setInterval para usar a nova lógica
 
 /////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
