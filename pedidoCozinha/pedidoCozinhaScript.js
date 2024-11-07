@@ -177,6 +177,7 @@ function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
 
 // Função que procura atualizações
 function procuraUpdates() {
+  console.log("começa");
   // Obtém as listas de pedidos atual e anterior do localStorage
   const pedidosAtuais = JSON.parse(
     localStorage.getItem("pedidosPendentes") || "[]"
@@ -197,7 +198,7 @@ function procuraUpdates() {
     localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
     localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
   }
-
+  console.log(temNovosPedidos);
   return {
     teveMudancas: temNovosPedidos,
   };
@@ -217,6 +218,24 @@ setInterval(() => {
     console.log("Nenhum novo pedido");
   }
 }, 1000);
+iniciaTimeout();
+function iniciaTimeout() {
+  setInterval(() => {
+    console.log("entrou interval");
+    const updates = procuraUpdates();
+    console.log(updates, "updates");
+    if (updates.teveMudancas) {
+      // Toca o som de notificação apenas quando houver novos pedidos
+      const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+      sfx.play();
+      console.log("Novos pedidos detectados");
+      GETPedidoCozinha(1, "#ul-Pendente");
+    } else {
+      console.log("Nenhum novo pedido");
+    }
+  }, 5000);
+}
+// Atualiza o setInterval para usar a nova lógica
 
 /////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -299,13 +318,3 @@ function exibirDetalhesModal(pedido) {
   // Exibe o modal
   modal.style.display = "block";
 }
-
-// Adiciona um evento de clique no h1 para retornar para o menu
-function adicionarEventoCliqueH1Chiquinho() {
-  const h1Chiquinho = document.querySelector(".h1-chiquinho");
-  h1Chiquinho.addEventListener("click", () => {
-    document.location.href = "http://127.0.0.1:5500/index.html";
-  });
-}
-
-adicionarEventoCliqueH1Chiquinho();

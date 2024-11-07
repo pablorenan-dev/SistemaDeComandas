@@ -249,14 +249,6 @@ function adicionarItensLocalStorage(mesas) {
   localStorage.setItem("mesas", JSON.stringify(mesas));
 }
 
-// Adiciona um evento de clique no h1 para retornar para o menu
-function adicionarEventoCliqueH1Chiquinho() {
-  const h1Chiquinho = document.querySelector(".h1-chiquinho");
-  h1Chiquinho.addEventListener("click", () => {
-    document.location.href = "http://127.0.0.1:5500/index.html";
-  });
-}
-
 // Adicionar um Evento de clique que monta uma tela de modal para adicionar os parametros para adicionar um novo item e confirmar a adicao
 function adicionarEventoCliqueBotaoAdicionarItem() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
@@ -381,6 +373,5 @@ function removerModal() {
 }
 
 montarItensLocalStorage();
-adicionarEventoCliqueH1Chiquinho();
 adicionarEventoCliqueBotaoAdicionarItem();
 filtrarItem();
