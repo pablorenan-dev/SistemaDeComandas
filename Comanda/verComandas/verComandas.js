@@ -6,7 +6,7 @@ const header = {
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
   try {
-    const response = await fetch("https://localhost:7168/api/Comandas", {
+    const response = await fetch("http://localhost:5164/api/Comandas", {
       method: "GET",
       headers: header,
     });
@@ -21,7 +21,7 @@ async function getAllOrders() {
 // Função para buscar todos os itens do cardápio da API
 async function getMenuItems() {
   try {
-    const response = await fetch("https://localhost:7168/api/CardapioItems", {
+    const response = await fetch("http://localhost:5164/api/CardapioItems", {
       method: "GET",
       headers: header,
     });
@@ -78,13 +78,21 @@ async function openEditModal(order) {
           <div class="modal-body">
             <div class="form-group">
               <label for="client-name">Nome do Cliente:</label>
-              <input type="text" id="client-name" value="${order.nomeCliente}" />
-              <button onclick="confirmClientName(${order.id})" class="confirm-button">✔️</button>
+              <input type="text" id="client-name" value="${
+                order.nomeCliente
+              }" />
+              <button onclick="confirmClientName(${
+                order.id
+              })" class="confirm-button">✔️</button>
             </div>
             <div class="form-group">
               <label for="table-number">Número da Mesa:</label>
-              <input type="text" id="table-number" value="${order.numeroMesa}" />
-              <button onclick="confirmTableNumber(${order.id})" class="confirm-button">✔️</button>
+              <input type="text" id="table-number" value="${
+                order.numeroMesa
+              }" />
+              <button onclick="confirmTableNumber(${
+                order.id
+              })" class="confirm-button">✔️</button>
             </div>
             <div class="form-group">
               <label>Itens da Comanda:</label>
@@ -157,7 +165,7 @@ async function confirmClientName(orderId) {
 
   try {
     const response = await fetch(
-      `https://localhost:7168/api/Comandas/${orderId}`,
+      `http://localhost:5164/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -198,7 +206,7 @@ async function confirmTableNumber(orderId) {
 
   try {
     const response = await fetch(
-      `https://localhost:7168/api/Comandas/${orderId}`,
+      `http://localhost:5164/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -222,7 +230,7 @@ async function confirmTableNumber(orderId) {
 async function removeItem(orderId, itemId, tableNumber, clientName) {
   const updatedOrder = {
     id: orderId,
-    numeroMesa: tableNumber,
+    numeroMesa: 0,
     nomeCliente: clientName,
     comandaItens: [
       {
@@ -267,7 +275,7 @@ async function addItem(orderId, tableNumber, clientName) {
 
   const updatedOrder = {
     id: orderId,
-    numeroMesa: tableNumber,
+    numeroMesa: 0,
     nomeCliente: clientName,
     comandaItens: [
       {
