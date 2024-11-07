@@ -219,5 +219,88 @@ async function confirmTableNumber(orderId) {
   }
 }
 
+async function removeItem(orderId, itemId, tableNumber, clientName) {
+  const updatedOrder = {
+    id: orderId,
+    numeroMesa: tableNumber,
+    nomeCliente: clientName,
+    comandaItens: [
+      {
+        cardapioItemId: 0, // Pode ser qualquer valor, como mencionado
+        id: itemId,
+        excluir: true,
+        incluir: false,
+      },
+    ],
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5164/api/Comandas/${orderId}`,
+      {
+        method: "PUT",
+        headers: header,
+        body: JSON.stringify(updatedOrder),
+      }
+    );
+
+    if (response.ok) {
+      alert("Item removido com sucesso!");
+      closeEditModal();
+      renderOrders();
+    } else {
+      alert("Erro ao remover item.");
+      console.error("API response:", response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error("Error removing item:", error);
+    alert("Erro ao conectar com o servidor.");
+  }
+}
+async function addItem(orderId, tableNumber, clientName) {
+  const select = document.getElementById("add-item");
+  const cardapioItemId = parseInt(select.value);
+
+  if (!cardapioItemId) {
+    return;
+  }
+
+  const updatedOrder = {
+    id: orderId,
+    numeroMesa: tableNumber,
+    nomeCliente: clientName,
+    comandaItens: [
+      {
+        cardapioItemId: cardapioItemId, // ID do item do cardápio a ser incluído
+        id: 0, // ID do item na comanda (0 para novo)
+        excluir: false,
+        incluir: true,
+      },
+    ],
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5164/api/Comandas/${orderId}`,
+      {
+        method: "PUT",
+        headers: header,
+        body: JSON.stringify(updatedOrder),
+      }
+    );
+
+    if (response.ok) {
+      alert("Item adicionado com sucesso!");
+      closeEditModal();
+      renderOrders();
+    } else {
+      alert("Erro ao adicionar item.");
+      console.error("API response:", response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error("Error adding item:", error);
+    alert("Erro ao conectar com o servidor.");
+  }
+}
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);
