@@ -230,7 +230,7 @@ async function confirmTableNumber(orderId) {
 async function removeItem(orderId, itemId, tableNumber, clientName) {
   const updatedOrder = {
     id: orderId,
-    numeroMesa: tableNumber,
+    numeroMesa: 0,
     nomeCliente: clientName,
     comandaItens: [
       {
@@ -275,7 +275,7 @@ async function addItem(orderId, tableNumber, clientName) {
 
   const updatedOrder = {
     id: orderId,
-    numeroMesa: tableNumber,
+    numeroMesa: 0,
     nomeCliente: clientName,
     comandaItens: [
       {
