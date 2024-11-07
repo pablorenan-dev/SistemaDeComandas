@@ -45,7 +45,7 @@ async function renderOrders() {
     ordersList.insertAdjacentHTML(
       "beforeend",
       `
-        <li id="order-${order.id}" class="order-item">
+    <li id="order-${order.id}" class="order-item">
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
@@ -56,6 +56,9 @@ async function renderOrders() {
               order
             ).replace(/"/g, "&quot;")})">
               ✏️ Editar
+            </button>
+            <button class="finalize-button" onclick="finalizeOrder(${order.id})">
+              ✅ Finalizar Comanda
             </button>
           </div>
         </li>
@@ -307,6 +310,28 @@ async function addItem(orderId, tableNumber, clientName) {
     }
   } catch (error) {
     console.error("Error adding item:", error);
+    alert("Erro ao conectar com o servidor.");
+  }
+}
+async function finalizeOrder(orderId) {
+  try {
+    const response = await fetch(
+      `http://localhost:5164/api/Comandas/${orderId}`, // Exemplo de endpoint
+      {
+        method: "PATCH",
+        headers: header,
+      }
+    );
+
+    if (response.ok) {
+      alert("Comanda finalizada com sucesso!");
+      renderOrders(); // Atualiza a lista de comandas
+    } else {
+      alert("Erro ao finalizar a comanda.");
+      console.error("API response:", response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error("Error finalizing order:", error);
     alert("Erro ao conectar com o servidor.");
   }
 }
