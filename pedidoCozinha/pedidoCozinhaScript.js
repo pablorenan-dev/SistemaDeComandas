@@ -223,79 +223,64 @@ setInterval(() => {
 // Define o HTML do modal que será inserido no documento
 const modalHTML = `
 <div id="pedidoModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal">&times;</span>
-    <h2 id="modalTitulo"></h2>
-    <div id="modalDescricao"></div>
-    <div id="modalItens""></div>
-  </div>
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalTitulo"></h2>
+        <h2 id="modalmesa"></h2>
+        <div id="modalDescricao"></div>
+        <div id="modalItens"></div>
+    </div>
 </div>
 `;
 
-// Adiciona o HTML do modal ao body do documento
+// Adiciona o modal ao documento
 document.body.insertAdjacentHTML("beforeend", modalHTML);
 
-// Seleciona os elementos do modal
+// Elementos do modal
 const modal = document.getElementById("pedidoModal");
-const closeModal = document.querySelector(".close-modal");
+const closeBtn = document.querySelector(".close-modal");
 
-// Fecha o modal quando clicar no X
-closeModal.onclick = function () {
+// Fecha modal ao clicar no X
+closeBtn.onclick = function () {
   modal.style.display = "none";
 };
 
-// Fecha o modal quando clicar fora dele
+// Fecha modal ao clicar fora
 window.onclick = function (event) {
-  if (event.target === modal) {
+  if (event.target == modal) {
     modal.style.display = "none";
   }
 };
 
-/**
- * Exibe o modal com os detalhes do pedido
- * @param {Object} pedido - Objeto contendo os detalhes do pedido
- */
+// Função para mostrar o modal
 function exibirDetalhesModal(pedido) {
-  const modalTitulo = document.getElementById("modalTitulo");
-  const modalDescricao = document.getElementById("modalDescricao");
+  // Preenche os elementos
+  document.getElementById("modalTitulo").textContent = pedido.item;
+  document.getElementById("modalMesa").textContent = pedido.NumeroMesa;
+  // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
+  document.getElementById("modalDescricao").innerHTML = pedido.descricao
+    ? `<p><strong>Descrição:</strong> ${pedido.descricao}</p>`
+    : "";
+
+  // Preenche os itens se existirem
   const modalItens = document.getElementById("modalItens");
-
-  // Limpa o conteúdo anterior do modal
-  modalTitulo.textContent = "";
-  modalDescricao.innerHTML = "";
-  modalItens.innerHTML = "";
-
-  // Preenche o título
-  modalTitulo.textContent = pedido.titulo;
-
-  // Preenche a descrição (se existir)
-  if (pedido.descricao) {
-    modalDescricao.innerHTML = `
-      <p><strong>Descrição:</strong></p>
-      <p>${pedido.descricao}</p>
-    `;
-  }
-
-  // Preenche os itens do pedido (se existirem)
   if (pedido.itens && pedido.itens.length > 0) {
-    const itensHTML = `
-      <p><strong>Itens do Pedido:</strong></p>
-      <ul style="list-style-type: disc; margin-left: 20px;">
-        ${pedido.itens
-          .map(
-            (item) => `
-          <li>
-            ${item.quantidade}x ${item.nome}
-            ${item.observacao ? `<br><em>Obs: ${item.observacao}</em>` : ""}
-          </li>
-        `
-          )
-          .join("")}
-      </ul>
-    `;
-    modalItens.innerHTML = itensHTML;
+    modalItens.innerHTML = `
+            <p><strong>Itens:</strong></p>
+            <ul>
+                ${pedido.itens
+                  .map(
+                    (item) => `
+                    <li>${item.quantidade}x ${item.nome}
+                        ${item.observacao ? ` - Obs: ${item.observacao}` : ""}
+                    </li>
+                `
+                  )
+                  .join("")}
+            </ul>
+        `;
   }
 
-  // Exibe o modal
+  // Mostra o modal
   modal.style.display = "block";
 }

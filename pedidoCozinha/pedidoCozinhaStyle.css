@@ -87,33 +87,41 @@ button:hover {
   justify-content: space-evenly;
 }
 
-.modal-wrapper {
+/* Estilo mínimo necessário para o modal */
+.modal {
+  display: none; /* Modal começa escondido */
   position: fixed;
   top: 0;
-  height: 100%;
+  left: 0;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.2);
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro */
 }
 
-.modal {
-  position: sticky;
+.modal-content {
   background-color: white;
-  border-radius: 16px;
-  width: 40vh;
-  overflow: hidden;
+  width: 400px;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 8px;
 }
 
-.modal-header {
-  padding: 2.5vh;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--color-black);
+.close-modal {
+  float: right;
+  cursor: pointer;
+  font-size: 24px;
 }
 
-.modal-body {
-  background-color: var(--color-grey);
-  padding: 16px;
+/* Espaçamento básico */
+#modalTitulo {
+  margin-bottom: 20px;
+}
+
+#modalDescricao,
+#modalItens {
+  margin-top: 10px;
 }
