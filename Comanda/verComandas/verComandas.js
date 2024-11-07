@@ -132,7 +132,7 @@ const header = {
     
     const updatedOrder = {
       id: orderId,
-      numeroMesa: 0,
+      numeroMesa: tableNumber,
       nomeCliente: clientName,
       comandaItens: [
         {
@@ -169,7 +169,7 @@ const header = {
   async function removeItem(orderId, itemId, tableNumber, clientName) {
     const updatedOrder = {
       id: orderId,
-      numeroMesa: 0,
+      numeroMesa: tableNumber,
       nomeCliente: clientName,
       comandaItens: [
         {
