@@ -51,7 +51,7 @@ async function renderOrders() {
             <p>Mesa: ${order.numeroMesa}</p>
             <p id="p-descricao">Itens: ${items
               .map((item) => item.titulo)
-              .join(", ")}</p>
+              .join("<br>• ")}</p>
           </div>
           <div class="order-actions">
             <button class="edit-button" onclick="openEditModal(${JSON.stringify(
