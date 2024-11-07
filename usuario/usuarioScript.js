@@ -6,15 +6,6 @@ import {
   GETUsuario,
 } from "./usuarioApiScript.js";
 
-// Adiciona um evento de clique no h1 para retornar para o menu
-function adicionarEventoCliqueH1Chiquinho() {
-  const h1Chiquinho = document.querySelector(".h1-chiquinho");
-  h1Chiquinho.addEventListener("click", () => {
-    // usar a no h1 e passar ./
-    document.location.href = "http://127.0.0.1:5500/index.html";
-  });
-}
-
 // Adicionar um Evento de clique que monta uma tela de modal para adicionar os parametros para adicionar um novo item e confirmar a adicao
 function adicionarEventoCliqueBotaoAdicionarUsuario() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
@@ -394,7 +385,6 @@ function adicionarUsuariosLocalStorage(usuarios) {
 
 // Chama todas as funcoes iniciais
 function chamarFuncoesIniciais() {
-  adicionarEventoCliqueH1Chiquinho();
   adicionarEventoCliqueBotaoAdicionarUsuario();
   montarUsuariosLocalStorage();
 }

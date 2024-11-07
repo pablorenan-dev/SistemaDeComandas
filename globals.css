@@ -87,3 +87,6 @@ button:hover {
 .h1-chiquinho {
   cursor: pointer;
 }
+a {
+  text-decoration: none;
+}
