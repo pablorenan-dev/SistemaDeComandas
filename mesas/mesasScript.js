@@ -91,7 +91,10 @@ async function montarModalEditarItem(idItem, tituloItem) {
           <p>Numero Mesa:</p>
           <input type="text" class="input-item-modal" value="${itemDetalhes.numeroMesa}"/>
           <p>Situacao Mesa:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.situacaoMesa}"/>
+          <select id="select-adicionar-mesa">
+            <option value="livre">Livre</option>
+            <option value="ocupada">Ocupada</option>
+          </select>
           <div>
             <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
           </div>
@@ -112,10 +115,8 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   botaoDeletarItem.addEventListener("click", () => {
     const valoresItens = pegarValoresDosItens(idItem);
 
-    if (valoresItens[0].value == "") {
+    if (valoresItens[0] == "") {
       carregarModalErro("Escreva um Numero Mesa");
-    } else if (valoresItens[1].value == "") {
-      carregarModalErro("Escreva uma Situacao Mesa");
     } else {
       PUTMesa(valoresItens, idItem);
       deletarItensUl();

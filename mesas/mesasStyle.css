@@ -242,3 +242,13 @@ section div input::placeholder {
 span {
   text-decoration: underline;
 }
+
+select {
+  border-radius: 6px;
+  height: 30px;
+  width: 100%;
+  padding: 2%;
+  border: solid 1px var(--color-black);
+  margin: 8px 0 8px 0;
+  font-size: 14px;
+}

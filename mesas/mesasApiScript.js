@@ -58,8 +58,8 @@ async function PUTMesa(valoresMesa, idItem) {
       headers: header,
       body: JSON.stringify({
         idMesa: idItem,
-        numeroMesa: valoresMesa[0].value,
-        situacaoMesa: valoresMesa[1].value,
+        numeroMesa: valoresMesa[0],
+        situacaoMesa: valoresMesa[1],
       }),
     });
   } catch (error) {
