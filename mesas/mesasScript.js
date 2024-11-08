@@ -292,7 +292,10 @@ function montarModalAdicionarItem() {
           <p>Numero Mesa:</p>
           <input type="number" class="input-item-modal" />
           <p>Situacao Mesa:</p>
-          <input type="number" class="input-item-modal" />
+          <select>
+            <option value="livre">Livre</option>
+            <option value="ocupada">Ocupada</option>
+          </select>
           <div>
             <button class="button-adicionar-item-modal">+ Adicionar</button>
           </div>
