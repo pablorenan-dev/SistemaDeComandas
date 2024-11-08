@@ -50,6 +50,7 @@ section ul li img {
 
 section ul li p {
   color: var(--color-dark-blue-grey);
+  font-size: 90%;
 }
 
 section ul li div {
@@ -236,4 +237,8 @@ section div input::placeholder {
   border: solid 1px var(--color-black);
   margin: 8px 0 8px 0;
   font-size: 16px;
+}
+
+span {
+  text-decoration: underline;
 }

@@ -33,8 +33,8 @@ async function POSTMesa(valoresMesa) {
       method: "POST",
       headers: header,
       body: JSON.stringify({
-        numeroMesa: valoresMesa[0].value,
-        situacaoMesa: valoresMesa[1].value,
+        numeroMesa: valoresMesa[0],
+        situacaoMesa: valoresMesa[1],
       }),
     });
   } catch (error) {

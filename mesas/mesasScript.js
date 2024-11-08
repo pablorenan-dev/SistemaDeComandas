@@ -17,7 +17,9 @@ async function montarMesas(mesas = []) {
        <li>
             <img src="../imgs/mesa-redonda.png" />
             <p>Mesa ${item.numeroMesa}</p>
-            <p>Situacao Mesa: ${item.situacaoMesa}</p>
+            <p>Situacao: <span>${
+              item.situacaoMesa === 0 ? "Livre" : "Ocupada"
+            }</span></p>
             <div class="div-li-buttons">
               <button id="button-li-delete-${item.idMesa}">
                 ❌
@@ -292,7 +294,7 @@ function montarModalAdicionarItem() {
           <p>Numero Mesa:</p>
           <input type="number" class="input-item-modal" />
           <p>Situacao Mesa:</p>
-          <select>
+          <select id="select-adicionar-mesa">
             <option value="livre">Livre</option>
             <option value="ocupada">Ocupada</option>
           </select>
@@ -342,10 +344,8 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
 
-  if (valoresItem[0].value == "") {
+  if (valoresItem[0] == "") {
     carregarModalErro("Escreva um numero mesa");
-  } else if (valoresItem[1].value == "") {
-    carregarModalErro("Escreva uma situacao mesa");
   } else {
     try {
       POSTMesa(valoresItem);
@@ -363,10 +363,17 @@ function adicionarItem() {
 
 // Pegar os valores do modal de adicionar itens e retorna eles em um array
 function pegarValoresDosItens() {
-  let valoresItens = document.querySelectorAll(".input-item-modal");
+  let valoresArray = [];
+  let valoresItens = document.querySelector(".input-item-modal").value;
+  let selectValor = document.querySelector("#select-adicionar-mesa").value;
+  if (selectValor === "livre") {
+    valoresArray.push(parseInt(valoresItens), 0);
+  } else {
+    valoresArray.push(parseInt(valoresItens), 1);
+  }
 
-  console.log(valoresItens);
-  return valoresItens;
+  console.log(valoresArray);
+  return valoresArray;
 }
 
 // Remove o modal por completo da tela
