@@ -292,3 +292,43 @@ main {
 #ver-comandas:active {
   transform: scale(0.98);
 }
+
+#section-comanda {
+  height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    to right,
+    rgb(31 41 55),
+    rgb(75 85 99),
+    rgb(17 24 39)
+  );
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px 16px 0px 0px;
+  gap: 4px;
+}
+
+@media (max-width: 600px) {
+  section {
+    width: 100%;
+    margin-top: 0px;
+  }
+  main {
+    flex-direction: column;
+  }
+  .div-section-header {
+    margin-top: 0px;
+    border-radius: 16px;
+  }
+  #section-comanda {
+    height: 120px;
+    margin-top: 50px;
+    border-radius: 16px;
+    width: 100%;
+  }
+  #section-cardapio {
+    margin-top: 420px;
+  }
+}
