@@ -113,12 +113,12 @@ async function montarModalEditarItem(idItem, tituloItem) {
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    const valoresItens = pegarValoresDosItens(idItem);
+    const valoresItem = pegarValoresDosItens(idItem);
 
-    if (valoresItens[0] == "") {
+    if (isNaN(valoresItem[0])) {
       carregarModalErro("Escreva um Numero Mesa");
     } else {
-      PUTMesa(valoresItens, idItem);
+      PUTMesa(valoresItem, idItem);
       deletarItensUl();
       removerModal();
       montarLiCarregandoUl();
@@ -345,7 +345,7 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
 
-  if (valoresItem[0] == "") {
+  if (isNaN(valoresItem[0])) {
     carregarModalErro("Escreva um numero mesa");
   } else {
     try {
