@@ -11,7 +11,7 @@ const header = {
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `http://localhost:5164/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -41,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `http://localhost:5164/api/PedidoCozinhas/${id}`,
+      `https://localhost:7129/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -75,7 +75,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.titulo}</p>
+        <p>${pedido.item}</p>
       </li>
     `;
 
@@ -275,7 +275,8 @@ window.onclick = function (event) {
 function exibirDetalhesModal(pedido) {
   // Preenche os elementos
   document.getElementById("modalTitulo").textContent = pedido.item;
-  document.getElementById("modalMesa").textContent = pedido.NumeroMesa;
+  document.getElementById("modalmesa").textContent =
+    "mesa: " + pedido.numeroMesa;
   // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
   document.getElementById("modalDescricao").innerHTML = pedido.descricao
     ? `<p><strong>Descrição:</strong> ${pedido.descricao}</p>`
