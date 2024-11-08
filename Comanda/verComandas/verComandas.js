@@ -6,7 +6,7 @@ const header = {
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
   try {
-    const response = await fetch("http://localhost:5164/api/Comandas", {
+    const response = await fetch("https://localhost:7168/api/Comandas", {
       method: "GET",
       headers: header,
     });
@@ -21,7 +21,7 @@ async function getAllOrders() {
 // Função para buscar todos os itens do cardápio da API
 async function getMenuItems() {
   try {
-    const response = await fetch("http://localhost:5164/api/CardapioItems", {
+    const response = await fetch("https://localhost:7168/api/CardapioItems", {
       method: "GET",
       headers: header,
     });
@@ -177,15 +177,15 @@ async function confirmClientName(orderId) {
     );
 
     if (response.ok) {
-      alert("Nome do cliente atualizado com sucesso!");
+      showAlertModal("Nome do cliente atualizado com sucesso!");
       closeEditModal();
       renderOrders();
     } else {
-      alert("Erro ao atualizar nome do cliente.");
+      showAlertModal("Erro ao atualizar nome do cliente.");
     }
   } catch (error) {
     console.error("Error updating client name:", error);
-    alert("Erro ao conectar com o servidor.");
+    showAlertModal("Erro ao conectar com o servidor.");
   }
 }
 
@@ -218,15 +218,15 @@ async function confirmTableNumber(orderId) {
     );
 
     if (response.ok) {
-      alert("Número da mesa atualizado com sucesso!");
+      showAlertModal("Número da mesa atualizado com sucesso!");
       closeEditModal();
       renderOrders();
     } else {
-      alert("Erro ao atualizar número da mesa.");
+      showAlertModal("Erro ao atualizar número da mesa.");
     }
   } catch (error) {
     console.error("Error updating table number:", error);
-    alert("Erro ao conectar com o servidor.");
+    showAlertModal("Erro ao conectar com o servidor.");
   }
 }
 
@@ -256,18 +256,19 @@ async function removeItem(orderId, itemId, tableNumber, clientName) {
     );
 
     if (response.ok) {
-      alert("Item removido com sucesso!");
+      showAlertModal("Item removido com sucesso!");
       closeEditModal();
       renderOrders();
     } else {
-      alert("Erro ao remover item.");
+      showAlertModal("Erro ao remover item.");
       console.error("API response:", response.status, response.statusText);
     }
   } catch (error) {
     console.error("Error removing item:", error);
-    alert("Erro ao conectar com o servidor.");
+    showAlertModal("Erro ao conectar com o servidor.");
   }
 }
+
 async function addItem(orderId, tableNumber, clientName) {
   const select = document.getElementById("add-item");
   const cardapioItemId = parseInt(select.value);
@@ -301,18 +302,19 @@ async function addItem(orderId, tableNumber, clientName) {
     );
 
     if (response.ok) {
-      alert("Item adicionado com sucesso!");
+      showAlertModal("Item adicionado com sucesso!");
       closeEditModal();
       renderOrders();
     } else {
-      alert("Erro ao adicionar item.");
+      showAlertModal("Erro ao adicionar item.");
       console.error("API response:", response.status, response.statusText);
     }
   } catch (error) {
     console.error("Error adding item:", error);
-    alert("Erro ao conectar com o servidor.");
+    showAlertModal("Erro ao conectar com o servidor.");
   }
 }
+
 async function finalizeOrder(orderId) {
   try {
     const response = await fetch(
@@ -324,16 +326,47 @@ async function finalizeOrder(orderId) {
     );
 
     if (response.ok) {
-      alert("Comanda finalizada com sucesso!");
+      showAlertModal("Comanda finalizada com sucesso!");
       renderOrders(); // Atualiza a lista de comandas
     } else {
-      alert("Erro ao finalizar a comanda.");
+      showAlertModal("Erro ao finalizar a comanda.");
       console.error("API response:", response.status, response.statusText);
     }
   } catch (error) {
     console.error("Error finalizing order:", error);
-    alert("Erro ao conectar com o servidor.");
+    showAlertModal("Erro ao conectar com o servidor.");
   }
 }
+
+function showAlertModal(message) {
+  // Remover o modal antigo, se já existir
+  const oldModal = document.getElementById("alert-modal");
+  if (oldModal) {
+    oldModal.remove();
+  }
+
+  const modalHTML = `
+    <div id="alert-modal" class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-body">
+          <p>${message}</p>
+          <button onclick="closeAlertModal()" class="close-button">OK</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+}
+
+// Função para fechar o modal de aviso
+function closeAlertModal() {
+  const modal = document.getElementById("alert-modal");
+  if (modal) {
+    modal.remove();
+  }
+}
+
+
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);
