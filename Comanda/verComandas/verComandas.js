@@ -6,7 +6,7 @@ const header = {
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
   try {
-    const response = await fetch("https://localhost:7168/api/Comandas", {
+    const response = await fetch("http://localhost:5164/api/Comandas", {
       method: "GET",
       headers: header,
     });
@@ -21,7 +21,7 @@ async function getAllOrders() {
 // Função para buscar todos os itens do cardápio da API
 async function getMenuItems() {
   try {
-    const response = await fetch("https://localhost:7168/api/CardapioItems", {
+    const response = await fetch("htts://localhost:5164/api/CardapioItems", {
       method: "GET",
       headers: header,
     });
@@ -59,7 +59,7 @@ async function renderOrders() {
             ).replace(/"/g, "&quot;")})">
               ✏️ Editar
             </button>
-            <button class="finalize-button" onclick="finalizeOrder(${order.id})">
+            <button class="edit-button" onclick="finalizeOrder(${order.id})">
               ✅ Finalizar Comanda
             </button>
           </div>
@@ -368,7 +368,6 @@ function closeAlertModal() {
     modal.remove();
   }
 }
-
 
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);

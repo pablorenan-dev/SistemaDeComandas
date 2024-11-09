@@ -277,3 +277,12 @@ section ul li {
   text-align: center;
   margin: 1rem 0;
 }
+.order-actions {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  flex-direction: column;
+}
+.order-actions button {
+  margin: 2%;
+}
