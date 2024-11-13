@@ -112,9 +112,10 @@ section ul {
   align-items: center;
   height: 100%;
   button {
-    height: 32px;
-    width: 32px;
+    height: 90%;
+    width: 90%;
     border-radius: 4px;
+    padding: 12%;
     border-style: none;
   }
 }

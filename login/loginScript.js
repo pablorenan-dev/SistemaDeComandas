@@ -1,3 +1,5 @@
+import { GETUsuario } from "../usuario/usuarioApiScript";
+
 function adicionarEventoCliqueMostrarSenha() {
   const mostrarSenhaSvg = document.querySelector(".olho-icon");
   mostrarSenhaSvg.addEventListener("click", () => {
@@ -14,6 +16,13 @@ function trocarTipoDoCampoSenha(mostrarSenhaSvg) {
     inputSenha.type = "password";
     mostrarSenhaSvg.src = "../imgs/olho-slash.png";
   }
+}
+
+function adicionarEventoForm() {
+  let form = document.querySelector("form");
+  form.addEventListener("submit", () => {
+    const usuarioInfo = GET;
+  });
 }
 
 adicionarEventoCliqueMostrarSenha();
