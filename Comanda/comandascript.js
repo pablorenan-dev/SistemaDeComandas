@@ -14,6 +14,21 @@ async function GETItensCardapio() {
   return result;
 }
 
+async function verificarSituacaoMesa(numeroMesa) {
+  try {
+    const response = await fetch(`https://localhost:7168/api/Mesas/${numeroMesa}`, {
+      method: "GET",
+      headers: header,
+    });
+    const result = await response.json();
+    return result.situacaoMesa; // Deve retornar 0 (disponível) ou 1 (ocupada)
+  } catch (error) {
+    console.error("Erro ao verificar situação da mesa:", error);
+    createModal("Erro", "Não foi possível verificar a situação da mesa.", icons.error);
+    return null;
+  }
+}
+
 async function montarItensCardapio() {
   const cardapioItens = await GETItensCardapio();
   let ulCardapioItens = document.querySelector("ul");
@@ -169,51 +184,49 @@ function adicionarBotaoFinalizarComanda() {
 }
 
 async function finalizarComanda() {
-  const nomeCliente = document.querySelector(
-    'input[placeholder="Nome cliente"]'
-  ).value;
-  const numeroMesa = document.querySelector(
-    'input[placeholder="N° Mesa"]'
-  ).value;
+  const nomeCliente = document.querySelector('input[placeholder="Nome cliente"]').value;
+  const numeroMesa = document.querySelector('input[placeholder="N° Mesa"]').value;
 
   if (!nomeCliente) {
-    createModal(
-      "Campo Obrigatório",
-      "Por favor, preencha o nome do cliente.",
-      icons.error
-    );
+    createModal("Campo Obrigatório", "Por favor, preencha o nome do cliente.", icons.error);
     return;
   }
 
   if (!numeroMesa) {
-    createModal(
-      "Campo Obrigatório",
-      "Por favor, preencha o número da mesa.",
-      icons.error
-    );
+    createModal("Campo Obrigatório", "Por favor, preencha o número da mesa.", icons.error);
     return;
   }
 
-  const itensIDs = Object.keys(comanda);
+  // Verifica a situação da mesa antes de criar a comanda
+  const situacaoMesa = await verificarSituacaoMesa(numeroMesa);
 
-  try {
-    const response = await fetch("http://localhost:5164/api/Comandas", {
-      method: "POST",
-      headers: header,
-      body: JSON.stringify({
-        numeroMesa: numeroMesa,
-        nomeCliente: nomeCliente,
-        cardapioItems: itensIDs,
-      }),
-    });
+  if (situacaoMesa === 1) {
+    createModal("Mesa Ocupada", "A mesa já está ocupada. Por favor, escolha outra mesa.", icons.error);
+    return;
+  }
 
-    createModal("Sucesso", "Comanda finalizada com sucesso!", icons.success);
+  if (situacaoMesa === 0) {
+    const itensIDs = Object.keys(comanda);
 
-    document.querySelector("#ul-comanda").innerHTML = "";
-    comanda = {};
-  } catch (error) {
-    console.log(error);
-    createModal("Erro", "Erro ao finalizar comanda", icons.error);
+    try {
+      const response = await fetch("https://localhost:7168/api/Comandas", {
+        method: "POST",
+        headers: header,
+        body: JSON.stringify({
+          numeroMesa: numeroMesa,
+          nomeCliente: nomeCliente,
+          cardapioItems: itensIDs,
+        }),
+      });
+
+      createModal("Sucesso", "Comanda finalizada com sucesso!", icons.success);
+
+      document.querySelector("#ul-comanda").innerHTML = "";
+      comanda = {};
+    } catch (error) {
+      console.error("Erro ao finalizar comanda:", error);
+      createModal("Erro", "Erro ao finalizar comanda", icons.error);
+    }
   }
 }
 
