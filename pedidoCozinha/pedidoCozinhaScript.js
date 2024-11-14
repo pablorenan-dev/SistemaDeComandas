@@ -179,6 +179,7 @@ function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
 function procuraUpdates() {
   console.log("começa");
   // Obtém as listas de pedidos atual e anterior do localStorage
+  GETPedidoCozinha(1, "#ul-Pendente");
   const pedidosAtuais = JSON.parse(
     localStorage.getItem("pedidosPendentes") || "[]"
   );
@@ -205,35 +206,26 @@ function procuraUpdates() {
 }
 
 // Atualiza o setInterval para usar a nova lógica
-setInterval(() => {
-  const updates = procuraUpdates();
-
-  if (updates.teveMudancas) {
-    // Toca o som de notificação apenas quando houver novos pedidos
-    const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
-    sfx.play();
-    console.log("Novos pedidos detectados");
-    GETPedidoCozinha(1, "#ul-Pendente");
-  } else {
-    console.log("Nenhum novo pedido");
-  }
-}, 1000);
 iniciaTimeout();
 function iniciaTimeout() {
+  const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+  const div = document.querySelector(".p-div");
+  sfx.autoplay = true;
+  div.click();
+
   setInterval(() => {
     console.log("entrou interval");
     const updates = procuraUpdates();
     console.log(updates, "updates");
     if (updates.teveMudancas) {
       // Toca o som de notificação apenas quando houver novos pedidos
-      const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
       sfx.play();
       console.log("Novos pedidos detectados");
       GETPedidoCozinha(1, "#ul-Pendente");
     } else {
       console.log("Nenhum novo pedido");
     }
-  }, 5000);
+  }, 15000);
 }
 // Atualiza o setInterval para usar a nova lógica
 
