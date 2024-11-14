@@ -6,10 +6,13 @@ const header = {
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
   try {
-    const response = await fetch("http://localhost:5164/api/Comandas", {
-      method: "GET",
-      headers: header,
-    });
+    const response = await fetch(
+      "http://comandaapilobo.somee.com/api/Comandas",
+      {
+        method: "GET",
+        headers: header,
+      }
+    );
     const result = await response.json();
     return result;
   } catch (error) {
@@ -21,10 +24,13 @@ async function getAllOrders() {
 // Função para buscar todos os itens do cardápio da API
 async function getMenuItems() {
   try {
-    const response = await fetch("htts://localhost:5164/api/CardapioItems", {
-      method: "GET",
-      headers: header,
-    });
+    const response = await fetch(
+      "http://comandaapilobo.somee.com/api/CardapioItems",
+      {
+        method: "GET",
+        headers: header,
+      }
+    );
     const result = await response.json();
     return result;
   } catch (error) {
@@ -170,7 +176,7 @@ async function confirmClientName(orderId) {
 
   try {
     const response = await fetch(
-      `http://localhost:5164/api/Comandas/${orderId}`,
+      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -211,7 +217,7 @@ async function confirmTableNumber(orderId) {
 
   try {
     const response = await fetch(
-      `http://localhost:5164/api/Comandas/${orderId}`,
+      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -249,7 +255,7 @@ async function removeItem(orderId, itemId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `http://localhost:5164/api/Comandas/${orderId}`,
+      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -295,7 +301,7 @@ async function addItem(orderId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `http://localhost:5164/api/Comandas/${orderId}`,
+      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -320,7 +326,7 @@ async function addItem(orderId, tableNumber, clientName) {
 async function finalizeOrder(orderId) {
   try {
     const response = await fetch(
-      `http://localhost:5164/api/Comandas/${orderId}`, // Exemplo de endpoint
+      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`, // Exemplo de endpoint
       {
         method: "PATCH",
         headers: header,
@@ -369,5 +375,17 @@ function closeAlertModal() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const avatar = document.getElementById("user-avatar");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  avatar.addEventListener("click", () => {
+    logoutBtn.classList.toggle("show");
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+  });
+});
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);

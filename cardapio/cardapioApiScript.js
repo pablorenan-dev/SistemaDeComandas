@@ -5,10 +5,13 @@ const header = {
 
 async function GETItensCardapio() {
   try {
-    let response = await fetch("http://localhost:5164/api/CardapioItems", {
-      method: "GET",
-      headers: header,
-    });
+    let response = await fetch(
+      "http://comandaapilobo.somee.com/api/CardapioItems",
+      {
+        method: "GET",
+        headers: header,
+      }
+    );
     let result = await response.json();
     return result;
   } catch (error) {
@@ -22,7 +25,7 @@ async function PUTItemCardapio(valoresItem, idItem) {
 
   try {
     let response = await fetch(
-      `http://localhost:5164/api/CardapioItems/${idItem}`,
+      `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
       {
         method: "PUT",
         headers: header,
@@ -43,7 +46,7 @@ async function PUTItemCardapio(valoresItem, idItem) {
 async function DELETEItenCardapio(idItem) {
   try {
     let response = await fetch(
-      `http://localhost:5164/api/CardapioItems/${idItem}`,
+      `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
       {
         method: "DELETE",
         headers: header,
@@ -56,7 +59,7 @@ async function DELETEItenCardapio(idItem) {
 
 async function GETItemCardapio(idItem) {
   let response = await fetch(
-    `http://localhost:5164/api/CardapioItems/${idItem}`,
+    `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
     {
       method: "GET",
       headers: header,
@@ -71,16 +74,19 @@ async function POSTItemCardapio(valoresItem) {
   let valorCheckbox = valoresItem[1];
 
   try {
-    let response = await fetch("http://localhost:5164/api/CardapioItems", {
-      method: "POST",
-      headers: header,
-      body: JSON.stringify({
-        titulo: valoresInputs[0].value,
-        descricao: valoresInputs[1].value,
-        preco: parseFloat(valoresInputs[2].value),
-        possuiPreparo: valorCheckbox.checked,
-      }),
-    });
+    let response = await fetch(
+      "http://comandaapilobo.somee.com/api/CardapioItems",
+      {
+        method: "POST",
+        headers: header,
+        body: JSON.stringify({
+          titulo: valoresInputs[0].value,
+          descricao: valoresInputs[1].value,
+          preco: parseFloat(valoresInputs[2].value),
+          possuiPreparo: valorCheckbox.checked,
+        }),
+      }
+    );
   } catch (error) {
     console.log(error);
   }
