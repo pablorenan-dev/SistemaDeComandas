@@ -14,7 +14,7 @@ const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `https://localhost:7168/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `http://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -38,7 +38,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `http://localhost:5164/api/PedidoCozinhas/${id}`,
+      `http://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -125,11 +125,100 @@ function montarPedidoCozinha(pedidos, element, finish) {
 setInterval(() => {
   sfx.play(); // Toca o som quando a requisição é iniciada \\
 
-  GETPedidoCozinha(1, "#ul-Pendente");
-  console.log("interval");
-}, 30000);
+  if (updates.teveMudancas) {
+    // Toca o som de notificação apenas quando houver novos pedidos
+    const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+    sfx.play();
+    console.log("Novos pedidos detectados");
+    GETPedidoCozinha(1, "#ul-Pendente");
+  } else {
+    console.log("Nenhum novo pedido");
+  }
+}, 1000);
+iniciaTimeout();
+function iniciaTimeout() {
+  setInterval(() => {
+    console.log("entrou interval");
+    const updates = procuraUpdates();
+    console.log(updates, "updates");
+    if (updates.teveMudancas) {
+      // Toca o som de notificação apenas quando houver novos pedidos
+      const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+      sfx.play();
+      console.log("Novos pedidos detectados");
+      GETPedidoCozinha(1, "#ul-Pendente");
+    } else {
+      console.log("Nenhum novo pedido");
+    }
+  }, 5000);
+}
+// Atualiza o setInterval para usar a nova lógica
 
-// Carrega inicialmente todos os pedidos \\
-GETPedidoCozinha(1, "#ul-Pendente");
-GETPedidoCozinha(2, "#ul-Andamento");
-GETPedidoCozinha(3, "#ul-Finalizado");
+/////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+// Define o HTML do modal que será inserido no documento
+const modalHTML = `
+<div id="pedidoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalTitulo"></h2>
+        <h2 id="modalmesa"></h2>
+        <div id="modalDescricao"></div>
+        <div id="modalItens"></div>
+    </div>
+</div>
+`;
+
+// Adiciona o modal ao documento
+document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+// Elementos do modal
+const modal = document.getElementById("pedidoModal");
+const closeBtn = document.querySelector(".close-modal");
+
+// Fecha modal ao clicar no X
+closeBtn.onclick = function () {
+  modal.style.display = "none";
+};
+
+// Fecha modal ao clicar fora
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
+
+// Função para mostrar o modal
+function exibirDetalhesModal(pedido) {
+  // Preenche os elementos
+  document.getElementById("modalTitulo").textContent = pedido.item;
+  document.getElementById("modalmesa").textContent =
+    "mesa: " + pedido.numeroMesa;
+  // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
+  document.getElementById("modalDescricao").innerHTML = pedido.descricao
+    ? `<p><strong>Descrição:</strong> ${pedido.descricao}</p>`
+    : "";
+
+  // Preenche os itens se existirem
+  const modalItens = document.getElementById("modalItens");
+  if (pedido.itens && pedido.itens.length > 0) {
+    modalItens.innerHTML = `
+            <p><strong>Itens:</strong></p>
+            <ul>
+                ${pedido.itens
+                  .map(
+                    (item) => `
+                    <li>${item.quantidade}x ${item.nome}
+                        ${item.observacao ? ` - Obs: ${item.observacao}` : ""}
+                    </li>
+                `
+                  )
+                  .join("")}
+            </ul>
+        `;
+  }
+
+  // Mostra o modal
+  modal.style.display = "block";
+}
+ 

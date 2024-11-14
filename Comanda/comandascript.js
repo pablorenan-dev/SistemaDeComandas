@@ -6,12 +6,37 @@ const header = {
 let comanda = {};
 
 async function GETItensCardapio() {
-  let response = await fetch("https://localhost:7168/api/CardapioItems", {
-    method: "GET",
-    headers: header,
-  });
+  let response = await fetch(
+    "http://comandaapilobo.somee.com/api/CardapioItems",
+    {
+      method: "GET",
+      headers: header,
+    }
+  );
   let result = await response.json();
   return result;
+}
+
+async function verificarSituacaoMesa(numeroMesa) {
+  try {
+    const response = await fetch(
+      `http://comandaapilobo.somee.com/api/Mesas/${numeroMesa}`,
+      {
+        method: "GET",
+        headers: header,
+      }
+    );
+    const result = await response.json();
+    return result.situacaoMesa; // Deve retornar 0 (disponível) ou 1 (ocupada)
+  } catch (error) {
+    console.error("Erro ao verificar situação da mesa:", error);
+    createModal(
+      "Erro",
+      "Não foi possível verificar a situação da mesa.",
+      icons.error
+    );
+    return null;
+  }
 }
 
 async function montarItensCardapio() {
@@ -177,29 +202,51 @@ async function finalizarComanda() {
   ).value;
 
   if (!nomeCliente) {
-    alert("Por favor, preencha o nome do cliente.");
+    createModal(
+      "Campo Obrigatório",
+      "Por favor, preencha o nome do cliente.",
+      icons.error
+    );
     return;
   }
 
   if (!numeroMesa) {
-    alert("Por favor, preencha o número da mesa.");
+    createModal(
+      "Campo Obrigatório",
+      "Por favor, preencha o número da mesa.",
+      icons.error
+    );
     return;
   }
 
-  // Pegar os IDs dos itens da comanda
-  const itensIDs = Object.keys(comanda);
+  // Verifica a situação da mesa antes de criar a comanda
+  const situacaoMesa = await verificarSituacaoMesa(numeroMesa);
 
-  try {
-    // Faz o POST com o nome do cliente, número da mesa e os IDs dos itens
-    const response = await fetch("https://localhost:7168/api/Comandas", {
-      method: "POST",
-      headers: header,
-      body: JSON.stringify({
-        numeroMesa: numeroMesa,
-        nomeCliente: nomeCliente,
-        cardapioItems: itensIDs, // Enviando o array de IDs dos itens
-      }),
-    });
+  if (situacaoMesa === 1) {
+    createModal(
+      "Mesa Ocupada",
+      "A mesa já está ocupada. Por favor, escolha outra mesa.",
+      icons.error
+    );
+    return;
+  }
+
+  if (situacaoMesa === 0) {
+    const itensIDs = Object.keys(comanda);
+
+    try {
+      const response = await fetch(
+        "http://comandaapilobo.somee.com/api/Comandas",
+        {
+          method: "POST",
+          headers: header,
+          body: JSON.stringify({
+            numeroMesa: numeroMesa,
+            nomeCliente: nomeCliente,
+            cardapioItems: itensIDs,
+          }),
+        }
+      );
 
     alert("Comanda finalizada com sucesso!");
     // Limpa a comanda após finalizar
@@ -246,4 +293,61 @@ function adicionarBotaoFinalizarComanda() {
 document.querySelector("#ver-comandas").addEventListener("click", () => {
   // Redireciona o usuário para a página de visualização de comandas
   window.location.href = "./verComandas/index.html";
+});
+
+function createModal(title, message, icon) {
+  const modalHTML = `
+    <div class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-header" style="background-color: var(--color-light-blue);">
+          ${icon}
+          <h2>${title}</h2>
+          <button class="modal-button">X</button>
+        </div>
+        <div class="modal-body">
+          <p>${message}</p>
+          <div>
+            <button class="button-confirm-modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const modalContainer = document.createElement("div");
+  modalContainer.innerHTML = modalHTML;
+  document.body.appendChild(modalContainer);
+
+  // Add event listeners for closing the modal
+  const closeButton = modalContainer.querySelector(".modal-button");
+  const confirmButton = modalContainer.querySelector(".button-confirm-modal");
+  const closeModal = () => {
+    modalContainer.remove();
+  };
+
+  closeButton.addEventListener("click", closeModal);
+  confirmButton.addEventListener("click", closeModal);
+}
+
+// Define icons for different types of messages
+const icons = {
+  error: `<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </svg>`,
+  success: `<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+  </svg>`,
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+  const avatar = document.getElementById("user-avatar");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  avatar.addEventListener("click", () => {
+    logoutBtn.classList.toggle("show");
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+  });
 });
