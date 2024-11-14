@@ -2,9 +2,6 @@ const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
-  Accept: "application/json",
-  "Content-Type": "application/json",
-};
 
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
@@ -44,21 +41,22 @@ async function getMenuItems() {
 
 // Função para renderizar a lista de comandas
 async function renderOrders() {
-  const orders = await getAllOrders();
-  const ordersList = document.querySelector("#lista-comandas");
-  ordersList.innerHTML = "";
+  try {
+    const orders = await getAllOrders();
+    const ordersList = document.querySelector("#lista-comandas");
+    ordersList.innerHTML = "";
 
-  orders.forEach((order) => {
-    const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
+    orders.forEach((order) => {
+      const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
 
-    ordersList.insertAdjacentHTML(
-      "beforeend",
-      `
-    <li id="order-${order.id}" class="order-item">
+      ordersList.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li id="order-${order.id}" class="order-item">
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
-            <p id="p-descricao">Itens: ${items
+            <p id="p-descricao">Itens: • ${items
               .map((item) => item.titulo)
               .join("<br>• ")}</p>
           </div>
@@ -72,9 +70,11 @@ async function renderOrders() {
               ✅ Finalizar Comanda
             </button>
           </div>
+        </li>`
+      );
+    });
   } catch (error) {
     console.error("Error fetching menu items:", error);
-    return [];
   }
 }
 
@@ -198,9 +198,9 @@ function closeEditModal() {
   if (modal) {
     modal.remove();
 
-  document.body.insertAdjacentHTML("beforeend", modalHTML);
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+  }
 }
-
 // Função para fechar o modal de edição
 function closeEditModal() {
   const modal = document.getElementById("edit-modal");
