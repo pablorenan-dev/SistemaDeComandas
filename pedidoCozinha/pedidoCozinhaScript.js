@@ -75,7 +75,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.item}</p>
+        <p>${pedido.titulo}</p>
       </li>
     `;
 
@@ -291,7 +291,7 @@ function exibirDetalhesModal(pedido) {
                 ${pedido.itens
                   .map(
                     (item) => `
-                    <li>${item.quantidade}x ${item.nome}
+                    <li>${item.quantidade}x ${item.titulo}
                         ${item.observacao ? ` - Obs: ${item.observacao}` : ""}
                     </li>
                 `
@@ -304,4 +304,3 @@ function exibirDetalhesModal(pedido) {
   // Mostra o modal
   modal.style.display = "block";
 }
- 
