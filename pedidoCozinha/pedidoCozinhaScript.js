@@ -1,11 +1,8 @@
-// Define os cabeçalhos padrão para as requisições HTTP \\
+/////////////////////////////////////// Define os cabeçalhos padrão para as requisições HTTP \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
-
-// Inicializa o objeto de áudio para notificação sonora \\
-const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
 
 /**
  * Busca os pedidos da cozinha baseado no status (situação) e atualiza a interface
@@ -23,7 +20,13 @@ async function GETPedidoCozinha(situacaoId, element) {
   let result = await response.json();
   console.log(result);
   montarPedidoCozinha(result, element, situacaoId);
+  return;
 }
+
+// Carrega todos os pedidos quando a tela é aberta \\
+GETPedidoCozinha(1, "#ul-Pendente");
+GETPedidoCozinha(2, "#ul-Andamento");
+GETPedidoCozinha(3, "#ul-Finalizado");
 
 /**
  * Atualiza o status de um pedido específico na cozinha
@@ -48,37 +51,44 @@ async function PUTPedidoCozinha(id, situacaoId) {
 
     // Se a atualização for bem-sucedida, atualiza todas as listas de pedidos \\
     if (response.ok) {
-      GETPedidoCozinha(1, "#ul-Pendente");
-      GETPedidoCozinha(2, "#ul-Andamento");
-      GETPedidoCozinha(3, "#ul-Finalizado");
+      await GETPedidoCozinha(1, "#ul-Pendente");
+      await GETPedidoCozinha(2, "#ul-Andamento");
+      await GETPedidoCozinha(3, "#ul-Finalizado");
     }
   }
 }
 
+////////////////////////////////////////////////// aqui começa a montagem da tela \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 /**
- * Monta a interface dos pedidos na cozinha e configura o sistema de drag and drop
+ * Função que modifica o montarPedidoCozinha para adicionar eventos de clique
+ * e exibir o modal com os detalhes do pedido
  * @param {Array} pedidos - Array de pedidos a serem exibidos
  * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
- * @param {number} finish - Status atual dos pedidos sendo montados
+ * @param {number} situacaoId - Status atual dos pedidos sendo montados
  */
-function montarPedidoCozinha(pedidos, element, finish) {
-  console.log(finish, "finish");
+function montarPedidoCozinha(pedidos, element, situacaoId) {
   let ulPedidoCozinhaItens = document.querySelector(element);
   ulPedidoCozinhaItens.innerHTML = "";
 
-  // Itera sobre cada pedido e cria os elementos na interface \\
+  // Itera sobre cada pedido e cria os elementos na interface
   pedidos.forEach((pedido) => {
-    ulPedidoCozinhaItens.insertAdjacentHTML(
-      "beforeend",
-      `
-      <li draggable="true" id="mover${pedido.id}">
-      <p>${pedido.titulo}</p>
+    const pedidoHTML = `
+      <li draggable="true" id="mover${pedido.id}" class="pedido-item">
+        <p>${pedido.item}</p>
       </li>
-      `
-    );
+    `;
+
+    ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
+
+    // Configura o evento de clique para abrir o modal
+    const pedidoElement = document.getElementById(`mover${pedido.id}`);
+    pedidoElement.addEventListener("click", () => {
+      exibirDetalhesModal(pedido);
+    });
 
     // Configura o sistema de drag and drop \\
-    const columns = document.querySelectorAll(".coluna");
+    const colunas = document.querySelectorAll(".coluna");
     const mover = document.getElementById(`mover${pedido.id}`);
 
     // Adiciona classe visual durante o arrasto \\
@@ -87,7 +97,7 @@ function montarPedidoCozinha(pedidos, element, finish) {
     });
 
     // Configura o evento de soltar o item para cada coluna
-    columns.forEach((item) => {
+    colunas.forEach((item) => {
       mover.addEventListener("dragend", (e) => {
         e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto \\
 
@@ -119,11 +129,84 @@ function montarPedidoCozinha(pedidos, element, finish) {
       });
     });
   });
+
+  ///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
+  if (situacaoId === 1) {
+    const pedidosPassados = JSON.parse(
+      localStorage.getItem("pedidosPendentes") || "[]"
+    );
+
+    // Atualiza o localStorage com os novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+  }
 }
 
-// Configura atualização automática dos pedidos pendentes a cada 30 segundos \\
+/**
+ * Função simplificada para verificar novos pedidos pendentes
+ * @param {Array} pedidosAntigos - Lista antiga de pedidos
+ * @param {Array} pedidosNovos - Lista nova de pedidos
+ * @returns {boolean} - Retorna true se houver novos pedidos
+ */
+function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
+  // Se não houver pedidos anteriores, mas existem novos pedidos
+  if (!pedidosAntigos.length && pedidosNovos.length > 0) {
+    return true;
+  }
+
+  // Se a nova lista é maior que a antiga, significa que há novos pedidos
+  if (pedidosNovos.length > pedidosAntigos.length) {
+    return true;
+  }
+
+  // Verifica se há algum pedido novo que não estava na lista antiga
+  const novoPedidoEncontrado = pedidosNovos.some((pedidoNovo) => {
+    return !pedidosAntigos.some(
+      (pedidoAntigo) => pedidoAntigo.id === pedidoNovo.id
+    );
+  });
+
+  return novoPedidoEncontrado;
+}
+
+// Função que procura atualizações
+function procuraUpdates() {
+  console.log("começa");
+  // Obtém as listas de pedidos atual e anterior do localStorage
+  const pedidosAtuais = JSON.parse(
+    localStorage.getItem("pedidosPendentes") || "[]"
+  );
+  const pedidosPassados = JSON.parse(
+    localStorage.getItem("pedidosPendentesAnteriores") || "[]"
+  );
+
+  // Verifica se há novos pedidos
+  const temNovosPedidos = verificarNovosPedidos(pedidosPassados, pedidosAtuais);
+
+  if (temNovosPedidos) {
+    // Atualiza o localStorage apenas se houver novos pedidos
+    localStorage.setItem(
+      "pedidosPendentesAnteriores",
+      JSON.stringify(pedidosPassados)
+    );
+    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
+    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+  }
+  console.log(temNovosPedidos);
+  return {
+    teveMudancas: temNovosPedidos,
+  };
+}
+
+// Atualiza o setInterval para usar a nova lógica
 setInterval(() => {
-  sfx.play(); // Toca o som quando a requisição é iniciada \\
+  const updates = procuraUpdates();
 
   if (updates.teveMudancas) {
     // Toca o som de notificação apenas quando houver novos pedidos

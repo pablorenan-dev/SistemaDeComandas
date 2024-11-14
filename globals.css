@@ -22,6 +22,9 @@
   --color-green: #009900;
   --color-red: #ff4d4d;
   --color-light-blue: #89c0ff;
+  --color-light-grey: #c4c4c4;
+  --color-dark-blue-grey: #1f2530;
+  --color-slight-grey: #a5a5a5;
 }
 
 header {
@@ -83,4 +86,7 @@ button:hover {
 
 .h1-chiquinho {
   cursor: pointer;
+}
+a {
+  text-decoration: none;
 }

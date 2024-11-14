@@ -98,7 +98,7 @@ function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
       adicionarEventoCliqueRemoverTodosBotaoItemComanda(idItem);
     }
     atualizarQuantidadeEValorTotal(idItem);
-    atualizarValorTotalComanda(); // Atualiza o valor total da comanda
+    atualizarValorTotalComanda();
   });
 }
 document
@@ -194,12 +194,8 @@ function adicionarBotaoFinalizarComanda() {
 }
 
 async function finalizarComanda() {
-  const nomeCliente = document.querySelector(
-    'input[placeholder="Nome cliente"]'
-  ).value;
-  const numeroMesa = document.querySelector(
-    'input[placeholder="N° Mesa"]'
-  ).value;
+  const nomeCliente = document.querySelector('input[placeholder="Nome cliente"]').value;
+  const numeroMesa = document.querySelector('input[placeholder="N° Mesa"]').value;
 
   if (!nomeCliente) {
     createModal(
@@ -233,6 +229,8 @@ async function finalizarComanda() {
 
   if (situacaoMesa === 0) {
     const itensIDs = Object.keys(comanda);
+  if (situacaoMesa === 0) {
+    const itensIDs = Object.keys(comanda);
 
     try {
       const response = await fetch(
@@ -248,13 +246,14 @@ async function finalizarComanda() {
         }
       );
 
-    alert("Comanda finalizada com sucesso!");
-    // Limpa a comanda após finalizar
-    document.querySelector("#ul-comanda").innerHTML = "";
-    comanda = {};
-  } catch (error) {
-    console.log(error);
-    alert("Erro ao finalizar comanda");
+      createModal("Sucesso", "Comanda finalizada com sucesso!", icons.success);
+
+      document.querySelector("#ul-comanda").innerHTML = "";
+      comanda = {};
+    } catch (error) {
+      console.error("Erro ao finalizar comanda:", error);
+      createModal("Erro", "Erro ao finalizar comanda", icons.error);
+    }
   }
 }
 

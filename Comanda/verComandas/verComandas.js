@@ -2,6 +2,9 @@ const header = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
+  Accept: "application/json",
+  "Content-Type": "application/json",
+};
 
 // Função para buscar todas as comandas da API
 async function getAllOrders() {
@@ -69,6 +72,42 @@ async function renderOrders() {
               ✅ Finalizar Comanda
             </button>
           </div>
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
+    return [];
+  }
+}
+
+// Função para renderizar a lista de comandas
+async function renderOrders() {
+  const orders = await getAllOrders();
+  const ordersList = document.querySelector("#lista-comandas");
+  ordersList.innerHTML = "";
+
+  orders.forEach((order) => {
+    const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
+
+    ordersList.insertAdjacentHTML(
+      "beforeend",
+      `
+    <li id="order-${order.id}" class="order-item">
+          <div class="order-info">
+            <h3>Cliente: ${order.nomeCliente}</h3>
+            <p>Mesa: ${order.numeroMesa}</p>
+            <p id="p-descricao">Itens: ${items
+              .map((item) => item.titulo)
+              .join("<br>• ")}</p>
+          </div>
+          <div class="order-actions">
+            <button class="edit-button" onclick="openEditModal(${JSON.stringify(
+              order
+            ).replace(/"/g, "&quot;")})">
+              ✏️ Editar
+            </button>
+            <button class="edit-button" onclick="finalizeOrder(${order.id})">
+              ✅ Finalizar Comanda
+            </button>
+          </div>
         </li>
         `
     );
@@ -89,23 +128,75 @@ function criarModalEdicao(comanda) {
         <div class="modal">
           <div class="modal-header">
             <h2>Editar Comanda</h2>
-            <button onclick="fecharModal()">X</button>
+            <button onclick="closeEditModal()" class="close-button">✕</button>
           </div>
           <div class="modal-body">
-            <label for="nome-cliente-editar">Nome do Cliente:</label>
-            <input type="text" id="nome-cliente-editar" placeholder="Nome do Cliente">
-            
-            <label for="mesa-editar">Número da Mesa:</label>
-            <input type="text" id="mesa-editar" placeholder="Número da Mesa">
-            
-            <label for="itens-editar">Itens:</label>
-            <textarea  rows="4" placeholder="Exemplo: Café, Bolo"></textarea>
-              <select id="itens-editar"></select>
-            <button class="button-geral" onclick="salvarEdicaoComanda()">Salvar</button>
+            <div class="form-group">
+              <label for="client-name">Nome do Cliente:</label>
+              <input type="text" id="client-name" value="${
+                order.nomeCliente
+              }" />
+              <button onclick="confirmClientName(${
+                order.id
+              })" class="confirm-button">✔️</button>
+            </div>
+            <div class="form-group">
+              <label for="table-number">Número da Mesa:</label>
+              <input type="text" id="table-number" value="${
+                order.numeroMesa
+              }" />
+              <button onclick="confirmTableNumber(${
+                order.id
+              })" class="confirm-button">✔️</button>
+            </div>
+            <div class="form-group">
+              <label>Itens da Comanda:</label>
+              <div id="order-items" class="order-items-list">
+              ${
+                Array.isArray(order.comandaItens)
+                  ? order.comandaItens
+                      .map(
+                        (item) => `
+                <div class="order-item" id="item-${item.id}">
+                  <span>${item.titulo}</span>
+                  <button onclick="removeItem(${order.id}, ${item.id}, ${order.numeroMesa}, '${order.nomeCliente}')" class="remove-item">✕</button>
+                </div>
+              `
+                      )
+                      .join("")
+                  : ""
+              }
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="add-item">Adicionar Item:</label>
+              <select id="add-item">
+                <option value="">Selecione um item...</option>
+                ${menuItems
+                  .map(
+                    (item) => `
+                  <option value="${item.id}">${item.titulo}</option>
+                `
+                  )
+                  .join("")}
+              </select>
+              <button onclick="addItem(${order.id}, ${order.numeroMesa}, '${
+    order.nomeCliente
+  }')" class="add-button">Adicionar</button>
+            </div>
           </div>
         </div>
       </div>
     `;
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+}
+
+// Função para fechar o modal de edição
+function closeEditModal() {
+  const modal = document.getElementById("edit-modal");
+  if (modal) {
+    modal.remove();
 
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }

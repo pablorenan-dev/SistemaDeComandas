@@ -17,7 +17,9 @@ async function montarMesas(mesas = []) {
        <li>
             <img src="../imgs/mesa-redonda.png" />
             <p>Mesa ${item.numeroMesa}</p>
-            <p>Situacao Mesa: ${item.situacaoMesa}</p>
+            <p>Situacao: <span>${
+              item.situacaoMesa === 0 ? "Livre" : "Ocupada"
+            }</span></p>
             <div class="div-li-buttons">
               <button id="button-li-delete-${item.idMesa}">
                 ❌
@@ -89,7 +91,10 @@ async function montarModalEditarItem(idItem, tituloItem) {
           <p>Numero Mesa:</p>
           <input type="text" class="input-item-modal" value="${itemDetalhes.numeroMesa}"/>
           <p>Situacao Mesa:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.situacaoMesa}"/>
+          <select id="select-adicionar-mesa">
+            <option value="livre">Livre</option>
+            <option value="ocupada">Ocupada</option>
+          </select>
           <div>
             <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
           </div>
@@ -108,14 +113,12 @@ async function montarModalEditarItem(idItem, tituloItem) {
 function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    const valoresItens = pegarValoresDosItens(idItem);
+    const valoresItem = pegarValoresDosItens(idItem);
 
-    if (valoresItens[0].value == "") {
+    if (isNaN(valoresItem[0])) {
       carregarModalErro("Escreva um Numero Mesa");
-    } else if (valoresItens[1].value == "") {
-      carregarModalErro("Escreva uma Situacao Mesa");
     } else {
-      PUTMesa(valoresItens, idItem);
+      PUTMesa(valoresItem, idItem);
       deletarItensUl();
       removerModal();
       montarLiCarregandoUl();
@@ -249,14 +252,6 @@ function adicionarItensLocalStorage(mesas) {
   localStorage.setItem("mesas", JSON.stringify(mesas));
 }
 
-// Adiciona um evento de clique no h1 para retornar para o menu
-function adicionarEventoCliqueH1Chiquinho() {
-  const h1Chiquinho = document.querySelector(".h1-chiquinho");
-  h1Chiquinho.addEventListener("click", () => {
-    document.location.href = "http://127.0.0.1:5500/index.html";
-  });
-}
-
 // Adicionar um Evento de clique que monta uma tela de modal para adicionar os parametros para adicionar um novo item e confirmar a adicao
 function adicionarEventoCliqueBotaoAdicionarItem() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
@@ -300,7 +295,10 @@ function montarModalAdicionarItem() {
           <p>Numero Mesa:</p>
           <input type="number" class="input-item-modal" />
           <p>Situacao Mesa:</p>
-          <input type="number" class="input-item-modal" />
+          <select id="select-adicionar-mesa">
+            <option value="livre">Livre</option>
+            <option value="ocupada">Ocupada</option>
+          </select>
           <div>
             <button class="button-adicionar-item-modal">+ Adicionar</button>
           </div>
@@ -347,10 +345,8 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
 
-  if (valoresItem[0].value == "") {
+  if (isNaN(valoresItem[0])) {
     carregarModalErro("Escreva um numero mesa");
-  } else if (valoresItem[1].value == "") {
-    carregarModalErro("Escreva uma situacao mesa");
   } else {
     try {
       POSTMesa(valoresItem);
@@ -368,10 +364,17 @@ function adicionarItem() {
 
 // Pegar os valores do modal de adicionar itens e retorna eles em um array
 function pegarValoresDosItens() {
-  let valoresItens = document.querySelectorAll(".input-item-modal");
+  let valoresArray = [];
+  let valoresItens = document.querySelector(".input-item-modal").value;
+  let selectValor = document.querySelector("#select-adicionar-mesa").value;
+  if (selectValor === "livre") {
+    valoresArray.push(parseInt(valoresItens), 0);
+  } else {
+    valoresArray.push(parseInt(valoresItens), 1);
+  }
 
-  console.log(valoresItens);
-  return valoresItens;
+  console.log(valoresArray);
+  return valoresArray;
 }
 
 // Remove o modal por completo da tela
@@ -381,6 +384,5 @@ function removerModal() {
 }
 
 montarItensLocalStorage();
-adicionarEventoCliqueH1Chiquinho();
 adicionarEventoCliqueBotaoAdicionarItem();
 filtrarItem();
