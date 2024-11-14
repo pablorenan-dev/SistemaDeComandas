@@ -41,45 +41,6 @@ async function getMenuItems() {
 
 // Função para renderizar a lista de comandas
 async function renderOrders() {
-  try {
-    const orders = await getAllOrders();
-    const ordersList = document.querySelector("#lista-comandas");
-    ordersList.innerHTML = "";
-
-    orders.forEach((order) => {
-      const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
-
-      ordersList.insertAdjacentHTML(
-        "beforeend",
-        `
-        <li id="order-${order.id}" class="order-item">
-          <div class="order-info">
-            <h3>Cliente: ${order.nomeCliente}</h3>
-            <p>Mesa: ${order.numeroMesa}</p>
-            <p id="p-descricao">Itens: • ${items
-              .map((item) => item.titulo)
-              .join("<br>• ")}</p>
-          </div>
-          <div class="order-actions">
-            <button class="edit-button" onclick="openEditModal(${JSON.stringify(
-              order
-            ).replace(/"/g, "&quot;")})">
-              ✏️ Editar
-            </button>
-            <button class="edit-button" onclick="finalizeOrder(${order.id})">
-              ✅ Finalizar Comanda
-            </button>
-          </div>
-        </li>`
-      );
-    });
-  } catch (error) {
-    console.error("Error fetching menu items:", error);
-  }
-}
-
-// Função para renderizar a lista de comandas
-async function renderOrders() {
   const orders = await getAllOrders();
   const ordersList = document.querySelector("#lista-comandas");
   ordersList.innerHTML = "";
@@ -109,22 +70,17 @@ async function renderOrders() {
             </button>
           </div>
         </li>
-        `
+      `
     );
-    let btnEditar = document.getElementById(`${comanda.id}edit`);
-    btnEditar.addEventListener("click", () => {
-      abrirModalEdicao(comanda);
-    });
   });
 }
-montarComandas();
-function criarModalEdicao(comanda) {
-  // Verifica se o modal já existe, se não, cria-o
-  console.log("começou");
-  if (document.querySelector("#modal-editar-comanda")) return;
-  console.log("passour");
-  const modalHtml = `
-      <div id="modal-editar-comanda" class="modal-wrapper" style="display: none;">
+
+// Função para abrir o modal de edição
+async function openEditModal(order) {
+  const menuItems = await getMenuItems();
+
+  const modalHTML = `
+      <div id="edit-modal" class="modal-wrapper">
         <div class="modal">
           <div class="modal-header">
             <h2>Editar Comanda</h2>
@@ -192,15 +148,6 @@ function criarModalEdicao(comanda) {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
-// Função para fechar o modal de edição
-function closeEditModal() {
-  const modal = document.getElementById("edit-modal");
-  if (modal) {
-    modal.remove();
-
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
-  }
-}
 // Função para fechar o modal de edição
 function closeEditModal() {
   const modal = document.getElementById("edit-modal");
