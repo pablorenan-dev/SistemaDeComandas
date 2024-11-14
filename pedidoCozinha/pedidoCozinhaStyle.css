@@ -100,6 +100,11 @@ button:hover {
   align-items: center;
   justify-content: space-evenly;
 }
+
+.p-div p {
+  font-size: 100%;
+}
+
 /* Estilo mínimo necessário para o modal */
 .modal {
   display: none; /* Modal começa escondido */
@@ -137,4 +142,16 @@ button:hover {
 #modalDescricao,
 #modalItens {
   margin-top: 10px;
+}
+
+@media (max-width: 618px) {
+  .p-div p {
+    font-size: 70%;
+  }
+}
+
+@media (max-width: 442px) {
+  .p-div p {
+    font-size: 50%;
+  }
 }
