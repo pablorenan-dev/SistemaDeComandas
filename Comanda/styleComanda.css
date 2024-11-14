@@ -356,6 +356,14 @@ header div:hover .logout-btn {
   gap: 4px;
 }
 
+section ul li {
+  transition: transform 0.2s; /* Aplica a transição tanto no hover quanto na saída */
+}
+
+section ul li:hover {
+  transform: scale(1.02);
+}
+
 @media (max-width: 600px) {
   section {
     width: 100%;

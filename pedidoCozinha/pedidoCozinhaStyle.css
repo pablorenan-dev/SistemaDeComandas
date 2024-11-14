@@ -144,6 +144,14 @@ button:hover {
   margin-top: 10px;
 }
 
+section ul li {
+  transition: transform 0.2s; /* Aplica a transição tanto no hover quanto na saída */
+}
+
+section ul li:hover {
+  transform: scale(1.02);
+}
+
 @media (max-width: 618px) {
   .p-div p {
     font-size: 70%;

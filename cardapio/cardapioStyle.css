@@ -39,6 +39,14 @@ section ul li {
   align-items: center;
 }
 
+section ul li {
+  transition: transform 0.2s; /* Aplica a transição tanto no hover quanto na saída */
+}
+
+section ul li:hover {
+  transform: scale(1.02);
+}
+
 .div-li-info {
   width: 90%;
   display: flex;
@@ -221,7 +229,6 @@ section div input::placeholder {
   margin: 8px 0 8px 0;
   font-size: 16px;
 }
-
 
 header div {
   display: flex;
