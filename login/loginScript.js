@@ -33,7 +33,6 @@ async function adicionarEventoForm() {
     );
 
     if (usuario) {
-      alert(`Login bem-sucedido! Bem-vindo, ${usuario.nomeUsuario}`);
       window.location.href = "../index.html";
     } else {
       montarModalErro();
