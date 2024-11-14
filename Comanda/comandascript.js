@@ -6,35 +6,25 @@ const header = {
 let comanda = {};
 
 async function GETItensCardapio() {
-  let response = await fetch(
-    "http://comandaapilobo.somee.com/api/CardapioItems",
-    {
-      method: "GET",
-      headers: header,
-    }
-  );
+  let response = await fetch("http://localhost:5164/api/CardapioItems", {
+    method: "GET",
+    headers: header,
+  });
   let result = await response.json();
   return result;
 }
 
 async function verificarSituacaoMesa(numeroMesa) {
   try {
-    const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Mesas/${numeroMesa}`,
-      {
-        method: "GET",
-        headers: header,
-      }
-    );
+    const response = await fetch(`https://localhost:7168/api/Mesas/${numeroMesa}`, {
+      method: "GET",
+      headers: header,
+    });
     const result = await response.json();
     return result.situacaoMesa; // Deve retornar 0 (disponível) ou 1 (ocupada)
   } catch (error) {
     console.error("Erro ao verificar situação da mesa:", error);
-    createModal(
-      "Erro",
-      "Não foi possível verificar a situação da mesa.",
-      icons.error
-    );
+    createModal("Erro", "Não foi possível verificar a situação da mesa.", icons.error);
     return null;
   }
 }
@@ -198,20 +188,12 @@ async function finalizarComanda() {
   const numeroMesa = document.querySelector('input[placeholder="N° Mesa"]').value;
 
   if (!nomeCliente) {
-    createModal(
-      "Campo Obrigatório",
-      "Por favor, preencha o nome do cliente.",
-      icons.error
-    );
+    createModal("Campo Obrigatório", "Por favor, preencha o nome do cliente.", icons.error);
     return;
   }
 
   if (!numeroMesa) {
-    createModal(
-      "Campo Obrigatório",
-      "Por favor, preencha o número da mesa.",
-      icons.error
-    );
+    createModal("Campo Obrigatório", "Por favor, preencha o número da mesa.", icons.error);
     return;
   }
 
@@ -219,32 +201,23 @@ async function finalizarComanda() {
   const situacaoMesa = await verificarSituacaoMesa(numeroMesa);
 
   if (situacaoMesa === 1) {
-    createModal(
-      "Mesa Ocupada",
-      "A mesa já está ocupada. Por favor, escolha outra mesa.",
-      icons.error
-    );
+    createModal("Mesa Ocupada", "A mesa já está ocupada. Por favor, escolha outra mesa.", icons.error);
     return;
   }
 
   if (situacaoMesa === 0) {
     const itensIDs = Object.keys(comanda);
-  if (situacaoMesa === 0) {
-    const itensIDs = Object.keys(comanda);
 
     try {
-      const response = await fetch(
-        "http://comandaapilobo.somee.com/api/Comandas",
-        {
-          method: "POST",
-          headers: header,
-          body: JSON.stringify({
-            numeroMesa: numeroMesa,
-            nomeCliente: nomeCliente,
-            cardapioItems: itensIDs,
-          }),
-        }
-      );
+      const response = await fetch("https://localhost:7168/api/Comandas", {
+        method: "POST",
+        headers: header,
+        body: JSON.stringify({
+          numeroMesa: numeroMesa,
+          nomeCliente: nomeCliente,
+          cardapioItems: itensIDs,
+        }),
+      });
 
       createModal("Sucesso", "Comanda finalizada com sucesso!", icons.success);
 
