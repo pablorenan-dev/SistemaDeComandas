@@ -11,7 +11,7 @@ const header = {
  */
 async function GETPedidoCozinha(situacaoId, element) {
   let response = await fetch(
-    `http://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -41,7 +41,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `http://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
+      `https://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,

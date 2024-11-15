@@ -6,7 +6,7 @@ const header = {
 async function GETItensCardapio() {
   try {
     let response = await fetch(
-      "http://comandaapilobo.somee.com/api/CardapioItems",
+      "https://comandaapilobo.somee.com/api/CardapioItems",
       {
         method: "GET",
         headers: header,
@@ -25,7 +25,7 @@ async function PUTItemCardapio(valoresItem, idItem) {
 
   try {
     let response = await fetch(
-      `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
+      `https://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
       {
         method: "PUT",
         headers: header,
@@ -46,7 +46,7 @@ async function PUTItemCardapio(valoresItem, idItem) {
 async function DELETEItenCardapio(idItem) {
   try {
     let response = await fetch(
-      `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
+      `https://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
       {
         method: "DELETE",
         headers: header,
@@ -59,7 +59,7 @@ async function DELETEItenCardapio(idItem) {
 
 async function GETItemCardapio(idItem) {
   let response = await fetch(
-    `http://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
+    `https://comandaapilobo.somee.com/api/CardapioItems/${idItem}`,
     {
       method: "GET",
       headers: header,
@@ -75,7 +75,7 @@ async function POSTItemCardapio(valoresItem) {
 
   try {
     let response = await fetch(
-      "http://comandaapilobo.somee.com/api/CardapioItems",
+      "https://comandaapilobo.somee.com/api/CardapioItems",
       {
         method: "POST",
         headers: header,

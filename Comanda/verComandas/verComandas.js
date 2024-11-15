@@ -7,7 +7,7 @@ const header = {
 async function getAllOrders() {
   try {
     const response = await fetch(
-      "http://comandaapilobo.somee.com/api/Comandas",
+      "https://comandaapilobo.somee.com/api/Comandas",
       {
         method: "GET",
         headers: header,
@@ -25,7 +25,7 @@ async function getAllOrders() {
 async function getMenuItems() {
   try {
     const response = await fetch(
-      "http://comandaapilobo.somee.com/api/CardapioItems",
+      "https://comandaapilobo.somee.com/api/CardapioItems",
       {
         method: "GET",
         headers: header,
@@ -176,7 +176,7 @@ async function confirmClientName(orderId) {
 
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
+      `https://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -217,7 +217,7 @@ async function confirmTableNumber(orderId) {
 
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
+      `https://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -255,7 +255,7 @@ async function removeItem(orderId, itemId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
+      `https://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -301,7 +301,7 @@ async function addItem(orderId, tableNumber, clientName) {
 
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`,
+      `https://comandaapilobo.somee.com/api/Comandas/${orderId}`,
       {
         method: "PUT",
         headers: header,
@@ -326,7 +326,7 @@ async function addItem(orderId, tableNumber, clientName) {
 async function finalizeOrder(orderId) {
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Comandas/${orderId}`, // Exemplo de endpoint
+      `https://comandaapilobo.somee.com/api/Comandas/${orderId}`, // Exemplo de endpoint
       {
         method: "PATCH",
         headers: header,

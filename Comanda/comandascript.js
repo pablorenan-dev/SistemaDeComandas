@@ -7,7 +7,7 @@ let comanda = {};
 
 async function GETItensCardapio() {
   let response = await fetch(
-    "http://comandaapilobo.somee.com/api/CardapioItems",
+    "https://comandaapilobo.somee.com/api/CardapioItems",
     {
       method: "GET",
       headers: header,
@@ -20,7 +20,7 @@ async function GETItensCardapio() {
 async function verificarSituacaoMesa(numeroMesa) {
   try {
     const response = await fetch(
-      `http://comandaapilobo.somee.com/api/Mesas/${numeroMesa}`,
+      `https://comandaapilobo.somee.com/api/Mesas/${numeroMesa}`,
       {
         method: "GET",
         headers: header,
@@ -236,7 +236,7 @@ async function finalizarComanda() {
 
     try {
       const response = await fetch(
-        "http://comandaapilobo.somee.com/api/Comandas",
+        "https://comandaapilobo.somee.com/api/Comandas",
         {
           method: "POST",
           headers: header,

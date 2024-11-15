@@ -5,7 +5,7 @@ const header = {
 
 async function GETMesas() {
   try {
-    let response = await fetch("http://comandaapilobo.somee.com/api/Mesas", {
+    let response = await fetch("https://comandaapilobo.somee.com/api/Mesas", {
       method: "GET",
       headers: header,
     });
@@ -19,7 +19,7 @@ async function GETMesas() {
 async function DELETEMesa(IdMesa) {
   try {
     let response = await fetch(
-      `http://comandaapilobo.somee.com/api/Mesas/${IdMesa}`,
+      `https://comandaapilobo.somee.com/api/Mesas/${IdMesa}`,
       {
         method: "DELETE",
         headers: header,
@@ -32,7 +32,7 @@ async function DELETEMesa(IdMesa) {
 
 async function POSTMesa(valoresMesa) {
   try {
-    let response = await fetch(`http://comandaapilobo.somee.com/api/Mesas`, {
+    let response = await fetch(`https://comandaapilobo.somee.com/api/Mesas`, {
       method: "POST",
       headers: header,
       body: JSON.stringify({
@@ -47,7 +47,7 @@ async function POSTMesa(valoresMesa) {
 
 async function GETMesa(idItem) {
   let response = await fetch(
-    `http://comandaapilobo.somee.com/api/Mesas/${idItem}`,
+    `https://comandaapilobo.somee.com/api/Mesas/${idItem}`,
     {
       method: "GET",
       headers: header,
@@ -60,7 +60,7 @@ async function GETMesa(idItem) {
 async function PUTMesa(valoresMesa, idItem) {
   try {
     let response = await fetch(
-      `http://comandaapilobo.somee.com/api/Mesas/${idItem}`,
+      `https://comandaapilobo.somee.com/api/Mesas/${idItem}`,
       {
         method: "PUT",
         headers: header,
