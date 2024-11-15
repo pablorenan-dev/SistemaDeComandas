@@ -98,3 +98,49 @@ section li p {
   width: 100px;
   text-align: center;
 }
+
+header div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#user-avatar {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%;
+  width: 50px; /* Ajuste o tamanho conforme necessário */
+  height: 50px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#user-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+header div p {
+  font-size: 16px;
+  color: var(--color-off-white); /* Cor do nome do usuário */
+  margin: 0;
+}
+
+.logout-btn {
+  background-color: var(--color-dark-blue-grey); /* Cor de fundo do botão */
+  color: var(--color-ice-blue); /* Cor do texto */
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+header div:hover .logout-btn {
+  opacity: 1; /* Exibe o botão ao passar o mouse */
+}
+
+.logout-btn:hover {
+  background-color: var(--color-red); /* Cor de hover do botão */
+}

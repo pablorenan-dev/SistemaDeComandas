@@ -389,5 +389,17 @@ function chamarFuncoesIniciais() {
   montarUsuariosLocalStorage();
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const avatar = document.getElementById("user-avatar");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  avatar.addEventListener("click", () => {
+    logoutBtn.classList.toggle("show");
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+  });
+});
 chamarFuncoesIniciais();
 filtrarItem();

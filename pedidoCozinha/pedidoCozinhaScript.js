@@ -11,7 +11,7 @@ const header = {
  */
 async function GETPedidoCozinha(situacaoId, element, initial = false) {
   let response = await fetch(
-    `https://localhost:7129/api/PedidoCozinhas?situacaoId=${situacaoId}`,
+    `https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
       method: "GET",
       headers: header,
@@ -45,7 +45,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   // Verifica se o novo status é válido (menor ou igual a 3) \\
   if (body.novoStatusId <= 3) {
     let response = await fetch(
-      `https://localhost:7129/api/PedidoCozinhas/${id}`,
+      `https://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
       {
         method: "PUT",
         headers: header,
@@ -79,7 +79,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.item}</p>
+        <p>${pedido.titulo}</p>
       </li>
     `;
 
@@ -243,7 +243,7 @@ function exibirDetalhesModal(pedido) {
                 ${pedido.itens
                   .map(
                     (item) => `
-                    <li>${item.quantidade}x ${item.nome}
+                    <li>${item.quantidade}x ${item.titulo}
                         ${item.observacao ? ` - Obs: ${item.observacao}` : ""}
                     </li>
                 `
