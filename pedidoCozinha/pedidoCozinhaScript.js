@@ -226,9 +226,9 @@ window.onclick = function (event) {
 // Função para mostrar o modal
 function exibirDetalhesModal(pedido) {
   // Preenche os elementos
-  document.getElementById("modalTitulo").textContent = pedido.item;
+  document.getElementById("modalTitulo").textContent = pedido.titulo;
   document.getElementById("modalmesa").textContent =
-    "mesa: " + pedido.numeroMesa;
+    "Mesa: " + pedido.numeroMesa;
   // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
   document.getElementById("modalDescricao").innerHTML = pedido.descricao
     ? `<p><strong>Descrição:</strong> ${pedido.descricao}</p>`
