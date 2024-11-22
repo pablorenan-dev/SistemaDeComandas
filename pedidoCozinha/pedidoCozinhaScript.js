@@ -150,7 +150,7 @@ async function verificarNovosPedidos(pedidos) {
 
   if (local) {
     const res = await fetch(
-      "https://localhost:7129/api/PedidoCozinhas?situacaoId=1"
+      "https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=1"
     );
     const resJson = await res.json();
     console.log(resJson, "resjson");
