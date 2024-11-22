@@ -9,7 +9,7 @@ const header = {
  * @param {number} situacaoId - ID do status do pedido (1: pendente, 2: em andamento, 3: finalizado)
  * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
  */
-async function GETPedidoCozinha(situacaoId, element) {
+async function GETPedidoCozinha(situacaoId, element, initial = false) {
   let response = await fetch(
     `https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=${situacaoId}`,
     {
@@ -19,12 +19,16 @@ async function GETPedidoCozinha(situacaoId, element) {
   );
   let result = await response.json();
   console.log(result);
+  if (initial) {
+    localStorage.setItem("pedidos", JSON.stringify(result));
+  }
   montarPedidoCozinha(result, element, situacaoId);
+  verificarNovosPedidos(result);
   return;
 }
 
 // Carrega todos os pedidos quando a tela é aberta \\
-GETPedidoCozinha(1, "#ul-Pendente");
+GETPedidoCozinha(1, "#ul-Pendente", true);
 GETPedidoCozinha(2, "#ul-Andamento");
 GETPedidoCozinha(3, "#ul-Finalizado");
 
@@ -129,105 +133,53 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
       });
     });
   });
-
-  ///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-  // Verifica se são pedidos pendentes (situacaoId === 1) para gerenciar notificações
-  if (situacaoId === 1) {
-    const pedidosPassados = JSON.parse(
-      localStorage.getItem("pedidosPendentes") || "[]"
-    );
-
-    // Atualiza o localStorage com os novos pedidos
-    localStorage.setItem(
-      "pedidosPendentesAnteriores",
-      JSON.stringify(pedidosPassados)
-    );
-    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidos));
-    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
-  }
 }
+
+///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
  * Função simplificada para verificar novos pedidos pendentes
- * @param {Array} pedidosAntigos - Lista antiga de pedidos
- * @param {Array} pedidosNovos - Lista nova de pedidos
+ * @param {Array} pedidos - Lista de pedidos pendentes
  * @returns {boolean} - Retorna true se houver novos pedidos
  */
-function verificarNovosPedidos(pedidosAntigos, pedidosNovos) {
-  // Se não houver pedidos anteriores, mas existem novos pedidos
-  if (!pedidosAntigos.length && pedidosNovos.length > 0) {
-    return true;
-  }
+async function verificarNovosPedidos(pedidos) {
+  // coloca o array atual de pedidos pendentes no localStorage
+  const local = JSON.parse(localStorage.getItem("pedidos"));
+  console.log(local, "local");
+  let temMudanca = false;
 
-  // Se a nova lista é maior que a antiga, significa que há novos pedidos
-  if (pedidosNovos.length > pedidosAntigos.length) {
-    return true;
-  }
-
-  // Verifica se há algum pedido novo que não estava na lista antiga
-  const novoPedidoEncontrado = pedidosNovos.some((pedidoNovo) => {
-    return !pedidosAntigos.some(
-      (pedidoAntigo) => pedidoAntigo.id === pedidoNovo.id
+  if (local) {
+    const res = await fetch(
+      "https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=1"
     );
-  });
-
-  return novoPedidoEncontrado;
-}
-
-// Função que procura atualizações
-function procuraUpdates() {
-  console.log("começa");
-  // Obtém as listas de pedidos atual e anterior do localStorage
-  const pedidosAtuais = JSON.parse(
-    localStorage.getItem("pedidosPendentes") || "[]"
-  );
-  const pedidosPassados = JSON.parse(
-    localStorage.getItem("pedidosPendentesAnteriores") || "[]"
-  );
-
-  // Verifica se há novos pedidos
-  const temNovosPedidos = verificarNovosPedidos(pedidosPassados, pedidosAtuais);
-
-  if (temNovosPedidos) {
-    // Atualiza o localStorage apenas se houver novos pedidos
-    localStorage.setItem(
-      "pedidosPendentesAnteriores",
-      JSON.stringify(pedidosPassados)
-    );
-    localStorage.setItem("pedidosPendentes", JSON.stringify(pedidosAtuais));
-    localStorage.setItem("momentoUltimoUpdate", Date.now().toString());
+    const resJson = await res.json();
+    console.log(resJson, "resjson");
+    if (resJson.length != local.length) {
+      temMudanca = true;
+      localStorage.setItem("pedidos", JSON.stringify(resJson));
+    } else {
+      temMudanca = false;
+    }
   }
-  console.log(temNovosPedidos);
-  return {
-    teveMudancas: temNovosPedidos,
-  };
+  return temMudanca;
 }
 
 // Atualiza o setInterval para usar a nova lógica
-setInterval(() => {
-  const updates = procuraUpdates();
-
-  if (updates.teveMudancas) {
-    // Toca o som de notificação apenas quando houver novos pedidos
-    const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
-    sfx.play();
-    console.log("Novos pedidos detectados");
-    GETPedidoCozinha(1, "#ul-Pendente");
-  } else {
-    console.log("Nenhum novo pedido");
-  }
-}, 1000);
 iniciaTimeout();
 function iniciaTimeout() {
-  setInterval(() => {
+  // sfx.autoplay = true;
+
+  setInterval(async () => {
     console.log("entrou interval");
-    const updates = procuraUpdates();
-    console.log(updates, "updates");
-    if (updates.teveMudancas) {
+    const comparacao = await verificarNovosPedidos();
+    console.log(comparacao, "procurando comparacao");
+    if (comparacao) {
+      // fazer tocar sonzinho será adicionado dps
       // Toca o som de notificação apenas quando houver novos pedidos
-      const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
-      sfx.play();
+      // const sfx = new Audio("/audio/taco_bell_sfx.mpeg");
+      // const div = document.querySelector(".p-div");
+      // div.click();
+      // sfx.play();
       console.log("Novos pedidos detectados");
       GETPedidoCozinha(1, "#ul-Pendente");
     } else {
@@ -274,7 +226,7 @@ window.onclick = function (event) {
 // Função para mostrar o modal
 function exibirDetalhesModal(pedido) {
   // Preenche os elementos
-  document.getElementById("modalTitulo").textContent = pedido.item;
+  document.getElementById("modalTitulo").textContent = pedido.titulo;
   document.getElementById("modalmesa").textContent =
     "mesa: " + pedido.numeroMesa;
   // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
