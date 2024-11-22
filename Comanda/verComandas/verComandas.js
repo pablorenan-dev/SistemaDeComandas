@@ -387,5 +387,37 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
 });
+
+function filterOrders() {
+  const searchInput = document
+    .getElementById("input-procurar")
+    .value.toLowerCase();
+  const orders = document.querySelectorAll("#lista-comandas .order-item");
+
+  orders.forEach((order) => {
+    const clientName = order.querySelector("h3").textContent.toLowerCase();
+    const tableNumber = order
+      .querySelector("p:nth-child(2)")
+      .textContent.toLowerCase();
+    const items = order
+      .querySelector("p#p-descricao")
+      .textContent.toLowerCase();
+
+    if (
+      clientName.includes(searchInput) ||
+      tableNumber.includes(searchInput) ||
+      items.includes(searchInput)
+    ) {
+      order.style.display = ""; // Mostra a comanda
+    } else {
+      order.style.display = "none"; // Esconde a comanda
+    }
+  });
+}
+// Adiciona o evento de input para o campo de busca
+document
+  .getElementById("input-procurar")
+  .addEventListener("input", filterOrders);
+
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);

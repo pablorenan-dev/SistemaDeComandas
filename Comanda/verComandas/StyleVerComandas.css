@@ -332,3 +332,15 @@ header div:hover .logout-btn {
 .logout-btn:hover {
   background-color: var(--color-red); /* Cor de hover do botão */
 }
+
+section div input {
+  width: 90%;
+  height: 40%;
+  text-align: left;
+  padding: 1%;
+  border-radius: 8px;
+  font-size: 12pt;
+}
+section div input::placeholder {
+  text-align: left;
+}
