@@ -182,24 +182,46 @@ async function montarUsuarios(usuarios = []) {
   let ulUsuarios = document.querySelector("ul");
   ulUsuarios.innerHTML = "";
   usuarios.forEach((item) => {
-    ulUsuarios.insertAdjacentHTML(
-      "beforeend",
-      `
-      <li>
-            <div class="div-li-info">
-              <p>👤 ${item.nomeUsuario}</p>
-              <p>✉ ${item.emailUsuario}</p>
-              <p>🔒 ${item.senhaUsuario}</p>
-            </div>
-            <div class="div-li-buttons">
-              <button id="button-li-delete-${item.idUsuario}">❌</button>
-              <button id="button-li-editar-${item.idUsuario}">✏️</button>
-            </div>
-      </li>
-      `
-    );
-    adicionarEventoCliqueDeletarBotaoUsuario(item.idUsuario, item.nomeUsuario);
-    adicionarEventoCliqueEditarBotaoUsuario(item.idUsuario, item.nomeUsuario);
+    if (item.nomeUsuario === "admin") {
+      ulUsuarios.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li>
+              <div class="div-li-info">
+                <p>👤 ${item.nomeUsuario}</p>
+                <p>✉ ${item.emailUsuario}</p>
+                <p>🔒 ${item.senhaUsuario}</p>
+              </div>
+              <div class="div-li-buttons">
+                <button id="button-li-editar-${item.idUsuario}">✏️</button>
+              </div>
+        </li>
+        `
+      );
+      adicionarEventoCliqueEditarBotaoUsuario(item.idUsuario, item.nomeUsuario);
+    } else {
+      ulUsuarios.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li>
+              <div class="div-li-info">
+                <p>👤 ${item.nomeUsuario}</p>
+                <p>✉ ${item.emailUsuario}</p>
+                <p>🔒 ${item.senhaUsuario}</p>
+              </div>
+              <div class="div-li-buttons">
+                <button id="button-li-delete-${item.idUsuario}">❌</button>
+                <button id="button-li-editar-${item.idUsuario}">✏️</button>
+              </div>
+        </li>
+        `
+      );
+      adicionarEventoCliqueDeletarBotaoUsuario(
+        item.idUsuario,
+        item.nomeUsuario
+      );
+      adicionarEventoCliqueEditarBotaoUsuario(item.idUsuario, item.nomeUsuario);
+    }
   });
 }
 
