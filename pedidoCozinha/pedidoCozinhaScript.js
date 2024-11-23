@@ -195,11 +195,13 @@ function iniciaTimeout() {
 const modalHTML = `
 <div id="pedidoModal" class="modal">
     <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h2 id="modalTitulo"></h2>
+        <div>
+          <span class="close-modal">&times;</span>
+          <h2 id="modalTitulo"></h2>
+        </div>
         <h2 id="modalmesa"></h2>
-        <div id="modalDescricao"></div>
-        <div id="modalItens"></div>
+        <h2 id="modalnomeCliente"></h2>
+        <button id="btnImprimir">Imprimir</button>
     </div>
 </div>
 `;
@@ -229,29 +231,8 @@ function exibirDetalhesModal(pedido) {
   document.getElementById("modalTitulo").textContent = pedido.titulo;
   document.getElementById("modalmesa").textContent =
     "Mesa: " + pedido.numeroMesa;
-  // document.getElementById("modalDescricao").innerHTML = pedido.adicionais // adicionar função de localStorage para pegar os adicionais do pedido mais tarde \\\\
-  document.getElementById("modalDescricao").innerHTML = pedido.descricao
-    ? `<p><strong>Descrição:</strong> ${pedido.descricao}</p>`
-    : "";
-
-  // Preenche os itens se existirem
-  const modalItens = document.getElementById("modalItens");
-  if (pedido.itens && pedido.itens.length > 0) {
-    modalItens.innerHTML = `
-            <p><strong>Itens:</strong></p>
-            <ul>
-                ${pedido.itens
-                  .map(
-                    (item) => `
-                    <li>${item.quantidade}x ${item.titulo}
-                        ${item.observacao ? ` - Obs: ${item.observacao}` : ""}
-                    </li>
-                `
-                  )
-                  .join("")}
-            </ul>
-        `;
-  }
+  document.getElementById("modalnomeCliente").textContent =
+    "Cliente: " + pedido.nomeCliente;
 
   // Mostra o modal
   modal.style.display = "block";
