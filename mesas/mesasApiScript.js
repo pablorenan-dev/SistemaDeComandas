@@ -5,7 +5,7 @@ const header = {
 
 async function GETMesas() {
   try {
-    let response = await fetch("https://comandaapilobo.somee.com/api/Mesas", {
+    let response = await fetch("https://localhost:7282/api/Mesas", {
       method: "GET",
       headers: header,
     });
@@ -18,13 +18,10 @@ async function GETMesas() {
 
 async function DELETEMesa(IdMesa) {
   try {
-    let response = await fetch(
-      `https://comandaapilobo.somee.com/api/Mesas/${IdMesa}`,
-      {
-        method: "DELETE",
-        headers: header,
-      }
-    );
+    let response = await fetch(`https://localhost:7282/api/Mesas/${IdMesa}`, {
+      method: "DELETE",
+      headers: header,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -32,7 +29,7 @@ async function DELETEMesa(IdMesa) {
 
 async function POSTMesa(valoresMesa) {
   try {
-    let response = await fetch(`https://comandaapilobo.somee.com/api/Mesas`, {
+    let response = await fetch(`https://localhost:7282/api/Mesas`, {
       method: "POST",
       headers: header,
       body: JSON.stringify({
@@ -46,31 +43,25 @@ async function POSTMesa(valoresMesa) {
 }
 
 async function GETMesa(idItem) {
-  let response = await fetch(
-    `https://comandaapilobo.somee.com/api/Mesas/${idItem}`,
-    {
-      method: "GET",
-      headers: header,
-    }
-  );
+  let response = await fetch(`https://localhost:7282/api/Mesas/${idItem}`, {
+    method: "GET",
+    headers: header,
+  });
   let result = await response.json();
   return result;
 }
 
 async function PUTMesa(valoresMesa, idItem) {
   try {
-    let response = await fetch(
-      `https://comandaapilobo.somee.com/api/Mesas/${idItem}`,
-      {
-        method: "PUT",
-        headers: header,
-        body: JSON.stringify({
-          idMesa: idItem,
-          numeroMesa: valoresMesa[0],
-          situacaoMesa: valoresMesa[1],
-        }),
-      }
-    );
+    let response = await fetch(`https://localhost:7282/api/Mesas/${idItem}`, {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify({
+        idMesa: idItem,
+        numeroMesa: valoresMesa[0],
+        situacaoMesa: valoresMesa[1],
+      }),
+    });
   } catch (error) {
     console.log(error);
   }
