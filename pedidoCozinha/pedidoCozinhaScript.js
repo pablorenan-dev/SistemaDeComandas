@@ -201,7 +201,7 @@ const modalHTML = `
         </div>
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
-        <button id="btnImprimir">Imprimir</button>
+        <button id="btnImprimir">🖨 Imprimir</button>
     </div>
 </div>
 `;
@@ -228,7 +228,7 @@ window.onclick = function (event) {
 // Função para mostrar o modal
 function exibirDetalhesModal(pedido) {
   // Preenche os elementos
-  document.getElementById("modalTitulo").textContent = pedido.titulo;
+  document.getElementById("modalTitulo").textContent = "🍔 " + pedido.titulo;
   document.getElementById("modalmesa").textContent =
     "Mesa: " + pedido.numeroMesa;
   document.getElementById("modalnomeCliente").textContent =
