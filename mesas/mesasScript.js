@@ -8,6 +8,7 @@ import {
 
 // Adicionar os itens do Cardapio na tela
 async function montarMesas(mesas = []) {
+  console.log(mesas, "mesas!!");
   let ulMesas = document.querySelector("ul");
   ulMesas.innerHTML = "";
   mesas.forEach((item) => {
@@ -21,10 +22,10 @@ async function montarMesas(mesas = []) {
               item.situacaoMesa === 0 ? "Livre" : "Ocupada"
             }</span></p>
             <div class="div-li-buttons">
-              <button id="button-li-delete-${item.idMesa}">
+              <button id="button-li-delete-${item.numeroMesa}">
                 ❌
               </button>
-              <button id="button-li-editar-${item.idMesa}">
+              <button id="button-li-editar-${item.numeroMesa}">
                 ✏️
               </button>
             </div>
@@ -64,7 +65,7 @@ function pegarItensLocalStorage() {
 
 // Adicionar um Evento de clique que monta uma tela de modal para confirmar a edicao e adicionar os novos parametros do item
 function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
-  let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
+  let botaoDelete = document.querySelector(`#button-li-editar-${tituloItem}`);
   botaoDelete.addEventListener("click", () => {
     montarModalEditarItem(idItem, tituloItem);
   });
@@ -72,7 +73,7 @@ function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
 
 // Monta o modal na tela de editar um item especifico
 async function montarModalEditarItem(idItem, tituloItem) {
-  const itemDetalhes = await GETMesa(idItem);
+  const itemDetalhes = await GETMesa(tituloItem);
   const body = document.body;
   body.insertAdjacentHTML(
     "beforeend",
@@ -105,15 +106,15 @@ async function montarModalEditarItem(idItem, tituloItem) {
   );
 
   adicionarEventoCliqueBotaoFecharModal();
-  adicionarEventoCliqueBotaoEditarItemModal(idItem);
+  adicionarEventoCliqueBotaoEditarItemModal(itemDetalhes.numeroMesa, idItem);
   adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
-function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
+function adicionarEventoCliqueBotaoEditarItemModal(numeroMesa, idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
   botaoDeletarItem.addEventListener("click", () => {
-    const valoresItem = pegarValoresDosItens(idItem);
+    const valoresItem = pegarValoresDosItens(numeroMesa);
 
     if (isNaN(valoresItem[0])) {
       carregarModalErro("Escreva um Numero Mesa");
@@ -130,7 +131,7 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
 
 // Adicionar um Evento de clique que monta uma tela de modal para confirmar a deletacao
 function adicionarEventoCliqueDeletarBotaoItemCardapio(idMesa, numeroMesa) {
-  let botaoDelete = document.querySelector(`#button-li-delete-${idMesa}`);
+  let botaoDelete = document.querySelector(`#button-li-delete-${numeroMesa}`);
   botaoDelete.addEventListener("click", () => {
     montarModalDeletarMesa(idMesa, numeroMesa);
   });
@@ -175,7 +176,7 @@ function montarModalDeletarMesa(idMesa, numeroMesa) {
     `
   );
   adicionarEventoCliqueBotaoFecharModal();
-  adicionarEventoCliqueBotaoConfirmarDeletarItem(idMesa);
+  adicionarEventoCliqueBotaoConfirmarDeletarItem(numeroMesa, idMesa);
   adicionarEventoCliqueRemoverModalWrapper();
 }
 
