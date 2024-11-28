@@ -39,19 +39,36 @@ async function getMenuItems() {
   }
 }
 
-// Função para renderizar a lista de comandas
+// Atualizar a função renderOrders com a lógica de carregamento
 async function renderOrders() {
-  const orders = await getAllOrders();
   const ordersList = document.querySelector("#lista-comandas");
-  ordersList.innerHTML = "";
 
-  orders.forEach((order) => {
-    const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
+  // Mostra o item de carregamento
+  mostrarCarregamento();
 
-    ordersList.insertAdjacentHTML(
-      "beforeend",
-      `
-    <li id="order-${order.id}" class="order-item">
+  try {
+    // Busca os dados das comandas
+    const orders = await getAllOrders();
+    ordersList.innerHTML = ""; // Limpa a lista após o carregamento
+
+    if (orders.length === 0) {
+      ordersList.innerHTML = `
+        <li class="no-orders">
+          <div class="no-orders-info">
+            <h3>Nenhuma comanda encontrada.</h3>
+          </div>
+        </li>`;
+      return;
+    }
+
+    // Renderiza as comandas
+    orders.forEach((order) => {
+      const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
+
+      ordersList.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li id="order-${order.id}" class="order-item">
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
@@ -69,11 +86,22 @@ async function renderOrders() {
               ✅ Finalizar Comanda
             </button>
           </div>
-        </li>
-      `
-    );
-  });
+        </li>`
+      );
+    });
+  } catch (error) {
+    console.error("Erro ao buscar comandas:", error);
+    ordersList.innerHTML = `
+      <li class="error-item">
+        <div class="error-info">
+          <h3>Erro ao carregar comandas. Tente novamente mais tarde.</h3>
+        </div>
+      </li>`;
+  }
 }
+
+// Atualiza a lista ao carregar a página
+document.addEventListener("DOMContentLoaded", renderOrders);
 
 // Função para abrir o modal de edição
 async function openEditModal(order) {
@@ -347,18 +375,22 @@ async function finalizeOrder(orderId) {
 }
 
 function showAlertModal(message) {
-  // Remover o modal antigo, se já existir
+  // Remove o modal antigo, se já existir
   const oldModal = document.getElementById("alert-modal");
   if (oldModal) {
     oldModal.remove();
   }
 
+  // Adiciona o modal estilizado para finalizar comanda
   const modalHTML = `
-    <div id="alert-modal" class="modal-wrapper">
-      <div class="modal">
+    <div id="alert-modal" class="modal-wrapper finalize-order-modal">
+      <div class="modal finalize-order">
+        <div class="modal-header">Atenção</div>
         <div class="modal-body">
           <p>${message}</p>
-          <button onclick="closeAlertModal()" class="close-button">OK</button>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-button" onclick="confirmFinalizeOrder()">Confirmar</button>
         </div>
       </div>
     </div>
@@ -421,3 +453,19 @@ document
 
 // Renderizar as comandas ao carregar o documento
 document.addEventListener("DOMContentLoaded", renderOrders);
+
+function confirmFinalizeOrder() {
+  closeAlertModal(); // Fecha o modal
+  renderOrders(); // Atualiza as comandas
+}
+
+// Função para exibir uma mensagem de carregamento
+function mostrarCarregamento() {
+  const ordersList = document.querySelector("#lista-comandas");
+  ordersList.innerHTML = `
+    <li class="loading-item">
+      <div class="loading-info">
+        <h3>Carregando...</h3>
+      </div>
+    </li>`;
+}
