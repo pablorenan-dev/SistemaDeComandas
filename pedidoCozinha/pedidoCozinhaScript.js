@@ -79,7 +79,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   pedidos.forEach((pedido) => {
     const pedidoHTML = `
       <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>${pedido.titulo}</p>
+        <p>Mesa: ${pedido.numeroMesa} | ${pedido.titulo}</p>
       </li>
     `;
 
