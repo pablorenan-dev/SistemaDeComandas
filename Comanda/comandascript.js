@@ -40,29 +40,54 @@ async function verificarSituacaoMesa(numeroMesa) {
 }
 
 async function montarItensCardapio() {
-  const cardapioItens = await GETItensCardapio();
   let ulCardapioItens = document.querySelector("ul");
-  cardapioItens.forEach((item) => {
-    ulCardapioItens.insertAdjacentHTML(
-      "beforeend",
-      `
+
+  // Add a loading state
+  ulCardapioItens.innerHTML = `
+    <li>
+      <div class="div-li-info">
+        <h3>Carregando...</h3>
+      </div>
+    </li>
+  `;
+
+  try {
+    const cardapioItens = await GETItensCardapio();
+
+    // Clear the loading state and populate with items
+    ulCardapioItens.innerHTML = "";
+
+    cardapioItens.forEach((item) => {
+      ulCardapioItens.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li>
+          <div class="div-li-info">
+            <h3>${item.titulo}</h3>
+            <p>${item.descricao}</p>
+            <p>R$${item.preco.toFixed(2)}</p>
+          </div>
+          <div class="div-li-buttons">
+            <button id="button-li-add-comanda-${item.id}">➕</button>
+          </div>
+        </li>
+        `
+      );
+      adicionarEventoCliqueAdicionarBotaoItemComanda(item.id, item);
+    });
+
+    // Adicionar o botão "Finalizar" ao final da comanda
+    adicionarBotaoFinalizarComanda();
+  } catch (error) {
+    console.error("Erro ao carregar itens do cardápio:", error);
+    ulCardapioItens.innerHTML = `
       <li>
         <div class="div-li-info">
-          <h3>${item.titulo}</h3>
-          <p>${item.descricao}</p>
-          <p>R$${item.preco.toFixed(2)}</p>
-        </div>
-        <div class="div-li-buttons">
-          <button id="button-li-add-comanda-${item.id}">➕</button>
+          <h3>Erro ao carregar itens</h3>
         </div>
       </li>
-      `
-    );
-    adicionarEventoCliqueAdicionarBotaoItemComanda(item.id, item);
-  });
-
-  // Adicionar o botão "Finalizar" ao final da comanda
-  adicionarBotaoFinalizarComanda();
+    `;
+  }
 }
 
 function adicionarEventoCliqueAdicionarBotaoItemComanda(idItem, item) {
@@ -197,9 +222,7 @@ async function finalizarComanda() {
   const nomeCliente = document.querySelector(
     'input[placeholder="Nome cliente"]'
   ).value;
-  const numeroMesa = document.querySelector(
-    'input[placeholder="N° Mesa"]'
-  ).value;
+  const numeroMesa = document.querySelector("#select-mesa").value;
 
   if (!nomeCliente) {
     createModal(
@@ -324,6 +347,7 @@ function createModal(title, message, icon) {
   const confirmButton = modalContainer.querySelector(".button-confirm-modal");
   const closeModal = () => {
     modalContainer.remove();
+    location.reload();
   };
 
   closeButton.addEventListener("click", closeModal);
@@ -351,4 +375,43 @@ document.addEventListener("DOMContentLoaded", function () {
   logoutBtn.addEventListener("click", () => {
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
+});
+
+async function GETMesas() {
+  try {
+    const response = await fetch("https://comandaapilobo.somee.com/api/Mesas", {
+      method: "GET",
+      headers: header,
+    });
+    const mesas = await response.json();
+    return mesas;
+  } catch (error) {
+    console.error("Erro ao obter as mesas:", error);
+    createModal("Erro", "Não foi possível carregar as mesas.", icons.error);
+    return [];
+  }
+}
+
+// Função para carregar mesas disponíveis no select
+async function carregarMesasDisponiveis() {
+  const mesas = await GETMesas();
+  const selectMesa = document.querySelector("#select-mesa");
+
+  // Limpa o select e adiciona a opção inicial
+  selectMesa.innerHTML = "<option value=''>Selecione uma Mesa</option>";
+
+  // Adiciona as mesas disponíveis no select
+  mesas.forEach((mesa) => {
+    if (mesa.situacaoMesa === 0) {
+      // Verifica se a mesa está disponível
+      selectMesa.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${mesa.numeroMesa}">Mesa ${mesa.numeroMesa}</option>`
+      );
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  carregarMesasDisponiveis(); // Carregar mesas disponíveis assim que a página for carregada
 });

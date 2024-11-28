@@ -369,10 +369,6 @@ section ul li:hover {
     width: 100%;
     margin-top: 0px;
   }
-  header h1 {
-    font-size: 4vw;
-    width: 100px;
-  }
   main {
     flex-direction: column;
   }
@@ -390,10 +386,36 @@ section ul li:hover {
     margin-top: 420px;
   }
 }
+#select-mesa {
+  width: 90%;
+  padding: 10px;
+  font-size: 1rem;
+  color: #727272; /* Texto principal */
+  border: 1px solid #ccc; /* Borda cinza clara */
+  border-radius: 8px; /* Arredondamento */
+  appearance: none; /* Remove o estilo padrão */
+  outline: none; /* Remove borda ao focar */
+  transition: all 0.3s ease; /* Animação */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leve sombra */
+}
 
-@media (max-width: 458px) {
-  header h1 {
-    font-size: 3vw;
-    width: 50px;
-  }
+#select-mesa:hover {
+  background: linear-gradient(
+    to right,
+    #f7f7f7,
+    #ffffff
+  ); /* Fundo invertido no hover */
+  border-color: #999; /* Cor da borda ao passar o mouse */
+}
+
+#select-mesa:focus {
+  border-color: #4caf50; /* Borda verde ao focar */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Sombra com destaque */
+}
+
+#select-mesa option {
+  padding: 10px;
+  background-color: #fff; /* Fundo branco */
+  color: #333; /* Cor do texto */
 }
