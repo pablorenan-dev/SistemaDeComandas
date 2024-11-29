@@ -83,7 +83,7 @@ function adicionarEventoCliqueBotaoFecharModal() {
 }
 
 // Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
-function adicionarUsuario() {
+async function adicionarUsuario() {
   const valoresUsuario = pegarValoresDosItens();
   if (valoresUsuario[0].value == "") {
     carregarModalErro("Escreva um nome de usuário valido");
@@ -93,15 +93,18 @@ function adicionarUsuario() {
     carregarModalErro("Escreva uma senha valida");
   } else {
     try {
-      POSTUsuario(valoresUsuario);
-      deletarItensUl();
-      montarUsuarios();
-      removerModal();
-      carregarModalSucessoAdicionado();
-      montarLiCarregandoUl();
-      setTimeout(recarregarPagina, 2000);
+      // Usa async/await para garantir que o item seja adicionado
+      const adicionarUsuarioAsync = async () => {
+        await POSTUsuario(valoresUsuario);
+        deletarItensUl();
+        montarLiCarregandoUl();
+        removerModal();
+        carregarModalSucessoAdicionado();
+        await montarUsuariosLocalStorage();
+      };
+      adicionarUsuarioAsync();
     } catch (error) {
-      console.log(error);
+      carregarModalErro("Erro ao adicionar Usuario");
     }
   }
 }
@@ -272,9 +275,9 @@ async function montarModalEditarUsuario(idItem, tituloItem) {
 }
 
 // adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
-function adicionarEventoCliqueBotaoEditarUsuario(idItem) {
+async function adicionarEventoCliqueBotaoEditarUsuario(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
-  botaoDeletarItem.addEventListener("click", () => {
+  botaoDeletarItem.addEventListener("click", async () => {
     const valoresItensTela = pegarValoresDosItens();
     if (valoresItensTela[0].value == "") {
       carregarModalErro("Escreva um nome de usuário valido");
@@ -283,12 +286,16 @@ function adicionarEventoCliqueBotaoEditarUsuario(idItem) {
     } else if (valoresItensTela[2].value == "") {
       carregarModalErro("Escreva uma senha valida");
     } else {
-      PUTUsuario(valoresItensTela, idItem);
-      deletarItensUl();
-      removerModal();
-      montarLiCarregandoUl();
-      carregarModalSucessoAlterado();
-      setTimeout(recarregarPagina, 2000);
+      try {
+        await PUTUsuario(valoresItensTela, idItem);
+        deletarItensUl();
+        montarLiCarregandoUl();
+        removerModal();
+        carregarModalSucessoAlterado();
+        await montarUsuariosLocalStorage();
+      } catch (error) {
+        carregarModalErro("Erro ao montar Usuarios");
+      }
     }
   });
 }
@@ -382,22 +389,31 @@ function pegarItensLocalStorage() {
 async function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", async () => {
-    DELETEUsuario(idItem);
-    deletarItensUl();
-    montarLiCarregandoUl();
-    carregarModalSucessoDeletado();
-    removerModal();
-    let novosUsuarios = await GETUsuarios();
-    adicionarUsuariosLocalStorage(novosUsuarios);
-    setTimeout(recarregarPagina, 2000);
+    try {
+      await DELETEUsuario(idItem);
+      deletarItensUl();
+      montarLiCarregandoUl();
+      carregarModalSucessoDeletado();
+      await montarUsuariosLocalStorage();
+      removerModal();
+    } catch (error) {
+      carregarModalErro("Erro ao deletar Usuario");
+    }
   });
 }
 
 // Pega os Itens do LocalStorage e monta eles na tela em hmtl
 async function montarUsuariosLocalStorage() {
-  const usuarios = await GETUsuarios();
-  adicionarUsuariosLocalStorage(usuarios);
-  montarUsuarios(usuarios);
+  montarLiCarregandoUl();
+
+  try {
+    const usuarios = await GETUsuarios();
+    adicionarUsuariosLocalStorage(usuarios);
+    montarUsuarios(usuarios);
+  } catch (error) {
+    toastr.error("Erro ao carregar Usuarios");
+    deletarItensUl();
+  }
 }
 
 // Adiciona o array de items enviado para o LocalStorage

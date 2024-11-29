@@ -14,7 +14,12 @@ import {
 // Adicionar os itens do Cardapio na tela
 async function montarItensCardapio(cardapioItens = []) {
   let ulCardapioItens = document.querySelector("ul");
-  ulCardapioItens.innerHTML = "";
+
+  // Se houver itens, remova o item de carregamento
+  if (cardapioItens.length !== 0) {
+    ulCardapioItens.innerHTML = "";
+  }
+
   cardapioItens.forEach((item) => {
     ulCardapioItens.insertAdjacentHTML(
       "beforeend",
@@ -69,11 +74,28 @@ function adicionarItensLocalStorage(cardapioItens) {
   localStorage.setItem("cardapioItens", JSON.stringify(cardapioItens));
 }
 
-// Pega os Itens do LocalStorage e monta eles na tela em hmtl
 async function montarItensLocalStorage() {
-  const cardapioItens = await GETItensCardapio();
-  adicionarItensLocalStorage(cardapioItens);
-  montarItensCardapio(cardapioItens);
+  //AAAAAAAAAAAAAAAAAAAAAAAAAA
+  // Primeiro, monta o item de carregamento
+  montarLiCarregandoUl();
+
+  try {
+    // Faz a requisição dos itens
+    const cardapioItens = await GETItensCardapio();
+
+    // Adiciona os itens no localStorage
+    adicionarItensLocalStorage(cardapioItens);
+
+    // Monta os itens na tela
+    // Removemos deletarItensUl() para manter o item de carregamento
+    montarItensCardapio(cardapioItens);
+  } catch (error) {
+    console.error("Erro ao carregar itens:", error);
+    toastr.error("Erro ao carregar itens do cardápio");
+
+    // Remove o item de carregamento em caso de erro
+    deletarItensUl();
+  }
 }
 
 // Adicionar um Evento de clique que monta uma tela de modal para confirmar a deletacao
@@ -257,10 +279,10 @@ function montarModalDeletarItem(idItem, itemTitulo) {
   adicionarEventoCliqueRemoverModalWrapper();
 }
 
-// adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
-function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
+// Modificação na função de editar item
+async function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
-  botaoDeletarItem.addEventListener("click", () => {
+  botaoDeletarItem.addEventListener("click", async () => {
     const valoresItensTela = pegarValoresDosItensEditar(idItem);
     let valoresInputs = valoresItensTela[0];
 
@@ -271,28 +293,36 @@ function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
     } else if (valoresInputs[2].value == "") {
       carregarModalErro("Escreva um preço valido");
     } else {
-      PUTItemCardapio(valoresItensTela, idItem);
-      deletarItensUl();
-      removerModal();
-      montarLiCarregandoUl();
-      carregarModalSucessoAlterado();
-      setTimeout(recarregarPagina, 2000);
+      try {
+        await PUTItemCardapio(valoresItensTela, idItem);
+        deletarItensUl();
+        montarLiCarregandoUl();
+        removerModal();
+        carregarModalSucessoAlterado();
+        await montarItensLocalStorage();
+      } catch (error) {
+        console.error("Erro ao atualizar item:", error);
+        carregarModalErro("Erro ao atualizar item");
+      }
     }
   });
 }
 
-// Adiciona um evento de clique no botao de confirmar a delecao de um item (no modal)
+// Modificação na função de deletar item
 async function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", async () => {
-    DELETEItenCardapio(idItem);
-    deletarItensUl();
-    montarLiCarregandoUl();
-    carregarModalSucessoDeletado();
-    removerModal();
-    let novosItems = await GETItensCardapio();
-    adicionarItensLocalStorage(novosItems);
-    setTimeout(recarregarPagina, 2000);
+    try {
+      await DELETEItenCardapio(idItem);
+      deletarItensUl();
+      montarLiCarregandoUl();
+      carregarModalSucessoDeletado();
+      await montarItensLocalStorage();
+      removerModal();
+    } catch (error) {
+      console.error("Erro ao deletar item:", error);
+      carregarModalErro("Erro ao deletar item");
+    }
   });
 }
 
@@ -320,7 +350,7 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
   });
 }
 
-// Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
+// Modificação na função de adicionar item
 function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
   let valoresInputs = valoresItem[0];
@@ -333,15 +363,19 @@ function adicionarItem() {
     carregarModalErro("Escreva um preço valido");
   } else {
     try {
-      POSTItemCardapio(valoresItem);
-      deletarItensUl();
-      montarItensCardapio();
-      removerModal();
-      carregarModalSucessoAdicionado();
-      montarLiCarregandoUl();
-      setTimeout(recarregarPagina, 2000);
+      // Usa async/await para garantir que o item seja adicionado
+      const adicionarItemAsync = async () => {
+        await POSTItemCardapio(valoresItem);
+        deletarItensUl();
+        montarLiCarregandoUl();
+        removerModal();
+        carregarModalSucessoAdicionado();
+        await montarItensLocalStorage();
+      };
+      adicionarItemAsync();
     } catch (error) {
-      console.log(error);
+      console.error("Erro ao adicionar item:", error);
+      carregarModalErro("Erro ao adicionar item");
     }
   }
 }
@@ -437,4 +471,3 @@ function chamarFuncoesIniciais() {
 }
 
 chamarFuncoesIniciais();
-

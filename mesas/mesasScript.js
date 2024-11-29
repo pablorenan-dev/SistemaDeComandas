@@ -9,7 +9,12 @@ import {
 // Adicionar os itens do Cardapio na tela
 async function montarMesas(mesas = []) {
   let ulMesas = document.querySelector("ul");
-  ulMesas.innerHTML = "";
+
+  // Se houver itens, remova o item de carregamento
+  if (mesas.length !== 0) {
+    ulMesas.innerHTML = "";
+  }
+
   mesas.forEach((item) => {
     ulMesas.insertAdjacentHTML(
       "beforeend",
@@ -21,10 +26,10 @@ async function montarMesas(mesas = []) {
               item.situacaoMesa === 0 ? "Livre" : "Ocupada"
             }</span></p>
             <div class="div-li-buttons">
-              <button id="button-li-delete-${item.idMesa}">
+              <button id="button-li-delete-${item.numeroMesa}">
                 ❌
               </button>
-              <button id="button-li-editar-${item.idMesa}">
+              <button id="button-li-editar-${item.numeroMesa}">
                 ✏️
               </button>
             </div>
@@ -64,7 +69,7 @@ function pegarItensLocalStorage() {
 
 // Adicionar um Evento de clique que monta uma tela de modal para confirmar a edicao e adicionar os novos parametros do item
 function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
-  let botaoDelete = document.querySelector(`#button-li-editar-${idItem}`);
+  let botaoDelete = document.querySelector(`#button-li-editar-${tituloItem}`);
   botaoDelete.addEventListener("click", () => {
     montarModalEditarItem(idItem, tituloItem);
   });
@@ -72,7 +77,7 @@ function adicionarEventoCliqueEditarBotaoItemCardapio(idItem, tituloItem) {
 
 // Monta o modal na tela de editar um item especifico
 async function montarModalEditarItem(idItem, tituloItem) {
-  const itemDetalhes = await GETMesa(idItem);
+  const itemDetalhes = await GETMesa(tituloItem);
   const body = document.body;
   body.insertAdjacentHTML(
     "beforeend",
@@ -105,32 +110,37 @@ async function montarModalEditarItem(idItem, tituloItem) {
   );
 
   adicionarEventoCliqueBotaoFecharModal();
-  adicionarEventoCliqueBotaoEditarItemModal(idItem);
+  adicionarEventoCliqueBotaoEditarItemModal(itemDetalhes.numeroMesa, idItem);
   adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // adiciona Um evento de clique no botao de confirmar a edicao de um item (no modal de editar item)
-function adicionarEventoCliqueBotaoEditarItemModal(idItem) {
+async function adicionarEventoCliqueBotaoEditarItemModal(numeroMesa, idItem) {
   const botaoDeletarItem = document.querySelector("#button-aplicar-alteracoes");
-  botaoDeletarItem.addEventListener("click", () => {
-    const valoresItem = pegarValoresDosItens(idItem);
+  botaoDeletarItem.addEventListener("click", async () => {
+    const valoresItem = pegarValoresDosItens(numeroMesa);
 
     if (isNaN(valoresItem[0])) {
       carregarModalErro("Escreva um Numero Mesa");
     } else {
-      PUTMesa(valoresItem, idItem);
-      deletarItensUl();
-      removerModal();
-      montarLiCarregandoUl();
-      carregarModalSucessoAlterado();
-      setTimeout(recarregarPagina, 2000);
+      try {
+        await PUTMesa(valoresItem, idItem);
+        deletarItensUl();
+        montarLiCarregandoUl();
+        removerModal();
+        carregarModalSucessoAlterado();
+        await montarItensLocalStorage();
+      } catch (error) {
+        console.error("Erro ao atualizar mesa:", error);
+        carregarModalErro("Erro ao atualizar mesa");
+      }
     }
   });
 }
 
 // Adicionar um Evento de clique que monta uma tela de modal para confirmar a deletacao
 function adicionarEventoCliqueDeletarBotaoItemCardapio(idMesa, numeroMesa) {
-  let botaoDelete = document.querySelector(`#button-li-delete-${idMesa}`);
+  let botaoDelete = document.querySelector(`#button-li-delete-${numeroMesa}`);
   botaoDelete.addEventListener("click", () => {
     montarModalDeletarMesa(idMesa, numeroMesa);
   });
@@ -175,22 +185,23 @@ function montarModalDeletarMesa(idMesa, numeroMesa) {
     `
   );
   adicionarEventoCliqueBotaoFecharModal();
-  adicionarEventoCliqueBotaoConfirmarDeletarItem(idMesa);
+  adicionarEventoCliqueBotaoConfirmarDeletarItem(numeroMesa, idMesa);
   adicionarEventoCliqueRemoverModalWrapper();
 }
 
 // Adiciona um evento de clique no botao de confirmar a delecao de um item (no modal)
-async function adicionarEventoCliqueBotaoConfirmarDeletarItem(idItem) {
+async function adicionarEventoCliqueBotaoConfirmarDeletarItem(
+  numeroMesa,
+  idMesa
+) {
   const botaoDeletarItem = document.querySelector("#button-deletar-item");
   botaoDeletarItem.addEventListener("click", async () => {
-    DELETEMesa(idItem);
+    await DELETEMesa(idMesa);
     deletarItensUl();
     montarLiCarregandoUl();
     carregarModalSucessoDeletado();
+    await montarItensLocalStorage();
     removerModal();
-    let novosItems = await GETMesas();
-    adicionarItensLocalStorage(novosItems);
-    setTimeout(recarregarPagina, 2000);
   });
 }
 
@@ -242,9 +253,19 @@ function deletarItensUl() {
 }
 
 async function montarItensLocalStorage() {
-  const mesas = await GETMesas();
-  adicionarItensLocalStorage(mesas);
-  montarMesas(mesas);
+  montarLiCarregandoUl();
+
+  try {
+    const mesas = await GETMesas();
+    adicionarItensLocalStorage(mesas);
+    montarMesas(mesas);
+  } catch (error) {
+    console.error("Erro ao carregar mesas:", error);
+    toastr.error("Erro ao carregar mesas");
+
+    // Remove o item de carregamento em caso de erro
+    deletarItensUl();
+  }
 }
 
 // Adiciona o array de items enviado para o LocalStorage
@@ -342,22 +363,23 @@ function adicionarEventoCliqueBotaoAdicionarItemModal() {
 }
 
 // Funcao de adicionar item na API e na tela, pegando as informacoes do modal de adicionar item
-function adicionarItem() {
+async function adicionarItem() {
   const valoresItem = pegarValoresDosItens();
 
   if (isNaN(valoresItem[0])) {
     carregarModalErro("Escreva um numero mesa");
   } else {
     try {
-      POSTMesa(valoresItem);
+      await POSTMesa(valoresItem);
       deletarItensUl();
-      montarMesas();
+      // montarMesas();
       removerModal();
       carregarModalSucessoAdicionado();
       montarLiCarregandoUl();
-      setTimeout(recarregarPagina, 2000);
+      await montarItensLocalStorage();
     } catch (error) {
       console.log(error);
+      carregarModalErro("Erro ao adicionar mesa");
     }
   }
 }
