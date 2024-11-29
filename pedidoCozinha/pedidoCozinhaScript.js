@@ -185,7 +185,7 @@ function iniciaTimeout() {
     } else {
       console.log("Nenhum novo pedido");
     }
-  }, 5000);
+  }, 15000);
 }
 // Atualiza o setInterval para usar a nova lógica
 
@@ -201,7 +201,7 @@ const modalHTML = `
         </div>
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
-        <button id="btnImprimir">🖨 Imprimir</button>
+        <button id="print">🖨 Imprimir</button>
     </div>
 </div>
 `;
@@ -225,8 +225,52 @@ window.onclick = function (event) {
   }
 };
 
+/**
+ * Função que recebe um objeto de pedido e gera uma impressão com os detalhes do cliente, mesa e itens.
+ *
+ * @param {Object} pedido - O pedido contendo informações do cliente, mesa e lista de produtos.
+ * @param {string} pedido.nomeCliente - Nome do cliente.
+ * @param {int} pedido.mesa - Número da mesa.
+ * @param {string} pedido.titulo - nome do pedido.
+ */
+function imprimir(pedido) {
+  // Inicializa o texto com o nome do cliente
+  let texto = `Cliente: ${pedido.nomeCliente} <br>`;
+
+  // Armazena a mesa do pedido
+  let mesa = `Mesa: ${pedido.mesa}<br>`;
+
+  // Armazena a lista de itens do pedido (título)
+  let itens = `Pedido: ${pedido.titulo}`;
+
+  // Combina as variáveis para formar o conteúdo a ser impresso
+  texto += mesa + itens;
+
+  // Cria uma nova janela pop-up para exibir o conteúdo a ser impresso
+  const win = window.open("", "", "width=800,height=600");
+
+  // Adiciona o conteúdo HTML à nova janela
+  win.document.write("<html><head><title>Pedido</title>");
+  win.document.write("</head><body>");
+  win.document.write(texto);
+  win.document.write("</body></html>");
+
+  // Fecha o documento (necessário para o funcionamento correto no IE >= 10)
+  win.document.close();
+
+  // Foca na nova janela (necessário para o IE >= 10)
+  win.focus();
+
+  // Adiciona um pequeno atraso de 1 segundo antes de disparar a impressão
+  setTimeout(function () {
+    win.print(); // Dispara a impressão \\
+    win.close(); // Fecha a janela após a impressão \\
+  }, 1000);
+}
+
 // Função para mostrar o modal
 function exibirDetalhesModal(pedido) {
+  console.log("judas", pedido);
   // Preenche os elementos
   document.getElementById("modalTitulo").textContent = "🍔 " + pedido.titulo;
   document.getElementById("modalmesa").textContent =
@@ -236,4 +280,8 @@ function exibirDetalhesModal(pedido) {
 
   // Mostra o modal
   modal.style.display = "block";
+  const btnPrint = document.querySelector("#print");
+  btnPrint.addEventListener("click", () => {
+    imprimir({ ...pedido, mesa: pedido.numeroMesa });
+  });
 }
