@@ -43,13 +43,11 @@ async function getMenuItems() {
 async function renderOrders() {
   const ordersList = document.querySelector("#lista-comandas");
 
-  // Mostra o item de carregamento
-  mostrarCarregamento();
+  mostrarCarregamento(); // Mantém o carregamento
 
   try {
-    // Busca os dados das comandas
     const orders = await getAllOrders();
-    ordersList.innerHTML = ""; // Limpa a lista após o carregamento
+    ordersList.innerHTML = ""; // Limpa a lista antes de carregar
 
     if (orders.length === 0) {
       ordersList.innerHTML = `
@@ -61,7 +59,7 @@ async function renderOrders() {
       return;
     }
 
-    // Renderiza as comandas
+    // Renderiza cada comanda
     orders.forEach((order) => {
       const items = Array.isArray(order.comandaItens) ? order.comandaItens : [];
 
@@ -72,31 +70,25 @@ async function renderOrders() {
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
-            <p id="p-descricao">Itens: ${items
-              .map((item) => item.titulo)
-              .join("<br>• ")}</p>
+            <p>Itens: ${items.map((item) => item.titulo).join("<br>• ")}</p>
           </div>
           <div class="order-actions">
             <button class="edit-button" onclick="openEditModal(${JSON.stringify(
               order
-            ).replace(/"/g, "&quot;")})">
-              ✏️ Editar
-            </button>
-            <button class="edit-button" onclick="finalizeOrder(${order.id})">
-              ✅ Finalizar Comanda
-            </button>
+            ).replace(/"/g, "&quot;")})">✏️ Editar</button>
+            <button class="edit-button" onclick="finalizeOrder(${
+              order.id
+            })">✅ Finalizar Comanda</button>
+            <button class="edit-button" onclick="getOrderDataForPrint(${
+              order.id
+            })">🖨️ Imprimir</button>
           </div>
         </li>`
       );
     });
   } catch (error) {
     console.error("Erro ao buscar comandas:", error);
-    ordersList.innerHTML = `
-      <li class="error-item">
-        <div class="error-info">
-          <h3>Erro ao carregar comandas. Tente novamente mais tarde.</h3>
-        </div>
-      </li>`;
+    ordersList.innerHTML = `<li class="error-item">...</li>`;
   }
 }
 
@@ -468,4 +460,116 @@ function mostrarCarregamento() {
         <h3>Carregando...</h3>
       </div>
     </li>`;
+}
+async function getOrderDataForPrint(orderId) {
+  try {
+    const [orders, menuItems] = await Promise.all([
+      getAllOrders(),
+      getMenuItems(),
+    ]);
+
+    // Encontre a comanda pelo ID
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) {
+      alert("Comanda não encontrada.");
+      return;
+    }
+
+    // Crie um mapa do cardápio para acesso rápido
+    const menuMap = {};
+    menuItems.forEach((item) => {
+      menuMap[item.titulo] = { preco: item.preco || 0 };
+    });
+
+    // Ajustar os itens da comanda para incluir preços e evitar duplicatas
+    const itensAtualizados = [];
+    order.comandaItens.forEach((comandaItem) => {
+      const { titulo, quantidade } = comandaItem;
+
+      // Verifica se o item já existe na lista atualizada
+      const itemExistente = itensAtualizados.find(
+        (item) => item.titulo === titulo
+      );
+      if (itemExistente) {
+        // Incrementa a quantidade se o item já existir
+        itemExistente.quantidade += quantidade || 1;
+      } else {
+        // Adiciona um novo item com preço do cardápio
+        const preco = menuMap[titulo]?.preco || 0;
+        itensAtualizados.push({
+          titulo,
+          quantidade: quantidade || 1,
+          preco,
+        });
+      }
+    });
+
+    // Atualiza os itens na ordem
+    order.comandaItens = itensAtualizados;
+
+    // Crie a lista final para impressão
+    const itemsWithPrices = order.comandaItens.map((item) => ({
+      titulo: item.titulo,
+      quantidade: item.quantidade,
+      precoUnitario: item.preco,
+      total: item.preco * item.quantidade,
+    }));
+
+    // Chama a função de impressão
+    printOrder(order, itemsWithPrices);
+  } catch (error) {
+    console.error("Erro ao preparar dados para impressão:", error);
+    alert("Erro ao buscar dados para impressão.");
+  }
+}
+
+function printOrder(order, items) {
+  let printContent = `
+    <h1>Comanda</h1>
+    <p><strong>Cliente:</strong> ${order.nomeCliente}</p>
+    <p><strong>Mesa:</strong> ${order.numeroMesa}</p>
+    <hr>
+    <table border="1" cellspacing="0" cellpadding="5" width="100%">
+      <tr>
+        <th>Item</th>
+        <th>Quantidade</th>
+        <th>Preço Unitário</th>
+        <th>Total</th>
+      </tr>
+  `;
+
+  items.forEach((item) => {
+    printContent += `
+      <tr>
+        <td>${item.titulo}</td>
+        <td>${item.quantidade}</td>
+        <td>R$ ${item.precoUnitario.toFixed(2)}</td>
+        <td>R$ ${item.total.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  const totalGeral = items.reduce((sum, item) => sum + item.total, 0);
+  printContent += `
+      <tr>
+        <td colspan="3"><strong>Total Geral</strong></td>
+        <td><strong>R$ ${totalGeral.toFixed(2)}</strong></td>
+      </tr>
+    </table>
+  `;
+
+  const printWindow = window.open("", "_blank", "width=800,height=600");
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+  printWindow.print();
+}
+
+async function printOrders() {
+  try {
+    const orderData = await fetchOrderData(); // Função assíncrona que busca dados
+    const formattedData = getOrderDataForPrint(orderData);
+    print(formattedData);
+  } catch (error) {
+    console.error("Erro ao buscar a comanda:", error);
+  }
 }
