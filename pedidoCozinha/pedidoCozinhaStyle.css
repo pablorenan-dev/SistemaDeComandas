@@ -125,7 +125,6 @@ button:hover {
 
 /* Estilo mínimo necessário para o modal */
 .modal {
-  display: none; /* Modal começa escondido */
   position: fixed;
   top: 0;
   left: 0;

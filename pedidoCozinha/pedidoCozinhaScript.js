@@ -71,67 +71,82 @@ async function PUTPedidoCozinha(id, situacaoId) {
  * @param {string} element - Seletor CSS do elemento onde os pedidos serão exibidos
  * @param {number} situacaoId - Status atual dos pedidos sendo montados
  */
+function criarElementoPedido(pedido, situacaoId) {
+  return `
+    <li draggable="true" id="mover${pedido.id}" data-id=${situacaoId} class="pedido-item">
+      <p>Mesa: ${pedido.numeroMesa} | ${pedido.titulo}</p>
+    </li>
+  `;
+}
+
+// Função para configurar eventos de clique do pedido
+function configurarEventoCliquePedido(pedidoElement, pedido) {
+  pedidoElement.addEventListener("click", () => {
+    console.log(pedidoElement, "pedidoElement");
+    exibirDetalhesModal(pedido, pedidoElement);
+  });
+}
+
+// Função para configurar eventos de drag and drop
+function configurarDragAndDrop(mover, pedido) {
+  const colunas = document.querySelectorAll(".coluna");
+
+  // Evento de início do arrasto
+  document.addEventListener("dragstart", (e) => {
+    e.target.classList.add("dragging");
+  });
+
+  // Eventos de fim do arrasto para cada coluna
+  colunas.forEach((item) => {
+    mover.addEventListener("dragend", (e) => {
+      e.target.classList.remove("dragging");
+
+      const colunaDestino = document
+        .elementFromPoint(e.clientX, e.clientY)
+        .closest(".coluna");
+
+      if (colunaDestino) {
+        const colunaId = colunaDestino.id;
+        let novoStatusId;
+
+        switch (colunaId) {
+          case "ul-Pendente":
+            novoStatusId = 1;
+            break;
+          case "ul-Andamento":
+            novoStatusId = 2;
+            break;
+          case "ul-Finalizado":
+            novoStatusId = 3;
+            break;
+        }
+
+        PUTPedidoCozinha(pedido.id, novoStatusId);
+      }
+    });
+  });
+}
+
+// Função principal para montar a lista de pedidos da cozinha
 function montarPedidoCozinha(pedidos, element, situacaoId) {
   let ulPedidoCozinhaItens = document.querySelector(element);
   ulPedidoCozinhaItens.innerHTML = "";
 
   // Itera sobre cada pedido e cria os elementos na interface
   pedidos.forEach((pedido) => {
-    const pedidoHTML = `
-      <li draggable="true" id="mover${pedido.id}" class="pedido-item">
-        <p>Mesa: ${pedido.numeroMesa} | ${pedido.titulo}</p>
-      </li>
-    `;
-
+    // Cria o elemento HTML do pedido
+    console.log(situacaoId, "situação");
+    const pedidoHTML = criarElementoPedido(pedido, situacaoId);
     ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
 
-    // Configura o evento de clique para abrir o modal
+    // Seleciona o elemento recem-criado
     const pedidoElement = document.getElementById(`mover${pedido.id}`);
-    pedidoElement.addEventListener("click", () => {
-      exibirDetalhesModal(pedido);
-    });
 
-    // Configura o sistema de drag and drop \\
-    const colunas = document.querySelectorAll(".coluna");
-    const mover = document.getElementById(`mover${pedido.id}`);
+    // Configura eventos de clique
+    configurarEventoCliquePedido(pedidoElement, pedido);
 
-    // Adiciona classe visual durante o arrasto \\
-    document.addEventListener("dragstart", (e) => {
-      e.target.classList.add("dragging");
-    });
-
-    // Configura o evento de soltar o item para cada coluna
-    colunas.forEach((item) => {
-      mover.addEventListener("dragend", (e) => {
-        e.target.classList.remove("dragging"); // Remove a marcação quando o item é solto \\
-
-        // Identifica a coluna onde o item foi solto \\
-        const colunaDestino = document
-          .elementFromPoint(e.clientX, e.clientY)
-          .closest(".coluna"); // Verifica onde o item foi solto \\
-
-        if (colunaDestino) {
-          const colunaId = colunaDestino.id; // Pega o ID da coluna (como "ul-Pendente") \\
-          let novoStatusId;
-
-          // Define o novo status baseado na coluna de destino \\
-          switch (colunaId) {
-            case "ul-Pendente":
-              novoStatusId = 1; // Para "Pendente"
-              break;
-            case "ul-Andamento":
-              novoStatusId = 2; // Para "Em Andamento"
-              break;
-            case "ul-Finalizado":
-              novoStatusId = 3; // Para "Finalizado"
-              break;
-          }
-
-          // Atualiza o status do pedido \\
-          PUTPedidoCozinha(pedido.id, novoStatusId);
-        }
-      });
-    });
+    // Configura drag and drop
+    configurarDragAndDrop(pedidoElement, pedido);
   });
 }
 
@@ -192,7 +207,8 @@ function iniciaTimeout() {
 /////////////////////////////////////////////////////// aqui começa o modal \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 // Define o HTML do modal que será inserido no documento
-const modalHTML = `
+function montarModal(pendente) {
+  return `
 <div id="pedidoModal" class="modal">
     <div class="modal-content">
         <div>
@@ -201,29 +217,28 @@ const modalHTML = `
         </div>
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
-        <button id="print">🖨 Imprimir</button>
+        ${pendente ? `<button id="print">🖨 Imprimir</button>` : ""}
     </div>
 </div>
 `;
+}
+// const modalHTML = `
+// <div id="pedidoModal" class="modal">
+//     <div class="modal-content">
+//         <div>
+//           <span class="close-modal">&times;</span>
+//           <h2 id="modalTitulo"></h2>
+//         </div>
+//         <h2 id="modalmesa"></h2>
+//         <h2 id="modalnomeCliente"></h2>
+//         <button id="print">🖨 Imprimir</button>
+//     </div>
+// </div>
+// `;
 
 // Adiciona o modal ao documento
-document.body.insertAdjacentHTML("beforeend", modalHTML);
 
 // Elementos do modal
-const modal = document.getElementById("pedidoModal");
-const closeBtn = document.querySelector(".close-modal");
-
-// Fecha modal ao clicar no X
-closeBtn.onclick = function () {
-  modal.style.display = "none";
-};
-
-// Fecha modal ao clicar fora
-window.onclick = function (event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
 
 /**
  * Função que recebe um objeto de pedido e gera uma impressão com os detalhes do cliente, mesa e itens.
@@ -250,28 +265,51 @@ function imprimir(pedido) {
   const win = window.open("", "", "width=800,height=600");
 
   // Adiciona o conteúdo HTML à nova janela
-  win.document.write("<html><head><title>Pedido</title>");
-  win.document.write("</head><body>");
-  win.document.write(texto);
-  win.document.write("</body></html>");
+  if (win) {
+    win.document.write("<html><head><title>Pedido</title>");
+    win.document.write("</head><body>");
+    win.document.write(texto);
+    win.document.write("</body></html>");
 
-  // Fecha o documento (necessário para o funcionamento correto no IE >= 10)
-  win.document.close();
+    // Fecha o documento (necessário para o funcionamento correto no IE >= 10)
+    win.document.close();
 
-  // Foca na nova janela (necessário para o IE >= 10)
-  win.focus();
+    // Foca na nova janela (necessário para o IE >= 10)
+    win.focus();
 
-  // Adiciona um pequeno atraso de 1 segundo antes de disparar a impressão
-  setTimeout(function () {
-    win.print(); // Dispara a impressão \\
-    win.close(); // Fecha a janela após a impressão \\
-  }, 1000);
+    // bota o pedido em andamento automaticamente
+    PUTPedidoCozinha(pedido.id, 2);
+
+    // Adiciona um pequeno atraso de 1 segundo antes de disparar a impressão
+    setTimeout(function () {
+      win.print(); // Dispara a impressão \\
+      win.close(); // Fecha a janela após a impressão \\
+    }, 1000);
+  }
 }
 
 // Função para mostrar o modal
-function exibirDetalhesModal(pedido) {
-  console.log("judas", pedido);
+function exibirDetalhesModal(pedido, pedidoElement) {
+  // console.log();
+  const status = pedidoElement.getAttribute("data-id");
   // Preenche os elementos
+
+  const html = montarModal(status == 1);
+  document.body.insertAdjacentHTML("beforeend", html);
+  const modal = document.getElementById("pedidoModal");
+  const closeBtn = document.querySelector(".close-modal");
+
+  // Fecha modal ao clicar no X
+  closeBtn.onclick = function () {
+    modal.remove();
+  };
+
+  // Fecha modal ao clicar fora
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.remove();
+    }
+  };
   document.getElementById("modalTitulo").textContent = "🍔 " + pedido.titulo;
   document.getElementById("modalmesa").textContent =
     "Mesa: " + pedido.numeroMesa;
@@ -279,9 +317,11 @@ function exibirDetalhesModal(pedido) {
     "Cliente: " + pedido.nomeCliente;
 
   // Mostra o modal
-  modal.style.display = "block";
+  // modal.style.display = "block";
   const btnPrint = document.querySelector("#print");
-  btnPrint.addEventListener("click", () => {
-    imprimir({ ...pedido, mesa: pedido.numeroMesa });
-  });
+  if (btnPrint) {
+    btnPrint.addEventListener("click", () => {
+      imprimir({ ...pedido, mesa: pedido.numeroMesa });
+    });
+  }
 }
