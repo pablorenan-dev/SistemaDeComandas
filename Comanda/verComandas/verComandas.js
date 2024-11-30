@@ -525,19 +525,55 @@ async function getOrderDataForPrint(orderId) {
 
 function printOrder(order, items) {
   let printContent = `
-    <h1>Comanda</h1>
-    <p><strong>Cliente:</strong> ${order.nomeCliente}</p>
-    <p><strong>Mesa:</strong> ${order.numeroMesa}</p>
-    <hr>
-    <table border="1" cellspacing="0" cellpadding="5" width="100%">
-      <tr>
-        <th>Item</th>
-        <th>Quantidade</th>
-        <th>Preço Unitário</th>
-        <th>Total</th>
-      </tr>
+    <html>
+      <head>
+        <title>Comanda</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+          }
+          table {
+            width: 70%; /* Reduz a largura da tabela */
+            margin: 0 auto; /* Centraliza a tabela na página */
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center; /* Centraliza todo o texto */
+            font-size: 12px; /* Diminui o tamanho da fonte */
+          }
+          th {
+            background-color: #f2f2f2;
+          }
+          td:nth-child(4) { /* Coluna "Total" */
+            text-align: right; /* Alinha valores à direita */
+            padding-right: 10px;
+          }
+          tfoot td {
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <h1 style="text-align: center;">Comanda</h1>
+        <p><strong>Cliente:</strong> ${order.nomeCliente}</p>
+        <p><strong>Mesa:</strong> ${order.numeroMesa}</p>
+        <hr>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantidade</th>
+              <th>Preço Unitário</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
   `;
 
+  // Adiciona os itens na tabela
   items.forEach((item) => {
     printContent += `
       <tr>
@@ -549,16 +585,24 @@ function printOrder(order, items) {
     `;
   });
 
+  // Calcula e insere o total geral
   const totalGeral = items.reduce((sum, item) => sum + item.total, 0);
   printContent += `
-      <tr>
-        <td colspan="3"><strong>Total Geral</strong></td>
-        <td><strong>R$ ${totalGeral.toFixed(2)}</strong></td>
-      </tr>
-    </table>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Total Geral</td>
+              <td>R$ ${totalGeral.toFixed(2)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </body>
+    </html>
   `;
 
+  // Cria a janela de impressão
   const printWindow = window.open("", "_blank", "width=800,height=600");
+  printWindow.document.open();
   printWindow.document.write(printContent);
   printWindow.document.close();
   printWindow.print();
