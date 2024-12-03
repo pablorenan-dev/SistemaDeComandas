@@ -18,7 +18,7 @@ async function GETPedidoCozinha(situacaoId, element, initial = false) {
     }
   );
   let result = await response.json();
-  console.log(result);
+
   if (initial) {
     localStorage.setItem("pedidos", JSON.stringify(result));
   }
@@ -82,7 +82,6 @@ function criarElementoPedido(pedido, situacaoId) {
 // Função para configurar eventos de clique do pedido
 function configurarEventoCliquePedido(pedidoElement, pedido) {
   pedidoElement.addEventListener("click", () => {
-    console.log(pedidoElement, "pedidoElement");
     exibirDetalhesModal(pedido, pedidoElement);
   });
 }
@@ -135,7 +134,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   // Itera sobre cada pedido e cria os elementos na interface
   pedidos.forEach((pedido) => {
     // Cria o elemento HTML do pedido
-    console.log(situacaoId, "situação");
+
     const pedidoHTML = criarElementoPedido(pedido, situacaoId);
     ulPedidoCozinhaItens.insertAdjacentHTML("beforeend", pedidoHTML);
 
@@ -160,7 +159,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
 async function verificarNovosPedidos(pedidos) {
   // coloca o array atual de pedidos pendentes no localStorage
   const local = JSON.parse(localStorage.getItem("pedidos"));
-  console.log(local, "local");
+
   let temMudanca = false;
 
   if (local) {
@@ -168,7 +167,7 @@ async function verificarNovosPedidos(pedidos) {
       "https://comandaapilobo.somee.com/api/PedidoCozinhas?situacaoId=1"
     );
     const resJson = await res.json();
-    console.log(resJson, "resjson");
+
     if (resJson.length != local.length) {
       temMudanca = true;
       localStorage.setItem("pedidos", JSON.stringify(resJson));
@@ -185,9 +184,8 @@ function iniciaTimeout() {
   // sfx.autoplay = true;
 
   setInterval(async () => {
-    console.log("entrou interval");
     const comparacao = await verificarNovosPedidos();
-    console.log(comparacao, "procurando comparacao");
+
     if (comparacao) {
       // fazer tocar sonzinho será adicionado dps
       // Toca o som de notificação apenas quando houver novos pedidos
@@ -195,10 +193,9 @@ function iniciaTimeout() {
       // const div = document.querySelector(".p-div");
       // div.click();
       // sfx.play();
-      console.log("Novos pedidos detectados");
+
       GETPedidoCozinha(1, "#ul-Pendente");
     } else {
-      console.log("Nenhum novo pedido");
     }
   }, 15000);
 }
@@ -290,7 +287,6 @@ function imprimir(pedido) {
 
 // Função para mostrar o modal
 function exibirDetalhesModal(pedido, pedidoElement) {
-  // console.log();
   const status = pedidoElement.getAttribute("data-id");
   // Preenche os elementos
 
