@@ -11,6 +11,10 @@ import {
   PUTItemCardapio,
 } from "./cardapioApiScript.js";
 
+document.addEventListener("DOMContentLoaded", async function () {
+  // Remove o botão imediatamente ao carregar o DOM
+  removerBotaodeAdicionarItens();
+});
 // Adicionar os itens do Cardapio na tela
 async function montarItensCardapio(cardapioItens = []) {
   let ulCardapioItens = document.querySelector("ul");
@@ -19,6 +23,8 @@ async function montarItensCardapio(cardapioItens = []) {
   if (cardapioItens.length !== 0) {
     ulCardapioItens.innerHTML = "";
   }
+
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
 
   cardapioItens.forEach((item) => {
     ulCardapioItens.insertAdjacentHTML(
@@ -30,15 +36,23 @@ async function montarItensCardapio(cardapioItens = []) {
               <p>${item.descricao}</p>
               <p>R$${item.preco.toFixed(2)}</p>
             </div>
-            <div class="div-li-buttons">
+            ${
+              usuarioInfo.userId === 1
+                ? `<div class="div-li-buttons">
               <button id="button-li-delete-${item.id}">❌</button>
               <button id="button-li-editar-${item.id}">✏️</button>
-            </div>
+            </div>`
+                : ""
+            }
+            
       </li>
       `
     );
-    adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
-    adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
+
+    if (usuarioInfo.userId === 1) {
+      adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
+      adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
+    }
   });
 }
 
@@ -462,12 +476,30 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+function removerBotaodeAdicionarItens() {
+  let botaoAdicionar = document.querySelector("#button-adicionar-item");
+  botaoAdicionar.remove();
+}
+
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}
+
 // Chama todas as funcoes iniciais
 function chamarFuncoesIniciais() {
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
   filtrarItem();
   montarItensLocalStorage();
   adicionarEventoCliqueBotaoAdicionarItem();
   montarItensCardapio();
+  mudarNomeDoUsuario(usuarioInfo);
 }
 
 chamarFuncoesIniciais();

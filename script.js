@@ -5,16 +5,12 @@ function adicionarEventoCliqueLiCardapio() {
   });
 }
 
-adicionarEventoCliqueLiCardapio();
-
 function adicionarEventoCliqueLiPedidoCozinha() {
   const liCardapio = document.querySelector("#li-pedido");
   liCardapio.addEventListener("click", () => {
     window.location.href = "pedidoCozinha/index.html";
   });
 }
-
-adicionarEventoCliqueLiPedidoCozinha();
 
 function adicionarEventoCliqueLiComanda() {
   const liCardapio = document.querySelector("#li-comanda");
@@ -23,16 +19,12 @@ function adicionarEventoCliqueLiComanda() {
   });
 }
 
-adicionarEventoCliqueLiComanda();
-
 function adicionarEventoCliqueLiUsuarios() {
   const liCardapio = document.querySelector("#li-usuarios");
   liCardapio.addEventListener("click", () => {
     window.location.href = "usuario/index.html";
   });
 }
-
-adicionarEventoCliqueLiUsuarios();
 
 function adicionarEventoCliqueLiMesas() {
   const liCardapio = document.querySelector("#li-mesas");
@@ -54,4 +46,34 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-adicionarEventoCliqueLiMesas();
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}
+
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function removerCamposDaTelaParaUsuarioNaoAdmin() {
+  let camposTela = document.querySelectorAll("li");
+  camposTela[4].remove();
+}
+
+function chamarPrimeirasFuncoes() {
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
+  if (usuarioInfo.userId === 1) {
+    adicionarEventoCliqueLiUsuarios();
+  } else {
+    removerCamposDaTelaParaUsuarioNaoAdmin();
+  }
+  adicionarEventoCliqueLiMesas();
+  adicionarEventoCliqueLiComanda();
+  adicionarEventoCliqueLiCardapio();
+  adicionarEventoCliqueLiPedidoCozinha();
+  mudarNomeDoUsuario(usuarioInfo);
+}
+
+chamarPrimeirasFuncoes();

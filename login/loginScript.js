@@ -33,11 +33,22 @@ async function adicionarEventoForm() {
     );
 
     if (usuario) {
+      await adicionarItemLocalStorage(
+        "usuarioInfo",
+        JSON.stringify({
+          userId: usuario.idUsuario,
+          username: usuario.nomeUsuario,
+        })
+      );
       window.location.href = "../index.html";
     } else {
       montarModalErro();
     }
   });
+}
+
+async function adicionarItemLocalStorage(chaveItem, item) {
+  localStorage.setItem(chaveItem, item);
 }
 
 // Adicionar um evento de clique no botao de fechar o modal(o x no canto superior direito do modal)

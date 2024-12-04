@@ -6,6 +6,25 @@ import {
   PUTMesa,
 } from "./mesasApiScript.js";
 
+document.addEventListener("DOMContentLoaded", async function () {
+  // Remove o botão imediatamente ao carregar o DOM
+  removerBotaodeAdicionarItens();
+
+  const avatar = document.getElementById("user-avatar");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  avatar.addEventListener("click", () => {
+    logoutBtn.classList.toggle("show");
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+  });
+
+  // Continua o carregamento das mesas
+  await montarItensLocalStorage();
+});
+
 // Adicionar os itens do Cardapio na tela
 async function montarMesas(mesas = []) {
   let ulMesas = document.querySelector("ul");
@@ -14,6 +33,8 @@ async function montarMesas(mesas = []) {
   if (mesas.length !== 0) {
     ulMesas.innerHTML = "";
   }
+
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
 
   mesas.forEach((item) => {
     ulMesas.insertAdjacentHTML(
@@ -25,20 +46,39 @@ async function montarMesas(mesas = []) {
             <p>Situacao: <span>${
               item.situacaoMesa === 0 ? "Livre" : "Ocupada"
             }</span></p>
-            <div class="div-li-buttons">
-              <button id="button-li-delete-${item.numeroMesa}">
+            ${
+              usuarioInfo.userId === 1
+                ? `<div class="div-li-buttons">
+              <button class="button-li" id="button-li-delete-${item.numeroMesa}">
                 ❌
               </button>
-              <button id="button-li-editar-${item.numeroMesa}">
+              <button class="button-li"  id="button-li-editar-${item.numeroMesa}">
                 ✏️
               </button>
-            </div>
+            </div>`
+                : ""
+            }
+            
           </li>
         `
     );
-    adicionarEventoCliqueDeletarBotaoItemCardapio(item.idMesa, item.numeroMesa);
-    adicionarEventoCliqueEditarBotaoItemCardapio(item.idMesa, item.numeroMesa);
+
+    if (usuarioInfo.userId === 1) {
+      adicionarEventoCliqueDeletarBotaoItemCardapio(
+        item.idMesa,
+        item.numeroMesa
+      );
+      adicionarEventoCliqueEditarBotaoItemCardapio(
+        item.idMesa,
+        item.numeroMesa
+      );
+    }
   });
+}
+
+function removerBotaodeAdicionarItens() {
+  let botaoAdicionar = document.querySelector("#button-adicionar-item");
+  botaoAdicionar.remove();
 }
 
 // Adicionar um evento no input de pesquisar, para filtrar os itens na tela, mostrando somente os escritos
@@ -418,6 +458,25 @@ function removerModal() {
   modalWrapper.remove();
 }
 
-montarItensLocalStorage();
-adicionarEventoCliqueBotaoAdicionarItem();
-filtrarItem();
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}
+
+function chamarPrimeirasFuncoes() {
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
+  montarItensLocalStorage();
+  filtrarItem();
+  if (usuarioInfo.usuarioId === 1) {
+    adicionarEventoCliqueBotaoAdicionarItem();
+  }
+  mudarNomeDoUsuario(usuarioInfo);
+}
+
+chamarPrimeirasFuncoes();
