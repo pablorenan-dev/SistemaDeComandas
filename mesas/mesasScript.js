@@ -95,7 +95,8 @@ function filtrarItem() {
     const itensFiltrados = cardapioItensLocalStorage.filter((item) => {
       return (
         String(item.numeroMesa).includes(valorBusca) ||
-        String(item.situacaoMesa).includes(valorBusca)
+        String(item.situacaoMesa).includes(valorBusca) ||
+        String(item.status).includes(valorBusca)
       );
     });
 
@@ -314,9 +315,24 @@ async function montarItensLocalStorage() {
 
 // Adiciona o array de items enviado para o LocalStorage
 function adicionarItensLocalStorage(mesas) {
-  localStorage.setItem("mesas", JSON.stringify(mesas));
-}
+  // Mapeia as mesas para adicionar o campo de status baseado no ID
+  const mesasComStatus = mesas.map((mesa) => {
+    // Cria uma cópia do objeto mesa para não modificar o original
+    const mesaAtualizada = { ...mesa };
 
+    // Verifica o ID da mesa e adiciona o campo de status
+    if (mesa.situacaoMesa === 1) {
+      mesaAtualizada.status = "ocupado";
+    } else if (mesa.situacaoMesa === 0) {
+      mesaAtualizada.status = "livre";
+    }
+
+    return mesaAtualizada;
+  });
+
+  // Salva as mesas com o novo campo de status no localStorage
+  localStorage.setItem("mesas", JSON.stringify(mesasComStatus));
+}
 // Adicionar um Evento de clique que monta uma tela de modal para adicionar os parametros para adicionar um novo item e confirmar a adicao
 function adicionarEventoCliqueBotaoAdicionarItem() {
   const botaoAdicionarItem = document.querySelector("#button-adicionar-item");
@@ -412,6 +428,8 @@ async function adicionarItem() {
 
   if (isNaN(valoresItem[0])) {
     carregarModalErro("Escreva um numero mesa");
+  } else if (valoresItem[0] < 1) {
+    carregarModalErro("Escreva um numero mesa maior que 0.");
   } else {
     try {
       await POSTMesa(valoresItem);
@@ -475,7 +493,7 @@ function chamarPrimeirasFuncoes() {
   let usuarioInfo = pegarInfoUsuarioLocalStorage();
   montarItensLocalStorage();
   filtrarItem();
-  if (usuarioInfo.usuarioId === 1) {
+  if (usuarioInfo.userId === 1) {
     adicionarEventoCliqueBotaoAdicionarItem();
   }
   mudarNomeDoUsuario(usuarioInfo);
@@ -487,8 +505,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!usuarioInfo) {
     exibirModalLogin();
-  } else {
-    chamarPrimeirasFuncoes();
   }
 });
 

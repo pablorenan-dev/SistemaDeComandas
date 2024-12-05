@@ -42,7 +42,7 @@ function montarModalAdicionarUsuario() {
               d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"
             />
           </svg>
-          <h2>Adicionar Item</h2>
+          <h2>Adicionar novo Usuário</h2>
           <button class="modal-button">X</button>
         </div>
         <div class="modal-body">
@@ -253,11 +253,17 @@ async function montarModalEditarUsuario(idItem, tituloItem) {
         </div>
         <div class="modal-body">
           <p>Nome:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.nomeUsuario}"/>
+          <input type="text" class="input-item-modal" value="${
+            itemDetalhes.nomeUsuario
+          }"/>
           <p>Email:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.emailUsuario}"/>
+          <input type="text" class="input-item-modal" value="${
+            itemDetalhes.emailUsuario
+          }"/>
           <p>Senha:</p>
-          <input type="password" class="input-item-modal" value="${itemDetalhes.senhaUsuario}" disabled/>
+          <input type="password" class="input-item-modal" value="${
+            itemDetalhes.senhaUsuario
+          }" ${idItem != 1 ? "disabled" : ""}/>
           <div>
             <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
           </div>
@@ -362,9 +368,6 @@ function filtrarItem() {
           .includes(event.target.value.toLowerCase()) ||
         item.emailUsuario
           .toLowerCase()
-          .includes(event.target.value.toLowerCase()) ||
-        item.senhaUsuario
-          .toLowerCase()
           .includes(event.target.value.toLowerCase())
       );
     });
@@ -459,8 +462,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!usuarioInfo) {
     exibirModalLogin();
-  } else {
-    chamarPrimeirasFuncoes();
   }
 });
 
