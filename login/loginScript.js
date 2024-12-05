@@ -24,7 +24,6 @@ async function adicionarEventoForm() {
     let nomeUsuarioInput = document.querySelectorAll("input");
     event.preventDefault();
     const usuarioInfo = await GETUsuarios();
-    console.log(usuarioInfo);
 
     let usuario = usuarioInfo.find(
       (user) =>

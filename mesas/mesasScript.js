@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("usuarioInfo");
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
 
@@ -421,7 +422,6 @@ async function adicionarItem() {
       montarLiCarregandoUl();
       await montarItensLocalStorage();
     } catch (error) {
-      console.log(error);
       carregarModalErro("Erro ao adicionar mesa");
     }
   }
@@ -438,7 +438,6 @@ function pegarValoresDosItens() {
     valoresArray.push(parseInt(valoresItens), 1);
   }
 
-  console.log(valoresArray);
   return valoresArray;
 }
 
@@ -480,6 +479,63 @@ function chamarPrimeirasFuncoes() {
     adicionarEventoCliqueBotaoAdicionarItem();
   }
   mudarNomeDoUsuario(usuarioInfo);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Verificar se o usuário está logado
+  const usuarioInfo = localStorage.getItem("usuarioInfo");
+
+  if (!usuarioInfo) {
+    exibirModalLogin();
+  } else {
+    chamarPrimeirasFuncoes();
+  }
+});
+
+// Função para exibir o modal
+function exibirModalLogin() {
+  // Inserir o modal no HTML
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div id="modal-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    ">
+      <div style="
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      ">
+        <p style="margin: 0 0 10px;">Você não está logado. Por favor, faça login para acessar o sistema.</p>
+        <button id="botao-login" style="
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          background-color: #007BFF;
+          color: white;
+          cursor: pointer;
+        ">Ir para o Login</button>
+      </div>
+    </div>
+    `
+  );
+
+  // Adicionar evento ao botão de login
+  const botaoLogin = document.getElementById("botao-login");
+  botaoLogin.addEventListener("click", () => {
+    window.location.href = "../login/index.html";
+  });
 }
 
 chamarPrimeirasFuncoes();
