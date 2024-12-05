@@ -139,45 +139,6 @@ button:hover {
   font-size: 100%;
 }
 
-section div input {
-  width: 90%;
-  text-align: left;
-  padding: 1%;
-  border-radius: 8px;
-}
-
-/* Estilo geral de input */
-input {
-  font-size: 1rem;
-  padding: 0.75rem;
-  border: 1px solid var(--color-soft-border);
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-input::placeholder {
-  text-align: left;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
-.div-input {
-  display: flex;
-  align-items: center;
-  height: auto;
-  overflow: hidden;
-  background: linear-gradient(
-    to right,
-    rgb(31 41 55),
-    rgb(75 85 99),
-    rgb(17 24 39)
-  );
-}
-
 /* Estilização do modal de detalhes do pedido */
 .modal {
   position: fixed;
