@@ -431,3 +431,26 @@ section div input::placeholder {
     transform: scale(1);
   }
 }
+
+table {
+  width: 100%; /* Faz a tabela ocupar a largura total da página */
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid black; /* Adiciona bordas para clareza */
+  padding: 5px; /* Espaçamento interno para melhor visualização */
+  text-align: center; /* Centraliza os valores */
+}
+
+th {
+  background-color: #f2f2f2; /* Adiciona um fundo cinza para os cabeçalhos */
+}
+
+td:nth-child(4) {
+  /* Aplica estilo específico à coluna "Total" */
+  width: 15%; /* Ajuste proporcional da largura */
+  text-align: right; /* Mantém os valores alinhados à direita */
+  padding-right: 10px; /* Adiciona espaço para evitar cortes */
+}

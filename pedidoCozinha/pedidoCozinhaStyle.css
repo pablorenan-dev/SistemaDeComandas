@@ -240,3 +240,105 @@ section ul li:hover {
     font-size: 50%; /* Reduz ainda mais em telas muito pequenas */
   }
 }
+
+section ul li img {
+  height: 60%;
+  width: 60%;
+  margin: 6px;
+}
+
+section ul li p {
+  color: var(--color-dark-blue-grey);
+  font-size: 90%;
+}
+
+section ul li div {
+  display: flex;
+}
+
+section ul li div button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+}
+
+section ul li div button:hover {
+  transform: scale(102%);
+  transition: 0.2s;
+  background: var(--color-slight-grey);
+}
+
+section ul li div button:active {
+  background-color: var(--color-dark-blue-grey);
+  transition: 0.2s;
+  transform: scale(98%);
+}
+
+.logout-btn {
+  background-color: var(--color-dark-blue-grey); /* Cor de fundo do botão */
+  color: var(--color-ice-blue); /* Cor do texto */
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+header div:hover .logout-btn {
+  opacity: 1; /* Exibe o botão ao passar o mouse */
+}
+
+.logout-btn:hover {
+  background-color: var(--color-red); /* Cor de hover do botão */
+}
+
+/* User avatar hover and transform effects */
+#user-avatar {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#user-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Logout button styles */
+.logout-btn {
+  background-color: var(--color-dark-blue-grey);
+  color: var(--color-ice-blue);
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+header div:hover .logout-btn {
+  opacity: 1;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-red);
+}
+
+/* Header text styles */
+header div p {
+  font-size: 16px;
+  color: var(--color-off-white);
+  margin: 0;
+}
+
+header div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

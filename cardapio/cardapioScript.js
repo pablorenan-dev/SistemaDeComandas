@@ -11,6 +11,13 @@ import {
   PUTItemCardapio,
 } from "./cardapioApiScript.js";
 
+document.addEventListener("DOMContentLoaded", async function () {
+  // Remove o botão imediatamente ao carregar o DOM
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
+  if (usuarioInfo.userId != 1) {
+    removerBotaodeAdicionarItens();
+  }
+});
 // Adicionar os itens do Cardapio na tela
 async function montarItensCardapio(cardapioItens = []) {
   let ulCardapioItens = document.querySelector("ul");
@@ -19,6 +26,8 @@ async function montarItensCardapio(cardapioItens = []) {
   if (cardapioItens.length !== 0) {
     ulCardapioItens.innerHTML = "";
   }
+
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
 
   cardapioItens.forEach((item) => {
     ulCardapioItens.insertAdjacentHTML(
@@ -30,15 +39,23 @@ async function montarItensCardapio(cardapioItens = []) {
               <p>${item.descricao}</p>
               <p>R$${item.preco.toFixed(2)}</p>
             </div>
-            <div class="div-li-buttons">
+            ${
+              usuarioInfo.userId === 1
+                ? `<div class="div-li-buttons">
               <button id="button-li-delete-${item.id}">❌</button>
               <button id="button-li-editar-${item.id}">✏️</button>
-            </div>
+            </div>`
+                : ""
+            }
+            
       </li>
       `
     );
-    adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
-    adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
+
+    if (usuarioInfo.userId === 1) {
+      adicionarEventoCliqueDeletarBotaoItemCardapio(item.id, item.titulo);
+      adicionarEventoCliqueEditarBotaoItemCardapio(item.id, item.titulo);
+    }
   });
 }
 
@@ -458,16 +475,90 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("usuarioInfo");
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
 });
 
+function removerBotaodeAdicionarItens() {
+  let botaoAdicionar = document.querySelector("#button-adicionar-item");
+  botaoAdicionar.remove();
+}
+
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}
+
 // Chama todas as funcoes iniciais
 function chamarFuncoesIniciais() {
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
   filtrarItem();
   montarItensLocalStorage();
   adicionarEventoCliqueBotaoAdicionarItem();
   montarItensCardapio();
+  mudarNomeDoUsuario(usuarioInfo);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Verificar se o usuário está logado
+  const usuarioInfo = localStorage.getItem("usuarioInfo");
+
+  if (!usuarioInfo) {
+    exibirModalLogin();
+  }
+});
+
+// Função para exibir o modal
+function exibirModalLogin() {
+  // Inserir o modal no HTML
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div id="modal-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    ">
+      <div style="
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      ">
+        <p style="margin: 0 0 10px;">Você não está logado. Por favor, faça login para acessar o sistema.</p>
+        <button id="botao-login" style="
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          background-color: #007BFF;
+          color: white;
+          cursor: pointer;
+        ">Ir para o Login</button>
+      </div>
+    </div>
+    `
+  );
+
+  // Adicionar evento ao botão de login
+  const botaoLogin = document.getElementById("botao-login");
+  botaoLogin.addEventListener("click", () => {
+    window.location.href = "../login/index.html";
+  });
 }
 
 chamarFuncoesIniciais();
