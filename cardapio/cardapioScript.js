@@ -13,7 +13,10 @@ import {
 
 document.addEventListener("DOMContentLoaded", async function () {
   // Remove o botão imediatamente ao carregar o DOM
-  removerBotaodeAdicionarItens();
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
+  if (usuarioInfo.userId != 1) {
+    removerBotaodeAdicionarItens();
+  }
 });
 // Adicionar os itens do Cardapio na tela
 async function montarItensCardapio(cardapioItens = []) {

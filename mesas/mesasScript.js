@@ -8,7 +8,10 @@ import {
 
 document.addEventListener("DOMContentLoaded", async function () {
   // Remove o botão imediatamente ao carregar o DOM
-  removerBotaodeAdicionarItens();
+  let usuarioInfo = pegarInfoUsuarioLocalStorage();
+  if (usuarioInfo.userId != 1) {
+    removerBotaodeAdicionarItens();
+  }
 
   const avatar = document.getElementById("user-avatar");
   const logoutBtn = document.getElementById("logout-btn");

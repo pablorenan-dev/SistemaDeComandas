@@ -315,3 +315,30 @@ function exibirDetalhesModal(pedido, pedidoElement) {
     });
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const avatar = document.getElementById("user-avatar");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  avatar.addEventListener("click", () => {
+    logoutBtn.classList.toggle("show");
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+  });
+
+  let userInfo = pegarInfoUsuarioLocalStorage();
+  mudarNomeDoUsuario(userInfo);
+});
+
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}

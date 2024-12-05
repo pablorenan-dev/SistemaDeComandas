@@ -412,6 +412,19 @@ async function carregarMesasDisponiveis() {
   });
 }
 
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   carregarMesasDisponiveis(); // Carregar mesas disponíveis assim que a página for carregada
+  let userInfo = pegarInfoUsuarioLocalStorage();
+  mudarNomeDoUsuario(userInfo);
 });

@@ -70,7 +70,9 @@ async function renderOrders() {
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
-            <p>Itens: ${items.map((item) => item.titulo).join("<br>• ")}</p>
+            <p>Itens: <br>• ${items
+              .map((item) => item.titulo)
+              .join("<br>• ")}</p>
           </div>
           <div class="order-actions">
             <button class="edit-button" onclick="openEditModal(${JSON.stringify(
@@ -410,6 +412,9 @@ document.addEventListener("DOMContentLoaded", function () {
   logoutBtn.addEventListener("click", () => {
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
+
+  let userInfo = pegarInfoUsuarioLocalStorage();
+  mudarNomeDoUsuario(userInfo);
 });
 
 function filterOrders() {
@@ -565,8 +570,8 @@ function printOrder(order, items) {
           <thead>
             <tr>
               <th>Item</th>
-              <th>Quantidade</th>
-              <th>Preço Unitário</th>
+              <th>Qntd</th>
+              <th>Preço Unt</th>
               <th>Total</th>
             </tr>
           </thead>
@@ -606,6 +611,17 @@ function printOrder(order, items) {
   printWindow.document.write(printContent);
   printWindow.document.close();
   printWindow.print();
+}
+
+function pegarInfoUsuarioLocalStorage() {
+  let usuarioInfo = localStorage.getItem("usuarioInfo");
+  usuarioInfo = JSON.parse(usuarioInfo);
+  return usuarioInfo;
+}
+
+function mudarNomeDoUsuario(usuarioInfo) {
+  let usuarioP = document.getElementById("p-username");
+  usuarioP.innerHTML = usuarioInfo.username;
 }
 
 async function printOrders() {
