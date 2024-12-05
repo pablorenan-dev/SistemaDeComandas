@@ -63,7 +63,7 @@ async function PUTPedidoCozinha(id, situacaoId) {
   }
 }
 
-////////////////////////////////////////////////// aqui começa a construção da tela da tela \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+////////////////////////////////////////////////// aqui começa a construção da tela da tela \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
  * Cria o elemento HTML para um pedido
@@ -164,7 +164,7 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
   });
 }
 
-///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+///////////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
  * Verifica se há novos pedidos pendentes
@@ -228,7 +228,7 @@ function montarModal(pendente, finalizado) {
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
         ${pendente ? `<button id="print">🖨 Imprimir</button>` : ""}
-        ${finalizado ? `<button id="excluir">Entregue</button>` : ""}
+        ${finalizado ? `<button id="entregue">Entregue</button>` : ""}
     </div>
 </div>
 `;
@@ -319,10 +319,10 @@ function exibirDetalhesModal(pedido, pedidoElement) {
   }
 
   // Configura botão de remover (se disponível)
-  const btnRemover = document.querySelector("#excluir");
-  if (btnRemover) {
-    btnRemover.addEventListener("click", () => {
-      // Atualiza o status do pedido para "excluído" (status 4)
+  const btnEntregado = document.querySelector("#entregue");
+  if (btnEntregado) {
+    btnEntregado.addEventListener("click", () => {
+      // Atualiza o status do pedido para "entregue" (status 4)
       PUTPedidoCozinha(pedido.id, 4);
       // Remove o modal da interface
       modal.remove();
