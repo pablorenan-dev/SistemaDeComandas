@@ -42,7 +42,7 @@ function montarModalAdicionarUsuario() {
               d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"
             />
           </svg>
-          <h2>Adicionar Item</h2>
+          <h2>Adicionar novo Usuário</h2>
           <button class="modal-button">X</button>
         </div>
         <div class="modal-body">
@@ -159,8 +159,6 @@ function deletarItensUl() {
 // Pegar os valores do modal de adicionar itens e retorna eles em um array
 function pegarValoresDosItens() {
   let valoresItens = document.querySelectorAll(".input-item-modal");
-
-  console.log(valoresItens);
   return valoresItens;
 }
 
@@ -193,7 +191,7 @@ async function montarUsuarios(usuarios = []) {
               <div class="div-li-info">
                 <p>👤 ${item.nomeUsuario}</p>
                 <p>✉ ${item.emailUsuario}</p>
-                <p>🔒 ${item.senhaUsuario}</p>
+                <p>🔒 ********</p>
               </div>
               <div class="div-li-buttons">
                 <button id="button-li-editar-${item.idUsuario}">✏️</button>
@@ -210,7 +208,7 @@ async function montarUsuarios(usuarios = []) {
               <div class="div-li-info">
                 <p>👤 ${item.nomeUsuario}</p>
                 <p>✉ ${item.emailUsuario}</p>
-                <p>🔒 ${item.senhaUsuario}</p>
+                <p>🔒 ********</p>
               </div>
               <div class="div-li-buttons">
                 <button id="button-li-delete-${item.idUsuario}">❌</button>
@@ -255,11 +253,17 @@ async function montarModalEditarUsuario(idItem, tituloItem) {
         </div>
         <div class="modal-body">
           <p>Nome:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.nomeUsuario}"/>
+          <input type="text" class="input-item-modal" value="${
+            itemDetalhes.nomeUsuario
+          }"/>
           <p>Email:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.emailUsuario}"/>
+          <input type="text" class="input-item-modal" value="${
+            itemDetalhes.emailUsuario
+          }"/>
           <p>Senha:</p>
-          <input type="text" class="input-item-modal" value="${itemDetalhes.senhaUsuario}"/>
+          <input type="password" class="input-item-modal" value="${
+            itemDetalhes.senhaUsuario
+          }" ${idItem != 1 ? "disabled" : ""}/>
           <div>
             <button class="button-adicionar-item-modal" id="button-aplicar-alteracoes">✏️ Aplicar Alterações</button>
           </div>
@@ -364,9 +368,6 @@ function filtrarItem() {
           .includes(event.target.value.toLowerCase()) ||
         item.emailUsuario
           .toLowerCase()
-          .includes(event.target.value.toLowerCase()) ||
-        item.senhaUsuario
-          .toLowerCase()
           .includes(event.target.value.toLowerCase())
       );
     });
@@ -436,6 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("usuarioInfo");
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
 
@@ -452,6 +454,61 @@ function pegarInfoUsuarioLocalStorage() {
 function mudarNomeDoUsuario(usuarioInfo) {
   let usuarioP = document.getElementById("p-username");
   usuarioP.innerHTML = usuarioInfo.username;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Verificar se o usuário está logado
+  const usuarioInfo = localStorage.getItem("usuarioInfo");
+
+  if (!usuarioInfo) {
+    exibirModalLogin();
+  }
+});
+
+// Função para exibir o modal
+function exibirModalLogin() {
+  // Inserir o modal no HTML
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div id="modal-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    ">
+      <div style="
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      ">
+        <p style="margin: 0 0 10px;">Você não está logado. Por favor, faça login para acessar o sistema.</p>
+        <button id="botao-login" style="
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          background-color: #007BFF;
+          color: white;
+          cursor: pointer;
+        ">Ir para o Login</button>
+      </div>
+    </div>
+    `
+  );
+
+  // Adicionar evento ao botão de login
+  const botaoLogin = document.getElementById("botao-login");
+  botaoLogin.addEventListener("click", () => {
+    window.location.href = "../login/index.html";
+  });
 }
 
 chamarFuncoesIniciais();

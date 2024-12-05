@@ -24,7 +24,6 @@ async function adicionarEventoForm() {
     let nomeUsuarioInput = document.querySelectorAll("input");
     event.preventDefault();
     const usuarioInfo = await GETUsuarios();
-    console.log(usuarioInfo);
 
     let usuario = usuarioInfo.find(
       (user) =>
@@ -33,14 +32,18 @@ async function adicionarEventoForm() {
     );
 
     if (usuario) {
-      await adicionarItemLocalStorage(
-        "usuarioInfo",
-        JSON.stringify({
-          userId: usuario.idUsuario,
-          username: usuario.nomeUsuario,
-        })
-      );
-      window.location.href = "../index.html";
+      carregarModalSucesso();
+      setTimeout(async () => {
+        await adicionarItemLocalStorage(
+          "usuarioInfo",
+          JSON.stringify({
+            userId: usuario.idUsuario,
+            username: usuario.nomeUsuario,
+          })
+        );
+        window.location.href = "../index.html";
+      }, 1000);
+      
     } else {
       montarModalErro();
     }
@@ -60,6 +63,11 @@ function adicionarEventoCliqueBotaoFecharModal() {
     nomeUsuarioInput[1].value = "";
     removerModal();
   });
+}
+
+// Monta o toastify de sucesso na tela
+function carregarModalSucesso() {
+  toastr.success("Logado com Sucesso...");
 }
 
 function montarModalErro() {

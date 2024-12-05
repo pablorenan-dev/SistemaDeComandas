@@ -70,7 +70,7 @@ async function renderOrders() {
           <div class="order-info">
             <h3>Cliente: ${order.nomeCliente}</h3>
             <p>Mesa: ${order.numeroMesa}</p>
-            <p>Itens: <br>• ${items
+            <p class="p-descricao">Itens: <br>• ${items
               .map((item) => item.titulo)
               .join("<br>• ")}</p>
           </div>
@@ -410,6 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("usuarioInfo");
     window.location.href = "../login/index.html"; // Redireciona para a tela de login
   });
 
@@ -428,9 +429,7 @@ function filterOrders() {
     const tableNumber = order
       .querySelector("p:nth-child(2)")
       .textContent.toLowerCase();
-    const items = order
-      .querySelector("p#p-descricao")
-      .textContent.toLowerCase();
+    const items = order.querySelector(".p-descricao").textContent.toLowerCase();
 
     if (
       clientName.includes(searchInput) ||
