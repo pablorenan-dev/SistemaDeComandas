@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   logoutBtn.addEventListener("click", () => {
-    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+    window.location.href = "login/index.html"; // Redireciona para a tela de login
   });
 });
 
