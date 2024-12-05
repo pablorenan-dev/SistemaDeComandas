@@ -436,8 +436,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!usuarioInfo) {
     exibirModalLogin();
-  } else {
-    chamarPrimeirasFuncoes();
   }
 });
 
@@ -493,8 +491,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!usuarioInfo) {
     exibirModalLogin();
-  } else {
-    chamarPrimeirasFuncoes();
   }
 });
 
