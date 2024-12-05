@@ -130,6 +130,6 @@ function exibirModalLogin() {
   // Adicionar evento ao botão de login
   const botaoLogin = document.getElementById("botao-login");
   botaoLogin.addEventListener("click", () => {
-    window.location.href = "/login/index.html";
+    window.location.href = "login/index.html";
   });
 }
