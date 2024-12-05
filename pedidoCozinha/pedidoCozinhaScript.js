@@ -330,6 +330,8 @@ function exibirDetalhesModal(pedido, pedidoElement) {
   }
 }
 
+//////////////////////////////////////////////////////// aqui começa algo \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 document.addEventListener("DOMContentLoaded", function () {
   const avatar = document.getElementById("user-avatar");
   const logoutBtn = document.getElementById("logout-btn");
