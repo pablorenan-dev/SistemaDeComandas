@@ -161,25 +161,9 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
 
     // Configura drag and drop
     configurarDragAndDrop(pedidoElement, pedido);
-
-    function filtrarMesa() {
-      const inputProcurar = document.querySelector("#input-procurar");
-
-      inputProcurar.addEventListener("input", (event) => {
-        const mesasLocalStorage = pegarItensLocalStorage();
-        const mesasFiltradas = mesasLocalStorage.filter((item) => {
-          return item.numeroMesa
-            .toLowerCase()
-            .includes(event.target.value.toLowerCase());
-        });
-
-        montarPedidoCozinha(mesasFiltradas);
-      });
-    }
   });
 }
 
-filtrarMesa();
 ///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
@@ -244,7 +228,7 @@ function montarModal(pendente, finalizado) {
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
         ${pendente ? `<button id="print">🖨 Imprimir</button>` : ""}
-        ${finalizado ? `<button id="excluir">❌ Excluir</button>` : ""}
+        ${finalizado ? `<button id="excluir">Entregue</button>` : ""}
     </div>
 </div>
 `;
