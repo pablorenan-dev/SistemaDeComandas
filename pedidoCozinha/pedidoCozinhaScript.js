@@ -46,23 +46,20 @@ async function PUTPedidoCozinha(id, situacaoId) {
     novoStatusId: situacaoId,
   };
 
-  // Verifica se o novo status é válido (menor ou igual a 3)
-  if (body.novoStatusId <= 3) {
-    let response = await fetch(
-      `https://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
-      {
-        method: "PUT",
-        headers: header,
-        body: JSON.stringify(body),
-      }
-    );
-
-    // Se a atualização for bem-sucedida, atualiza todas as listas de pedidos
-    if (response.ok) {
-      await GETPedidoCozinha(1, "#ul-Pendente");
-      await GETPedidoCozinha(2, "#ul-Andamento");
-      await GETPedidoCozinha(3, "#ul-Finalizado");
+  let response = await fetch(
+    `https://comandaapilobo.somee.com/api/PedidoCozinhas/${id}`,
+    {
+      method: "PUT",
+      headers: header,
+      body: JSON.stringify(body),
     }
+  );
+
+  // Se a atualização for bem-sucedida, atualiza todas as listas de pedidos
+  if (response.ok) {
+    await GETPedidoCozinha(1, "#ul-Pendente");
+    await GETPedidoCozinha(2, "#ul-Andamento");
+    await GETPedidoCozinha(3, "#ul-Finalizado");
   }
 }
 
@@ -164,9 +161,25 @@ function montarPedidoCozinha(pedidos, element, situacaoId) {
 
     // Configura drag and drop
     configurarDragAndDrop(pedidoElement, pedido);
+
+    function filtrarMesa() {
+      const inputProcurar = document.querySelector("#input-procurar");
+
+      inputProcurar.addEventListener("input", (event) => {
+        const mesasLocalStorage = pegarItensLocalStorage();
+        const mesasFiltradas = mesasLocalStorage.filter((item) => {
+          return item.numeroMesa
+            .toLowerCase()
+            .includes(event.target.value.toLowerCase());
+        });
+
+        montarPedidoCozinha(mesasFiltradas);
+      });
+    }
   });
 }
 
+filtrarMesa();
 ///////////////////////////////////// aqui começa a verificação para atualizar os pedidos pendentes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 /**
@@ -217,9 +230,10 @@ function iniciaTimeout() {
 /**
  * Monta o HTML do modal de detalhes do pedido
  * @param {boolean} pendente - Indica se o pedido está pendente
+ * @param {boolean} finalizado - Indica se o pedido está finalizado
  * @returns {string} HTML do modal
  */
-function montarModal(pendente) {
+function montarModal(pendente, finalizado) {
   return `
 <div id="pedidoModal" class="modal">
     <div class="modal-content">
@@ -230,6 +244,7 @@ function montarModal(pendente) {
         <h2 id="modalmesa"></h2>
         <h2 id="modalnomeCliente"></h2>
         ${pendente ? `<button id="print">🖨 Imprimir</button>` : ""}
+        ${finalizado ? `<button id="excluir">❌ Excluir</button>` : ""}
     </div>
 </div>
 `;
@@ -282,8 +297,12 @@ function exibirDetalhesModal(pedido, pedidoElement) {
   // Verifica o status atual do pedido
   const status = pedidoElement.getAttribute("data-id");
 
-  // Insere o HTML do modal no documento
-  const html = montarModal(status == 1);
+  // Determina o status do pedido (pendente ou finalizado) com base no valor de status
+  const pendente = status == 1; // Se o status for 1, é pendente
+  const finalizado = status == 3; // Se o status for 3, é finalizado
+
+  // Insere o HTML do modal no documento, passando as variáveis pendente e finalizado
+  const html = montarModal(pendente, finalizado);
   document.body.insertAdjacentHTML("beforeend", html);
   const modal = document.getElementById("pedidoModal");
   const closeBtn = document.querySelector(".close-modal");
@@ -312,6 +331,17 @@ function exibirDetalhesModal(pedido, pedidoElement) {
   if (btnPrint) {
     btnPrint.addEventListener("click", () => {
       imprimir({ ...pedido, mesa: pedido.numeroMesa });
+    });
+  }
+
+  // Configura botão de remover (se disponível)
+  const btnRemover = document.querySelector("#excluir");
+  if (btnRemover) {
+    btnRemover.addEventListener("click", () => {
+      // Atualiza o status do pedido para "excluído" (status 4)
+      PUTPedidoCozinha(pedido.id, 4);
+      // Remove o modal da interface
+      modal.remove();
     });
   }
 }
