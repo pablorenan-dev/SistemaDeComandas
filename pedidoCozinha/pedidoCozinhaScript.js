@@ -330,48 +330,65 @@ function exibirDetalhesModal(pedido, pedidoElement) {
   }
 }
 
-//////////////////////////////////////////////////////// aqui começa algo \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////// aqui começa o funcionamento do botão de sair do usuario \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+// Evento que carrega quando o DOM está completamente carregado
 document.addEventListener("DOMContentLoaded", function () {
+  // Seleciona o elemento de avatar do usuário
   const avatar = document.getElementById("user-avatar");
+  // Seleciona o botão de logout
   const logoutBtn = document.getElementById("logout-btn");
 
+  // Adiciona evento de clique no avatar para mostrar/esconder botão de logout
   avatar.addEventListener("click", () => {
     logoutBtn.classList.toggle("show");
   });
 
+  // Adiciona evento de clique no botão de logout
   logoutBtn.addEventListener("click", () => {
+    // Remove as informações do usuário do armazenamento local
     localStorage.removeItem("usuarioInfo");
-    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+    // Redireciona para a tela de login
+    window.location.href = "../login/index.html";
   });
 
+  // Obtém as informações do usuário do armazenamento local
   let userInfo = pegarInfoUsuarioLocalStorage();
+  // Atualiza o nome do usuário na interface
   mudarNomeDoUsuario(userInfo);
 });
 
+// Função para recuperar informações do usuário do armazenamento local
 function pegarInfoUsuarioLocalStorage() {
+  // Obtém as informações do usuário armazenadas
   let usuarioInfo = localStorage.getItem("usuarioInfo");
+  // Converte a string JSON para um objeto
   usuarioInfo = JSON.parse(usuarioInfo);
   return usuarioInfo;
 }
 
+// Função para atualizar o nome do usuário na interface
 function mudarNomeDoUsuario(usuarioInfo) {
+  // Seleciona o elemento de parágrafo para o nome do usuário
   let usuarioP = document.getElementById("p-username");
+  // Define o nome do usuário no elemento
   usuarioP.innerHTML = usuarioInfo.username;
 }
 
+// Evento que carrega quando o DOM está completamente carregado
 document.addEventListener("DOMContentLoaded", function () {
-  // Verificar se o usuário está logado
+  // Verifica se o usuário está logado
   const usuarioInfo = localStorage.getItem("usuarioInfo");
 
+  // Se não houver informações de usuário, exibe o modal de login
   if (!usuarioInfo) {
     exibirModalLogin();
   }
 });
 
-// Função para exibir o modal
+// Função para exibir o modal de login
 function exibirModalLogin() {
-  // Inserir o modal no HTML
+  // Insere o modal no HTML com estilos inline
   document.body.insertAdjacentHTML(
     "beforeend",
     `
@@ -408,9 +425,10 @@ function exibirModalLogin() {
     `
   );
 
-  // Adicionar evento ao botão de login
+  // Adiciona evento ao botão de login no modal
   const botaoLogin = document.getElementById("botao-login");
   botaoLogin.addEventListener("click", () => {
+    // Redireciona para a página de login
     window.location.href = "../login/index.html";
   });
 }
