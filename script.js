@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("usuarioInfo");
-    window.location.href = "../login/index.html"; // Redireciona para a tela de login
+    window.location.href = "login/index.html"; // Redireciona para a tela de login
   });
 });
 
